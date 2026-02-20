@@ -6,7 +6,6 @@
 <title>Sesli Okuma Oyunu</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  "use strict";
   :root {
     --bg: #0f1b2d;
     --surface: #1a2d46;
@@ -37,7 +36,6 @@
     position: relative;
   }
 
-  /* Yıldız arka planı */
   .stars {
     position: fixed;
     inset: 0;
@@ -67,10 +65,7 @@
     gap: 24px;
   }
 
-  /* Başlık */
-  .title-area {
-    text-align: center;
-  }
+  .title-area { text-align: center; }
   .title-area h1 {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
@@ -85,7 +80,6 @@
     margin-top: 4px;
   }
 
-  /* Skor kartı */
   .score-card {
     background: var(--surface);
     border: 2px solid var(--surface2);
@@ -111,16 +105,13 @@
     line-height: 1;
     transition: transform 0.15s ease;
   }
-  .score-value.bump {
-    animation: scoreBump 0.3s ease;
-  }
+  .score-value.bump { animation: scoreBump 0.3s ease; }
   @keyframes scoreBump {
     0% { transform: scale(1); }
     50% { transform: scale(1.4); color: #fff; }
     100% { transform: scale(1); }
   }
 
-  /* Kelime kartı */
   .word-card {
     background: var(--surface);
     border: 2px solid var(--surface2);
@@ -149,7 +140,6 @@
     color: var(--text);
     background: transparent;
   }
-
   .word.active {
     background: rgba(255, 209, 102, 0.15);
     border-color: var(--yellow);
@@ -162,7 +152,6 @@
     0%, 100% { box-shadow: 0 0 20px rgba(255,209,102,0.3); }
     50% { box-shadow: 0 0 36px rgba(255,209,102,0.6); }
   }
-
   .word.correct {
     background: rgba(6, 214, 160, 0.15);
     border-color: var(--green);
@@ -175,7 +164,6 @@
     70% { transform: scale(0.97) rotate(1deg); }
     100% { transform: scale(1) rotate(0deg); }
   }
-
   .word.wrong {
     background: rgba(239, 71, 111, 0.15);
     border-color: var(--red);
@@ -190,7 +178,6 @@
     80% { transform: translateX(4px); }
   }
 
-  /* Mikrofon göstergesi */
   .mic-area {
     display: flex;
     flex-direction: column;
@@ -228,7 +215,6 @@
   }
   .mic-status.listening { color: var(--red); }
 
-  /* Geçici konuşma */
   .interim-text {
     font-size: 0.9rem;
     color: var(--text-muted);
@@ -239,11 +225,7 @@
     transition: opacity 0.2s;
   }
 
-  /* Butonlar */
-  .button-row {
-    display: flex;
-    gap: 16px;
-  }
+  .button-row { display: flex; gap: 16px; }
   .btn {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
@@ -280,7 +262,6 @@
     box-shadow: none;
   }
 
-  /* Tebrikler banner */
   .congrats-banner {
     display: none;
     background: linear-gradient(135deg, #ffd166, #ff9f1c);
@@ -301,7 +282,6 @@
   }
   .congrats-banner.visible { display: block; }
 
-  /* Hata mesajı */
   .error-msg {
     display: none;
     color: var(--red);
@@ -315,7 +295,6 @@
   }
   .error-msg.visible { display: block; }
 
-  /* Tarayıcı desteği yok */
   .no-support {
     display: none;
     color: var(--accent);
@@ -328,7 +307,6 @@
 </head>
 <body>
 
-<!-- Yıldız arka planı -->
 <div class="stars" id="stars"></div>
 
 <div class="game-container" id="gameContainer">
@@ -346,9 +324,7 @@
     </div>
   </div>
 
-  <div class="word-card" id="wordCard">
-    <!-- Kelime span'ları buraya JS tarafından eklenir -->
-  </div>
+  <div class="word-card" id="wordCard"></div>
 
   <div class="mic-area">
     <div class="mic-indicator" id="micIndicator">🎤</div>
@@ -380,6 +356,7 @@
 // ─── Yıldız arka planı oluştur ───────────────────────────────────────────────
 (function yaratYildizlar() {
   const starsEl = document.getElementById('stars');
+  const fragment = document.createDocumentFragment();
   for (let i = 0; i < 80; i++) {
     const s = document.createElement('div');
     s.className = 'star';
@@ -391,8 +368,9 @@
       --d:${2 + Math.random()*4}s;
       --delay:${Math.random()*5}s;
     `;
-    starsEl.appendChild(s);
+    fragment.appendChild(s);
   }
+  starsEl.appendChild(fragment);
 })();
 
 // ─── Tarayıcı desteği kontrolü ───────────────────────────────────────────────
@@ -414,7 +392,6 @@ let wordSpans = [];
 let currentWordIndex = 0;
 let score = 0;
 let isListening = false;
-let processedWordCount = 0;
 
 /** @type {SpeechRecognition|null} */
 let recognition = null;
@@ -433,21 +410,25 @@ const interimText    = document.getElementById('interimText');
 const congratsBanner = document.getElementById('congratsBanner');
 const errorMsg       = document.getElementById('errorMsg');
 
-// ─── Oyunu başlat: kelime span'larını oluştur ────────────────────────────────
+// ─── Oyunu başlat ────────────────────────────────────────────────────────────
+// split() döngü dışına çıkarıldı | DocumentFragment → tek DOM yazımı
 function oyunuKur() {
+  const orijinalKelimeler = HEDEF_METIN.split(/\s+/);
   targetWords = normalizeText(HEDEF_METIN);
-  wordCard.innerHTML = '';
   wordSpans = [];
 
+  const fragment = document.createDocumentFragment();
   targetWords.forEach((kelime, i) => {
     const span = document.createElement('span');
     span.className = 'word' + (i === 0 ? ' active' : '');
-    const orijinalKelimeler = HEDEF_METIN.split(/\s+/);
     span.textContent = orijinalKelimeler[i] || kelime;
     span.dataset.index = i;
-    wordCard.appendChild(span);
+    fragment.appendChild(span);
     wordSpans.push(span);
   });
+
+  wordCard.innerHTML = '';
+  wordCard.appendChild(fragment);
 }
 
 // ─── Türkçe normalizasyon ─────────────────────────────────────────────────────
@@ -458,11 +439,12 @@ function oyunuKur() {
 function normalizeText(metin) {
   if (!metin || typeof metin !== 'string') return [];
   let sonuc = metin.replace(/I/g, 'ı').replace(/İ/g, 'i').toLocaleLowerCase('tr-TR');
-  sonuc = sonuc.replace(/[^\p{L}\s]/gu, ''); 
+  sonuc = sonuc.replace(/[^\p{L}\s]/gu, '');
   return sonuc.split(/\s+/).filter(t => t.length > 0);
 }
 
 // ─── Kelime doğrulama ─────────────────────────────────────────────────────────
+// endGame kontrolü rAF dışına alındı → gecikme olmadan tetiklenir
 /**
  * @param {string} konusulanKelime
  */
@@ -474,7 +456,6 @@ function validateWord(konusulanKelime) {
 
   const token = normalKonusulan[0];
   const hedef = targetWords[currentWordIndex];
-
   const span = wordSpans[currentWordIndex];
 
   if (token === hedef) {
@@ -483,13 +464,14 @@ function validateWord(konusulanKelime) {
     score += 10;
     currentWordIndex++;
 
+    const gameOver = currentWordIndex === targetWords.length;
+
     requestAnimationFrame(() => {
       updateUI();
     });
 
-    if (currentWordIndex === targetWords.length) {
-      endGame();
-    }
+    if (gameOver) endGame();
+
   } else {
     // ❌ Yanlış
     span.className = 'word wrong';
@@ -502,20 +484,20 @@ function validateWord(konusulanKelime) {
 }
 
 // ─── UI güncelle ──────────────────────────────────────────────────────────────
+// forEach kaldırıldı → sadece aktif span'a dokunuluyor
+// score global'den okunuyor → DOM'dan parseInt yok
 function updateUI() {
-  wordSpans.forEach((span, i) => {
-    if (i === currentWordIndex && !span.classList.contains('correct') && !span.classList.contains('wrong')) {
+  if (currentWordIndex < wordSpans.length) {
+    const span = wordSpans[currentWordIndex];
+    if (!span.classList.contains('correct') && !span.classList.contains('wrong')) {
       span.className = 'word active';
     }
-  });
-
-  const eskiPuan = parseInt(scoreDisplay.textContent, 10);
-  scoreDisplay.textContent = score;
-  if (score !== eskiPuan) {
-    scoreDisplay.classList.remove('bump');
-    void scoreDisplay.offsetWidth;
-    scoreDisplay.classList.add('bump');
   }
+
+  scoreDisplay.textContent = score;
+  scoreDisplay.classList.remove('bump');
+  void scoreDisplay.offsetWidth;
+  scoreDisplay.classList.add('bump');
 }
 
 // ─── Oyun sonu ────────────────────────────────────────────────────────────────
@@ -529,16 +511,15 @@ function endGame() {
   });
 
   congratsBanner.classList.add('visible');
-
   btnStop.disabled = true;
   btnStart.disabled = false;
-
   micStatus.textContent = '🎉 Harika iş çıkardın!';
   micStatus.classList.remove('listening');
   micIndicator.classList.remove('active');
 }
 
 // ─── Tanıma başlat ────────────────────────────────────────────────────────────
+// maxAlternatives: 3 → tanıma başarısı artar
 function startRecognition() {
   try {
     if (!SpeechRecognition) return;
@@ -550,6 +531,7 @@ function startRecognition() {
     recognition.lang = 'tr-TR';
     recognition.continuous = false;
     recognition.interimResults = true;
+    recognition.maxAlternatives = 3;
 
     recognition.onresult = handleSpeechResult;
     recognition.onerror = handleSpeechError;
@@ -594,26 +576,41 @@ function stopRecognition() {
 }
 
 // ─── Konuşma sonucu işle ─────────────────────────────────────────────────────
+// Interim: sadece son result'tan → gereksiz loop yok
+// Final: tüm alternatifler deneniyor → maxAlternatives'ten faydalanılıyor
 function handleSpeechResult(event) {
   try {
     if (!event || !event.results) return;
 
-    // Interim gösterim
-    let tamTranskript = '';
-    for (let i = 0; i < event.results.length; i++) {
-      tamTranskript += event.results[i][0].transcript + ' ';
-    }
-    interimText.textContent = tamTranskript.trim();
+    // Interim gösterim — sadece son result
+    const sonResult = event.results[event.results.length - 1];
+    interimText.textContent = sonResult[0].transcript;
 
-    // Sadece final sonuçlarla eşleşme yap
+    // Sadece yeni final sonuçları işle
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (!event.results[i].isFinal) continue;
-      const kelimeler = normalizeText(event.results[i][0].transcript);
-      kelimeler.forEach((kelime) => {
-        if (currentWordIndex < targetWords.length) {
-          validateWord(kelime);
+
+      const result = event.results[i];
+      let eslesti = false;
+
+      // Tüm alternatifleri dene
+      for (let a = 0; a < result.length && !eslesti; a++) {
+        const kelimeler = normalizeText(result[a].transcript);
+        for (const kelime of kelimeler) {
+          if (currentWordIndex < targetWords.length) {
+            if (kelime === targetWords[currentWordIndex]) {
+              validateWord(kelime);
+              eslesti = true;
+              break;
+            }
+          }
         }
-      });
+      }
+
+      // Hiçbir alternatif eşleşmediyse yanlış işle
+      if (!eslesti && currentWordIndex < targetWords.length) {
+        validateWord('__yanlis__');
+      }
     }
 
   } catch (hata) {
@@ -642,21 +639,18 @@ function handleSpeechError(event) {
 }
 
 // ─── Tanıma bitti ────────────────────────────────────────────────────────────
+// recognition.start() → startRecognition() : temiz nesne, event listener birikimi yok
+// Debounce 350 → 200ms
 function handleRecognitionEnd() {
   if (!isListening) return;
-
   if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
 
   if (restartDebounceTimer) clearTimeout(restartDebounceTimer);
   restartDebounceTimer = setTimeout(() => {
     if (isListening && currentWordIndex < targetWords.length) {
-      try {
-        recognition.start();
-      } catch (hata) {
-        // Sessizce yoksay
-      }
+      startRecognition();
     }
-  }, 350);
+  }, 200);
 }
 
 // ─── Hata mesajı göster ───────────────────────────────────────────────────────
@@ -677,7 +671,6 @@ btnStart.addEventListener('click', () => {
 
   currentWordIndex = 0;
   score = 0;
-  processedWordCount = 0;
   lastError = null;
   scoreDisplay.textContent = '0';
   interimText.textContent = '';
@@ -692,7 +685,7 @@ btnStop.addEventListener('click', () => {
   stopRecognition();
   micStatus.textContent = 'Yeniden başlatılıyor...';
   setTimeout(() => {
-    btnStart.click(); 
+    btnStart.click();
   }, 200);
 });
 
