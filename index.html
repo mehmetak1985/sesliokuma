@@ -393,7 +393,7 @@ let currentWordIndex = 0;
 let score = 0;
 let isListening = false;
 
-/** @type {SpeechRecognition|null} */
+/** @type {InstanceType<typeof SpeechRecognition>|null} */
 let recognition = null;
 
 let restartDebounceTimer = null;
@@ -411,7 +411,6 @@ const congratsBanner = document.getElementById('congratsBanner');
 const errorMsg       = document.getElementById('errorMsg');
 
 // ─── Oyunu başlat ────────────────────────────────────────────────────────────
-// split() döngü dışına çıkarıldı | DocumentFragment → tek DOM yazımı
 function oyunuKur() {
   const orijinalKelimeler = HEDEF_METIN.split(/\s+/);
   targetWords = normalizeText(HEDEF_METIN);
@@ -443,22 +442,49 @@ function normalizeText(metin) {
   return sonuc.split(/\s+/).filter(t => t.length > 0);
 }
 
-// ─── Kelime doğrulama ─────────────────────────────────────────────────────────
-// endGame kontrolü rAF dışına alındı → gecikme olmadan tetiklenir
+// ─── Kelime eşleşme kontrolü ──────────────────────────────────────────────────
+// FIX: Sadece tam eşleşme değil, Türkçe suffix toleransı da var.
+// "topu" hedefi için "top", "topu", "topU" hepsi kabul edilir.
+// Kural: konuşulan kelime hedef ile başlıyorsa veya hedef konuşulan ile başlıyorsa eşleşir.
 /**
- * @param {string} konusulanKelime
+ * @param {string} konusulan - normalize edilmiş tek kelime
+ * @param {string} hedef - normalize edilmiş hedef kelime
+ * @returns {boolean}
  */
-function validateWord(konusulanKelime) {
+function kelimeEslesiyor(konusulan, hedef) {
+  if (konusulan === hedef) return true;
+  // Türkçe suffix toleransı: "topu"→"top" veya "top"→"topu"
+  if (konusulan.startsWith(hedef) || hedef.startsWith(konusulan)) return true;
+  return false;
+}
+
+// ─── Transcript'ten hedef kelimeyi ara ────────────────────────────────────────
+/**
+ * Verilen token listesinde currentWordIndex için hedef eşleşmesi arar.
+ * @param {string[]} kelimeler
+ * @returns {boolean} eşleşti mi
+ */
+function transcriptIsleBul(kelimeler) {
+  if (currentWordIndex >= targetWords.length) return false;
+  const hedef = targetWords[currentWordIndex];
+  for (const kelime of kelimeler) {
+    if (kelimeEslesiyor(kelime, hedef)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// ─── Kelime doğrulama ─────────────────────────────────────────────────────────
+/**
+ * @param {boolean} dogru
+ */
+function validateWord(dogru) {
   if (currentWordIndex >= targetWords.length) return;
 
-  const normalKonusulan = normalizeText(konusulanKelime);
-  if (normalKonusulan.length === 0) return;
-
-  const token = normalKonusulan[0];
-  const hedef = targetWords[currentWordIndex];
   const span = wordSpans[currentWordIndex];
 
-  if (token === hedef) {
+  if (dogru) {
     // ✅ Doğru
     span.className = 'word correct';
     score += 10;
@@ -473,19 +499,17 @@ function validateWord(konusulanKelime) {
     if (gameOver) endGame();
 
   } else {
-    // ❌ Yanlış
+    // ❌ Yanlış — span'ı wrong yap, 500ms sonra active'e geri dön
     span.className = 'word wrong';
     setTimeout(() => {
       if (currentWordIndex < targetWords.length) {
         span.className = 'word active';
       }
-    }, 400);
+    }, 500);
   }
 }
 
 // ─── UI güncelle ──────────────────────────────────────────────────────────────
-// forEach kaldırıldı → sadece aktif span'a dokunuluyor
-// score global'den okunuyor → DOM'dan parseInt yok
 function updateUI() {
   if (currentWordIndex < wordSpans.length) {
     const span = wordSpans[currentWordIndex];
@@ -519,19 +543,25 @@ function endGame() {
 }
 
 // ─── Tanıma başlat ────────────────────────────────────────────────────────────
-// maxAlternatives: 3 → tanıma başarısı artar
 function startRecognition() {
+  if (!SpeechRecognition) return;
+
+  // Zaten dinliyorsa önce durdur
+  if (recognition) {
+    try { recognition.abort(); } catch(e) {}
+    recognition = null;
+  }
+
+  errorMsg.classList.remove('visible');
+  errorMsg.textContent = '';
+  lastError = null;
+
   try {
-    if (!SpeechRecognition) return;
-
-    errorMsg.classList.remove('visible');
-    errorMsg.textContent = '';
-
     recognition = new SpeechRecognition();
     recognition.lang = 'tr-TR';
     recognition.continuous = false;
     recognition.interimResults = true;
-    recognition.maxAlternatives = 3;
+    recognition.maxAlternatives = 5;
 
     recognition.onresult = handleSpeechResult;
     recognition.onerror = handleSpeechError;
@@ -539,7 +569,6 @@ function startRecognition() {
 
     recognition.start();
     isListening = true;
-    lastError = null;
 
     micIndicator.classList.add('active');
     micStatus.classList.add('listening');
@@ -554,62 +583,79 @@ function startRecognition() {
 
 // ─── Tanıma durdur ────────────────────────────────────────────────────────────
 function stopRecognition() {
-  try {
-    isListening = false;
-    if (restartDebounceTimer) {
-      clearTimeout(restartDebounceTimer);
-      restartDebounceTimer = null;
-    }
-    if (recognition) {
-      recognition.stop();
-    }
-  } catch (hata) {
-    // Sessizce yoksay
+  isListening = false;
+
+  if (restartDebounceTimer) {
+    clearTimeout(restartDebounceTimer);
+    restartDebounceTimer = null;
+  }
+
+  if (recognition) {
+    try { recognition.abort(); } catch(e) {}
+    recognition = null;
   }
 
   micIndicator.classList.remove('active');
   micStatus.classList.remove('listening');
-  if (micStatus.textContent === '🎤 Dinliyorum...') {
-    micStatus.textContent = 'Başlamak için düğmeye bas';
-  }
+  micStatus.textContent = 'Başlamak için düğmeye bas';
   interimText.textContent = '';
 }
 
 // ─── Konuşma sonucu işle ─────────────────────────────────────────────────────
-// Interim: sadece son result'tan → gereksiz loop yok
-// Final: tüm alternatifler deneniyor → maxAlternatives'ten faydalanılıyor
+// FIX: Hem interim hem final result'larda hedef aranıyor.
+// İnterim'de bulunursa hemen doğru kabul edilir (hız için).
+// Final gelip hiç eşleşme yoksa yanlış işlenir.
 function handleSpeechResult(event) {
   try {
-    if (!event || !event.results) return;
+    if (!event || !event.results || currentWordIndex >= targetWords.length) return;
 
-    // Interim gösterim — sadece son result
-    const sonResult = event.results[event.results.length - 1];
-    interimText.textContent = sonResult[0].transcript;
+    let interimTranscript = '';
+    let finalTranscript = '';
+    let interimEslesti = false;
 
-    // Sadece yeni final sonuçları işle
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (!event.results[i].isFinal) continue;
-
+    for (let i = 0; i < event.results.length; i++) {
       const result = event.results[i];
-      let eslesti = false;
+      const text = result[0].transcript;
 
+      if (result.isFinal) {
+        finalTranscript += text + ' ';
+      } else {
+        interimTranscript += text + ' ';
+      }
+    }
+
+    // Gösterim için
+    interimText.textContent = (interimTranscript || finalTranscript).trim();
+
+    // 1. Önce interim'de hedefi ara (anlık tepki için)
+    if (interimTranscript) {
+      const interimKelimeler = normalizeText(interimTranscript);
+      if (transcriptIsleBul(interimKelimeler)) {
+        interimEslesti = true;
+        validateWord(true);
+        return; // Bulundu, devam etme
+      }
+    }
+
+    // 2. Final result geldi mi işle
+    if (finalTranscript) {
       // Tüm alternatifleri dene
-      for (let a = 0; a < result.length && !eslesti; a++) {
-        const kelimeler = normalizeText(result[a].transcript);
-        for (const kelime of kelimeler) {
-          if (currentWordIndex < targetWords.length) {
-            if (kelime === targetWords[currentWordIndex]) {
-              validateWord(kelime);
-              eslesti = true;
-              break;
-            }
+      let eslesti = false;
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (!event.results[i].isFinal) continue;
+        const result = event.results[i];
+        for (let a = 0; a < result.length && !eslesti; a++) {
+          const kelimeler = normalizeText(result[a].transcript);
+          if (transcriptIsleBul(kelimeler)) {
+            eslesti = true;
+            validateWord(true);
           }
         }
       }
 
-      // Hiçbir alternatif eşleşmediyse yanlış işle
-      if (!eslesti && currentWordIndex < targetWords.length) {
-        validateWord('__yanlis__');
+      // Final geldi ama hiç eşleşme yoksa yanlış
+      if (!eslesti) {
+        validateWord(false);
       }
     }
 
@@ -629,7 +675,7 @@ function handleSpeechError(event) {
       btnStart.disabled = false;
       btnStop.disabled = true;
     } else if (event.error === 'no-speech') {
-      // Sessizce yoksay
+      // Sessizce yoksay — onend restart halleder
     } else if (event.error === 'network') {
       gosterHata('Ağ hatası. İnternet bağlantını kontrol et.');
     }
@@ -639,8 +685,7 @@ function handleSpeechError(event) {
 }
 
 // ─── Tanıma bitti ────────────────────────────────────────────────────────────
-// recognition.start() → startRecognition() : temiz nesne, event listener birikimi yok
-// Debounce 350 → 200ms
+// FIX: Debounce 100ms — daha hızlı restart
 function handleRecognitionEnd() {
   if (!isListening) return;
   if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
@@ -650,7 +695,7 @@ function handleRecognitionEnd() {
     if (isListening && currentWordIndex < targetWords.length) {
       startRecognition();
     }
-  }, 200);
+  }, 100);
 }
 
 // ─── Hata mesajı göster ───────────────────────────────────────────────────────
@@ -659,15 +704,9 @@ function gosterHata(mesaj) {
   errorMsg.classList.add('visible');
 }
 
-// ─── Buton işleyicileri ───────────────────────────────────────────────────────
-btnStart.addEventListener('click', () => {
-  if (!SpeechRecognition) return;
-  if (isListening) return;
-
-  window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-
-  btnStart.disabled = true;
-  btnStop.disabled = false;
+// ─── Oyunu sıfırla ve başlat ─────────────────────────────────────────────────
+function oyunuSifirlaVeBaslat() {
+  stopRecognition();
 
   currentWordIndex = 0;
   score = 0;
@@ -677,16 +716,33 @@ btnStart.addEventListener('click', () => {
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
 
+  btnStart.disabled = true;
+  btnStop.disabled = false;
+
   oyunuKur();
-  startRecognition();
+
+  // Kısa gecikme: stop → start arası Chrome'a nefes aldırır
+  setTimeout(() => {
+    startRecognition();
+  }, 150);
+}
+
+// ─── Buton işleyicileri ───────────────────────────────────────────────────────
+btnStart.addEventListener('click', () => {
+  if (!SpeechRecognition) return;
+  if (isListening) return;
+
+  window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+  oyunuSifirlaVeBaslat();
 });
 
+// FIX: btnStop artık doğrudan oyunuSifirlaVeBaslat() çağırıyor.
+// Eski: stopRecognition() → setTimeout → btnStart.click() zinciri güvenilir değildi.
 btnStop.addEventListener('click', () => {
-  stopRecognition();
+  if (!SpeechRecognition) return;
+  window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
   micStatus.textContent = 'Yeniden başlatılıyor...';
-  setTimeout(() => {
-    btnStart.click();
-  }, 200);
+  oyunuSifirlaVeBaslat();
 });
 
 // ─── Sayfa yüklendiğinde oyunu hazırla ───────────────────────────────────────
