@@ -129,9 +129,7 @@
   }
 
   .btn-skip {
-    position: absolute;
-    bottom: 10px;
-    right: 12px;
+    align-self: flex-end;
     background: transparent;
     border: 1px solid var(--surface2);
     border-radius: 8px;
@@ -345,6 +343,7 @@
   <div class="title-area">
     <h1>🌟 Sesli Okuma Oyunu</h1>
     <p class="subtitle">Kelimeyi sesli oku ve puan kazan!</p>
+    <p class="subtitle" id="levelDisplay">Seviye 1 / 5</p>
   </div>
 
   <div class="score-card">
@@ -355,9 +354,8 @@
     </div>
   </div>
 
-  <div class="word-card" id="wordCard">
-    <button class="btn-skip" id="btnSkip">Cümleyi Geç</button>
-  </div>
+  <div class="word-card" id="wordCard"></div>
+  <button class="btn-skip" id="btnSkip">Geç</button>
 
   <div class="mic-area">
     <div class="mic-indicator" id="micIndicator">🎤</div>
@@ -1007,6 +1005,7 @@ function endGame() {
       if (grupIndex < CUMLE_GRUPLARI.length - 1) {
         grupIndex++;
         micStatus.textContent = '🌟 Yeni harf grubu başlıyor!';
+        document.getElementById('levelDisplay').textContent = 'Seviye ' + (grupIndex + 1) + ' / 5';
       }
     }
     currentWordIndex   = 0;
@@ -1064,12 +1063,9 @@ btnSkip.addEventListener('click', () => {
     cumleIndex = 0;
     if (grupIndex < CUMLE_GRUPLARI.length - 1) {
       grupIndex++;
+      document.getElementById('levelDisplay').textContent = 'Seviye ' + (grupIndex + 1) + ' / 5';
     }
   }
-  currentWordIndex   = 0;
-  score              = 0;
-  processedWordCount = 0;
-  yanlisSayac        = 0;
   scoreDisplay.textContent = '0';
   interimText.textContent  = '';
   congratsBanner.classList.remove('visible');
