@@ -36,12 +36,7 @@
     position: relative;
   }
 
-  .stars {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
   .star {
     position: absolute;
     border-radius: 50%;
@@ -58,58 +53,81 @@
   .game-container {
     position: relative;
     z-index: 1;
-    width: min(90vw, 640px);
+    width: min(90vw, 660px);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    gap: 18px;
   }
 
   .title-area { text-align: center; }
   .title-area h1 {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
-    font-size: clamp(1.8rem, 6vw, 3rem);
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
     color: var(--accent);
     text-shadow: 0 0 20px rgba(255,209,102,0.4), 0 4px 8px rgba(0,0,0,0.5);
     letter-spacing: -0.5px;
   }
-  .subtitle {
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
+  .subtitle { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
 
-  .score-card {
+  /* Üst bilgi şeridi */
+  .info-bar {
     background: var(--surface);
     border: 2px solid var(--surface2);
     border-radius: var(--radius);
-    padding: 12px 32px;
+    padding: 10px 24px;
+    width: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
     box-shadow: var(--shadow);
+    flex-wrap: wrap;
   }
-  .score-icon { font-size: 1.6rem; }
-  .score-label {
-    font-size: 0.85rem;
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .info-label {
+    font-size: 0.72rem;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-  .score-value {
+  .info-value {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: var(--accent);
     line-height: 1;
-    transition: transform 0.15s ease;
   }
-  .score-value.bump { animation: scoreBump 0.3s ease; }
+  .info-value.bump { animation: scoreBump 0.3s ease; }
   @keyframes scoreBump {
     0% { transform: scale(1); }
     50% { transform: scale(1.4); color: #fff; }
     100% { transform: scale(1); }
+  }
+  .info-seviye {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--accent2);
+    text-align: center;
+  }
+  .info-kelime {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  /* Kelime kartı wrapper */
+  .word-card-wrapper {
+    position: relative;
+    width: 100%;
   }
 
   .word-card {
@@ -124,8 +142,29 @@
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
-    min-height: 120px;
+    min-height: 130px;
   }
+
+  /* Geç butonu */
+  .btn-gec {
+    position: absolute;
+    bottom: 10px;
+    right: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 5px 14px;
+    border: 1px solid var(--surface2);
+    border-radius: 50px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s, background 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-gec:hover:not(:disabled) { opacity: 1; background: rgba(255,255,255,0.1); }
+  .btn-gec:disabled { opacity: 0.15; cursor: not-allowed; }
 
   .word {
     font-family: 'Nunito', sans-serif;
@@ -141,7 +180,7 @@
     background: transparent;
   }
   .word.active {
-    background: rgba(255, 209, 102, 0.15);
+    background: rgba(255,209,102,0.15);
     border-color: var(--yellow);
     color: var(--yellow);
     transform: scale(1.08);
@@ -153,7 +192,7 @@
     50% { box-shadow: 0 0 36px rgba(255,209,102,0.6); }
   }
   .word.correct {
-    background: rgba(6, 214, 160, 0.15);
+    background: rgba(6,214,160,0.15);
     border-color: var(--green);
     color: var(--green);
     animation: correctPop 0.4s ease forwards;
@@ -165,7 +204,7 @@
     100% { transform: scale(1) rotate(0deg); }
   }
   .word.wrong {
-    background: rgba(239, 71, 111, 0.15);
+    background: rgba(239,71,111,0.15);
     border-color: var(--red);
     color: var(--red);
     animation: shake 0.4s ease;
@@ -178,101 +217,115 @@
     80% { transform: translateX(4px); }
   }
 
-  .mic-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+  /* Geri bildirim balonu */
+  .feedback-bubble {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    min-height: 26px;
+    text-align: center;
+    color: var(--accent2);
+    letter-spacing: 0.2px;
+    transition: opacity 0.3s;
+    opacity: 0;
   }
+  .feedback-bubble.show { opacity: 1; }
+  .feedback-bubble.yanlis { color: var(--text-muted); font-style: italic; }
+
+  /* Mikrofon */
+  .mic-area { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .mic-indicator {
-    width: 80px;
-    height: 80px;
+    width: 72px; height: 72px;
     border-radius: 50%;
     background: var(--surface);
     border: 3px solid var(--surface2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
     transition: all 0.3s ease;
     box-shadow: var(--shadow);
   }
   .mic-indicator.active {
-    background: rgba(239, 71, 111, 0.15);
+    background: rgba(239,71,111,0.15);
     border-color: var(--red);
     animation: micPulse 1s ease-in-out infinite;
   }
   @keyframes micPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 71, 111, 0.4); }
-    50% { box-shadow: 0 0 0 16px rgba(239, 71, 111, 0); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,71,111,0.4); }
+    50% { box-shadow: 0 0 0 16px rgba(239,71,111,0); }
   }
   .mic-status {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    text-align: center;
-    min-height: 20px;
-    transition: color 0.3s;
+    font-size: 0.82rem; color: var(--text-muted);
+    text-align: center; min-height: 20px; transition: color 0.3s;
   }
   .mic-status.listening { color: var(--red); }
 
   .interim-text {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    font-style: italic;
-    min-height: 22px;
-    text-align: center;
-    max-width: 400px;
-    transition: opacity 0.2s;
+    font-size: 0.88rem; color: var(--text-muted); font-style: italic;
+    min-height: 20px; text-align: center; max-width: 400px;
   }
 
   .button-row { display: flex; gap: 16px; }
   .btn {
-    font-family: 'Nunito', sans-serif;
-    font-weight: 900;
-    font-size: 1.1rem;
-    padding: 14px 36px;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-weight: 900;
+    font-size: 1.1rem; padding: 14px 36px;
+    border: none; border-radius: 50px; cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-    letter-spacing: 0.5px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3); letter-spacing: 0.5px;
   }
   .btn:active { transform: scale(0.96); }
-  .btn-start {
-    background: linear-gradient(135deg, var(--green), #04b88a);
-    color: #0a2a1f;
-  }
-  .btn-start:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(6,214,160,0.4);
-  }
-  .btn-stop {
-    background: linear-gradient(135deg, var(--red), #d63060);
-    color: #000;
-  }
-  .btn-stop:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(239,71,111,0.4);
-  }
-  .btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none;
-  }
+  .btn-start { background: linear-gradient(135deg, var(--green), #04b88a); color: #0a2a1f; }
+  .btn-start:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(6,214,160,0.4); }
+  .btn-stop { background: linear-gradient(135deg, var(--red), #d63060); color: #000; }
+  .btn-stop:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(239,71,111,0.4); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; box-shadow: none; }
 
+  /* Seviye tamamlandı overlay */
+  .level-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    background: rgba(15,27,45,0.96);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    z-index: 10;
+    animation: overlayIn 0.35s ease;
+  }
+  .level-overlay.visible { display: flex; }
+  @keyframes overlayIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .level-overlay-title {
+    font-family: 'Nunito', sans-serif; font-weight: 900;
+    font-size: clamp(1.3rem, 5vw, 1.9rem);
+    color: var(--accent); text-align: center;
+  }
+  .level-overlay-sub {
+    font-size: 1rem; color: var(--text-muted); text-align: center;
+  }
+  .btn-next-level {
+    font-family: 'Nunito', sans-serif; font-weight: 900;
+    font-size: 1.05rem; padding: 12px 32px;
+    border: none; border-radius: 50px; cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), #ff9f1c);
+    color: #1a0a00;
+    box-shadow: 0 4px 18px rgba(255,209,102,0.4);
+    transition: transform 0.2s;
+  }
+  .btn-next-level:hover { transform: translateY(-2px); }
+
+  /* Tebrikler banner */
   .congrats-banner {
     display: none;
     background: linear-gradient(135deg, #ffd166, #ff9f1c);
     color: #1a0a00;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 900;
-    font-size: clamp(1.4rem, 5vw, 2rem);
-    padding: 18px 40px;
-    border-radius: var(--radius);
-    text-align: center;
-    width: 100%;
+    font-family: 'Nunito', sans-serif; font-weight: 900;
+    font-size: clamp(1.3rem, 5vw, 1.9rem);
+    padding: 18px 40px; border-radius: var(--radius);
+    text-align: center; width: 100%;
     box-shadow: 0 8px 32px rgba(255,209,102,0.5);
     animation: congratsIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
   }
@@ -283,24 +336,16 @@
   .congrats-banner.visible { display: block; }
 
   .error-msg {
-    display: none;
-    color: var(--red);
-    font-size: 0.9rem;
-    text-align: center;
-    background: rgba(239,71,111,0.1);
+    display: none; color: var(--red); font-size: 0.9rem;
+    text-align: center; background: rgba(239,71,111,0.1);
     border: 1px solid rgba(239,71,111,0.3);
-    border-radius: 12px;
-    padding: 10px 20px;
-    width: 100%;
+    border-radius: 12px; padding: 10px 20px; width: 100%;
   }
   .error-msg.visible { display: block; }
 
   .no-support {
-    display: none;
-    color: var(--accent);
-    text-align: center;
-    font-size: 1.1rem;
-    padding: 20px;
+    display: none; color: var(--accent);
+    text-align: center; font-size: 1.1rem; padding: 20px;
   }
   .no-support.visible { display: block; }
 </style>
@@ -316,15 +361,35 @@
     <p class="subtitle">Kelimeyi sesli oku ve puan kazan!</p>
   </div>
 
-  <div class="score-card">
-    <span class="score-icon">⭐</span>
-    <div>
-      <div class="score-label">Puan</div>
-      <div class="score-value" id="scoreDisplay">0</div>
+  <!-- Üst bilgi şeridi -->
+  <div class="info-bar">
+    <div class="info-item">
+      <div class="info-label">Puan</div>
+      <div class="info-value" id="scoreDisplay">0</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Seviye</div>
+      <div class="info-seviye" id="seviyeDisplay">— —</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Kelime</div>
+      <div class="info-kelime" id="kelimeDisplay">0 / 0</div>
     </div>
   </div>
 
-  <div class="word-card" id="wordCard"></div>
+  <!-- Kelime kartı + overlay + geç -->
+  <div class="word-card-wrapper">
+    <div class="word-card" id="wordCard"></div>
+    <div class="level-overlay" id="levelOverlay">
+      <div class="level-overlay-title" id="overlayTitle">🎉 Seviye Tamamlandı!</div>
+      <div class="level-overlay-sub" id="overlaySub">Harika gidiyorsun!</div>
+      <button class="btn-next-level" id="btnNextLevel">Sonraki Seviye →</button>
+    </div>
+    <button class="btn-gec" id="btnGec" disabled>Geç →</button>
+  </div>
+
+  <!-- Geri bildirim -->
+  <div class="feedback-bubble" id="feedbackBubble"></div>
 
   <div class="mic-area">
     <div class="mic-indicator" id="micIndicator">🎤</div>
@@ -335,11 +400,11 @@
 
   <div class="button-row">
     <button class="btn btn-start" id="btnStart">▶ Başla</button>
-    <button class="btn btn-stop" id="btnStop" disabled>🔄 Tekrar</button>
+    <button class="btn btn-stop" id="btnStop" disabled>🔄 Sıfırla</button>
   </div>
 
   <div class="congrats-banner" id="congratsBanner">
-    🎉 Tebrikler! Harika okudun! 🎉
+    🏆 Tüm seviyeleri tamamladın! Süpersin! 🏆
   </div>
 
   <div class="error-msg" id="errorMsg"></div>
@@ -356,222 +421,404 @@
 // ─── Yıldız arka planı ───────────────────────────────────────────────────────
 (function yaratYildizlar() {
   const starsEl = document.getElementById('stars');
-  const fragment = document.createDocumentFragment();
+  const frag = document.createDocumentFragment();
   for (let i = 0; i < 80; i++) {
     const s = document.createElement('div');
     s.className = 'star';
-    const boyut = Math.random() * 3 + 1;
-    s.style.cssText = `width:${boyut}px;height:${boyut}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*5}s;`;
-    fragment.appendChild(s);
+    const b = Math.random() * 3 + 1;
+    s.style.cssText = `width:${b}px;height:${b}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*5}s;`;
+    frag.appendChild(s);
   }
-  starsEl.appendChild(fragment);
+  starsEl.appendChild(frag);
 })();
 
 // ─── Tarayıcı desteği ────────────────────────────────────────────────────────
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 // ─── DOM referansları (tek seferlik) ─────────────────────────────────────────
-const btnStart        = document.getElementById('btnStart');
-const btnStop         = document.getElementById('btnStop');
-const wordCard        = document.getElementById('wordCard');
-const scoreDisplay    = document.getElementById('scoreDisplay');
-const micIndicator    = document.getElementById('micIndicator');
-const micStatus       = document.getElementById('micStatus');
-const interimText     = document.getElementById('interimText');
-const congratsBanner  = document.getElementById('congratsBanner');
-const errorMsg        = document.getElementById('errorMsg');
-const noSupport       = document.getElementById('noSupport');
+const btnStart       = document.getElementById('btnStart');
+const btnStop        = document.getElementById('btnStop');
+const btnGec         = document.getElementById('btnGec');
+const btnNextLevel   = document.getElementById('btnNextLevel');
+const wordCard       = document.getElementById('wordCard');
+const scoreDisplay   = document.getElementById('scoreDisplay');
+const seviyeDisplay  = document.getElementById('seviyeDisplay');
+const kelimeDisplay  = document.getElementById('kelimeDisplay');
+const micIndicator   = document.getElementById('micIndicator');
+const micStatus      = document.getElementById('micStatus');
+const interimText    = document.getElementById('interimText');
+const congratsBanner = document.getElementById('congratsBanner');
+const errorMsg       = document.getElementById('errorMsg');
+const feedbackBubble = document.getElementById('feedbackBubble');
+const levelOverlay   = document.getElementById('levelOverlay');
+const overlayTitle   = document.getElementById('overlayTitle');
+const overlaySub     = document.getElementById('overlaySub');
+const noSupport      = document.getElementById('noSupport');
 
 if (!SpeechRecognition) {
   noSupport.classList.add('visible');
   btnStart.disabled = true;
 }
 
-// ─── Hedef metin ─────────────────────────────────────────────────────────────
-const HEDEF_METIN = "Ali topu at";
+// ─── Kelime veritabanı ────────────────────────────────────────────────────────
+// Seviye arttıkça harf kombinasyonları zorlaşır (uzunluk değil, kombinasyon)
+// Sev 1: VCV / CVC tek hece (el, at, su)
+// Sev 2: İki hece, basit geçişler (an-ne, ba-ba)
+// Sev 3: Üç hece / zor ünsüz grupları (port-a-kal, bil-gi-sa-yar)
+// Sev 4: Kısa cümle (birden fazla token)
+// Sev 5: Uzun cümle, karmaşık yapı
+const SEVIYELER = [
+  {
+    seviye: 1,
+    baslik: "Tek Hece",
+    puan: 10,
+    kelimeler: ["at","it","ev","su","el","ip","ot","bal","göz","kız","yol","taş","kuş","kar","top","çam","dal","gül","kol","yaş"]
+  },
+  {
+    seviye: 2,
+    baslik: "İki Hece",
+    puan: 15,
+    kelimeler: ["anne","baba","araba","okul","kedi","elma","masa","kitap","kapı","kalem","defter","köpek","çiçek","bulut","deniz","yıldız","bebek","bahçe","pencere","çanta"]
+  },
+  {
+    seviye: 3,
+    baslik: "Üç Hece",
+    puan: 20,
+    kelimeler: ["armut","portakal","bilgisayar","kelebek","sincap","tavşan","telefon","otobüs","çikolata","maymun","fırtına","köprü","traktör","aslan","kahraman"]
+  },
+  {
+    seviye: 4,
+    baslik: "Kısa Cümle",
+    puan: 30,
+    kelimeler: ["Ali topu at","Kedi süt iç","Anne eve gel","Kuş uçtu gitti","Baba arabaya bin","Top yukarı git","Balık suda yüzdü"]
+  },
+  {
+    seviye: 5,
+    baslik: "Uzun Cümle",
+    puan: 40,
+    kelimeler: ["Fatma okula gitti","Küçük kedi uyudu","Ali ve Ayşe bahçede oynadı","Annem marketten ekmek aldı","Köpek bahçede neşeyle koştu"]
+  }
+];
+
+// ─── Motivasyon sözleri (maks 2 kelime) ─────────────────────────────────────
+const DOGRU_MESAJLAR = ["Harikasın! 🌟","Çok iyi! ✨","Süpersin! 🎉","Bravo! 👏","Mükemmel! 💫","Aferin! 🌈","Devam et! 🚀"];
 
 // ─── Durum değişkenleri ───────────────────────────────────────────────────────
-let targetWords       = [];
-let wordSpans         = [];
-let currentWordIndex  = 0;
-let score             = 0;
-let processedWordCount = 0;
+let targetWords        = [];   // mevcut cümlenin normalize token listesi
+let wordSpans          = [];   // mevcut cümlenin span referansları
+let currentWordIndex   = 0;   // cümle içi token indexi
+let score              = 0;
+let currentSeviye      = 0;   // SEVIYELER[] indexi
+let currentKelimeIndex = 0;   // o seviyedeki kelime/cümle sırası
+let yanlisSayisi       = 0;   // mevcut kelimede yanlış sayısı
+let ustUsteDogruSayisi = 0;   // üst üste doğru kelime sayısı
 
-// ─── Tanıma durumu (state machine) ───────────────────────────────────────────
-// 'idle' | 'starting' | 'listening' | 'stopping'
-let recState          = 'idle';
-let lastError         = null;
-let restartTimer      = null;
-let silenceTimer      = null;   // 1.8 saniyelik sessizlik timeout
+// ─── Recognition state machine ────────────────────────────────────────────────
+let recState     = 'idle';   // 'idle'|'starting'|'listening'|'stopping'
+let lastError    = null;
+let restartTimer = null;
+let silenceTimer = null;
 
 /** @type {SpeechRecognition|null} */
-let recognition       = null;
+let recognition  = null;
+
+let feedbackTimer = null;
+
+// ─── Seslendirme ─────────────────────────────────────────────────────────────
+let seslerYuklendi = false;
+function sesleriYukle() {
+  if (seslerYuklendi) return;
+  window.speechSynthesis.getVoices();
+  seslerYuklendi = true;
+}
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = sesleriYukle;
+}
+
+/**
+ * İnsan sesine yakın Türkçe seslendirme.
+ * rate 0.82-0.88 arası doğal ama yavaş duyulur, robotik değil.
+ * pitch 1.05-1.12 hafif tiz → çocuk dostu.
+ */
+function seslendir(metin, hiz, perde) {
+  if (!window.speechSynthesis) return;
+  hiz   = hiz   || 0.85;
+  perde = perde || 1.08;
+  window.speechSynthesis.cancel();
+  const ut = new SpeechSynthesisUtterance(metin);
+  ut.lang   = 'tr-TR';
+  ut.rate   = hiz;
+  ut.pitch  = perde;
+  ut.volume = 1;
+  const sesler = window.speechSynthesis.getVoices();
+  const trSes  = sesler.find(function(s){ return s.lang === 'tr-TR' && s.localService; })
+              || sesler.find(function(s){ return s.lang === 'tr-TR'; })
+              || null;
+  if (trSes) ut.voice = trSes;
+  window.speechSynthesis.speak(ut);
+}
 
 // ─── Türkçe normalizasyon ─────────────────────────────────────────────────────
 function normalizeText(metin) {
   if (!metin || typeof metin !== 'string') return [];
-  let sonuc = metin.replace(/I/g, 'ı').replace(/İ/g, 'i').toLocaleLowerCase('tr-TR');
-  sonuc = sonuc.replace(/[^\p{L}\s]/gu, '');
-  return sonuc.split(/\s+/).filter(t => t.length > 0);
+  var s = metin.replace(/I/g, 'ı').replace(/İ/g, 'i').toLocaleLowerCase('tr-TR');
+  s = s.replace(/[^\p{L}\s]/gu, '');
+  return s.split(/\s+/).filter(function(t){ return t.length > 0; });
 }
 
-// ─── Levenshtein mesafesi (harf toleransı) ────────────────────────────────────
-// Çocuk sesi veya makine hatalarında 2 harf farkına kadar kabul et
+// ─── Levenshtein mesafesi ─────────────────────────────────────────────────────
 function levenshtein(a, b) {
-  const m = a.length, n = b.length;
+  var m = a.length, n = b.length;
   if (m === 0) return n;
   if (n === 0) return m;
-  const dp = [];
-  for (let i = 0; i <= m; i++) {
-    dp[i] = [i];
-  }
-  for (let j = 0; j <= n; j++) {
-    dp[0][j] = j;
-  }
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      dp[i][j] = a[i-1] === b[j-1]
-        ? dp[i-1][j-1]
-        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  var dp = [];
+  for (var i = 0; i <= m; i++) { dp[i] = [i]; }
+  for (var j = 0; j <= n; j++) { dp[0][j] = j; }
+  for (var i2 = 1; i2 <= m; i2++) {
+    for (var j2 = 1; j2 <= n; j2++) {
+      dp[i2][j2] = a[i2-1] === b[j2-1]
+        ? dp[i2-1][j2-1]
+        : 1 + Math.min(dp[i2-1][j2], dp[i2][j2-1], dp[i2-1][j2-1]);
     }
   }
   return dp[m][n];
 }
 
-/**
- * İki kelimeyi karşılaştır.
- * Tolerans: kelime uzunluğuna göre dinamik.
- *   ≤3 harf  → 1 harf farkı kabul
- *   4-6 harf → 2 harf farkı kabul
- *   7+ harf  → 3 harf farkı kabul
- * Ayrıca hedef kelimenin sesli harfleri konuşulan kelimede varsa bonusu hesaba kat.
- */
+// ─── Toleranslı kelime eşleşme ────────────────────────────────────────────────
 function kelimeEslesir(konusulan, hedef) {
   if (konusulan === hedef) return true;
-  const dist = levenshtein(konusulan, hedef);
-  const maxLen = Math.max(hedef.length, konusulan.length);
-  let tolerans;
-  if (hedef.length <= 3) tolerans = 1;
+  var dist = levenshtein(konusulan, hedef);
+  var tolerans;
+  if (hedef.length <= 3)      tolerans = 1;
   else if (hedef.length <= 6) tolerans = 2;
-  else tolerans = 3;
-  // İzin verilen maksimum hata payı: kelime uzunluğunun %40'ı ve tolerans'ın minimumu
-  const dinamikTolerans = Math.min(tolerans, Math.floor(maxLen * 0.40));
-  return dist <= dinamikTolerans;
+  else                        tolerans = 3;
+  var maxLen = Math.max(hedef.length, konusulan.length);
+  return dist <= Math.min(tolerans, Math.floor(maxLen * 0.40));
 }
 
-// ─── Oyunu kur ────────────────────────────────────────────────────────────────
-function oyunuKur() {
-  targetWords = normalizeText(HEDEF_METIN);
-  const fragment = document.createDocumentFragment();
-  wordSpans = [];
+// ─── Tüm 5 alternatifi kontrol et ────────────────────────────────────────────
+function checkAlternatives(result) {
+  for (var a = 0; a < result.length; a++) {
+    var token = normalizeText(result[a].transcript)[0];
+    if (!token) continue;
+    if (kelimeEslesir(token, targetWords[currentWordIndex])) return token;
+  }
+  return normalizeText(result[0].transcript)[0] || '';
+}
 
-  const orijinalKelimeler = HEDEF_METIN.split(/\s+/);
-  targetWords.forEach((kelime, i) => {
-    const span = document.createElement('span');
-    span.className = 'word' + (i === 0 ? ' active' : '');
-    span.textContent = orijinalKelimeler[i] || kelime;
+// ─── Geri bildirim göster ────────────────────────────────────────────────────
+function gosterGeri(mesaj, tip) {
+  if (feedbackTimer) clearTimeout(feedbackTimer);
+  feedbackBubble.textContent = mesaj;
+  feedbackBubble.className   = 'feedback-bubble show' + (tip === 'yanlis' ? ' yanlis' : '');
+  feedbackTimer = setTimeout(function(){
+    feedbackBubble.classList.remove('show');
+  }, 2200);
+}
+
+// ─── Info bar güncelle ────────────────────────────────────────────────────────
+function updateInfoBar() {
+  var sev = SEVIYELER[currentSeviye];
+  seviyeDisplay.textContent = sev.seviye + '. ' + sev.baslik;
+  kelimeDisplay.textContent = (currentKelimeIndex + 1) + ' / ' + sev.kelimeler.length;
+}
+
+// ─── Skoru güncelle ──────────────────────────────────────────────────────────
+function updateScore(ekle) {
+  score += ekle;
+  var eski = parseInt(scoreDisplay.textContent, 10);
+  scoreDisplay.textContent = score;
+  if (score !== eski) {
+    scoreDisplay.classList.remove('bump');
+    void scoreDisplay.offsetWidth;
+    scoreDisplay.classList.add('bump');
+  }
+}
+
+// ─── Mevcut kelimeyi yükle ───────────────────────────────────────────────────
+function kelimeyiYukle() {
+  var sev     = SEVIYELER[currentSeviye];
+  var metin   = sev.kelimeler[currentKelimeIndex];
+  targetWords      = normalizeText(metin);
+  currentWordIndex = 0;
+  yanlisSayisi     = 0;
+
+  var orijinal = metin.split(/\s+/);
+  var frag     = document.createDocumentFragment();
+  wordSpans    = [];
+
+  targetWords.forEach(function(kelime, i) {
+    var span = document.createElement('span');
+    span.className   = 'word' + (i === 0 ? ' active' : '');
+    span.textContent = orijinal[i] || kelime;
     span.dataset.index = i;
-    fragment.appendChild(span);
+    frag.appendChild(span);
     wordSpans.push(span);
   });
 
   wordCard.innerHTML = '';
-  wordCard.appendChild(fragment);
+  wordCard.appendChild(frag);
+
+  updateInfoBar();
+  btnGec.disabled = false;
+
+  // Öğretmen modeli: kelimeyi sesli oku
+  setTimeout(function(){ seslendir(metin, 0.78, 1.10); }, 450);
+}
+
+// ─── Kelimeyi geç (Geç butonu) ────────────────────────────────────────────────
+function gecKelime() {
+  var hedefMetin = SEVIYELER[currentSeviye].kelimeler[currentKelimeIndex];
+  // Öğretmen kalıbı: "Doğrusu şuydu: ..."
+  seslendir('Doğrusu şuydu: ' + hedefMetin, 0.80, 1.05);
+  gosterGeri('Doğrusu: ' + hedefMetin, 'yanlis');
+  btnGec.disabled = true;
+  setTimeout(sonrakiKelimeyeGec, 1600);
+}
+
+// ─── Sonraki kelimeye geç ────────────────────────────────────────────────────
+function sonrakiKelimeyeGec() {
+  var sev = SEVIYELER[currentSeviye];
+  currentKelimeIndex++;
+  if (currentKelimeIndex >= sev.kelimeler.length) {
+    seviyeTamamlandi();
+  } else {
+    kelimeyiYukle();
+  }
+}
+
+// ─── Seviye tamamlandı ────────────────────────────────────────────────────────
+function seviyeTamamlandi() {
+  btnGec.disabled = true;
+  var sev = SEVIYELER[currentSeviye];
+
+  if (currentSeviye >= SEVIYELER.length - 1) {
+    // Tüm oyun bitti
+    stopRecognition();
+    congratsBanner.classList.add('visible');
+    btnStop.disabled  = true;
+    btnStart.disabled = false;
+    micStatus.textContent = '🏆 Tüm seviyeleri bitirdin!';
+    micStatus.classList.remove('listening');
+    micIndicator.classList.remove('active');
+    seslendir('Tebrikler! Tüm seviyeleri tamamladın! Süpersin!', 0.85, 1.10);
+    return;
+  }
+
+  overlayTitle.textContent = '🎉 Seviye ' + sev.seviye + ' Tamamlandı!';
+  overlaySub.textContent   = 'Toplam Puan: ' + score;
+  levelOverlay.classList.add('visible');
+  seslendir('Seviye ' + sev.seviye + ' tamamlandı! Harikasın!', 0.85, 1.10);
+}
+
+// ─── Sonraki seviyeye geç ────────────────────────────────────────────────────
+function sonrakiSeviyeyeGec() {
+  levelOverlay.classList.remove('visible');
+  currentSeviye++;
+  currentKelimeIndex    = 0;
+  ustUsteDogruSayisi    = 0;
+  kelimeyiYukle();
 }
 
 // ─── Kelime doğrulama ─────────────────────────────────────────────────────────
 function validateWord(konusulanKelime) {
   if (currentWordIndex >= targetWords.length) return;
 
-  const tokenler = normalizeText(konusulanKelime);
+  var tokenler = normalizeText(konusulanKelime);
   if (tokenler.length === 0) return;
 
-  const token = tokenler[0];
-  const hedef = targetWords[currentWordIndex];
-  const span  = wordSpans[currentWordIndex];
+  var token = tokenler[0];
+  var hedef = targetWords[currentWordIndex];
+  var span  = wordSpans[currentWordIndex];
 
   if (kelimeEslesir(token, hedef)) {
+    // ✅ Doğru
     span.className = 'word correct';
-    score += 10;
     currentWordIndex++;
-    requestAnimationFrame(updateUI);
+
+    requestAnimationFrame(function(){
+      if (currentWordIndex < targetWords.length) {
+        wordSpans[currentWordIndex].className = 'word active';
+      }
+    });
 
     if (currentWordIndex === targetWords.length) {
-      endGame();
+      // Tüm cümle/kelime tamamlandı
+      ustUsteDogruSayisi++;
+      var sev = SEVIYELER[currentSeviye];
+      updateScore(sev.puan);
+      yanlisSayisi = 0;
+
+      var msg = DOGRU_MESAJLAR[Math.floor(Math.random() * DOGRU_MESAJLAR.length)];
+      gosterGeri(msg, 'dogru');
+      // Emoji olmadan seslendir
+      seslendir(msg.replace(/[🌟✨🎉👏💫🌈🚀]/g, '').trim(), 0.90, 1.15);
+
+      // 3 üst üste doğru → ekstra motivasyon
+      if (ustUsteDogruSayisi > 0 && ustUsteDogruSayisi % 3 === 0) {
+        setTimeout(function(){
+          gosterGeri('Mükemmel gidiyorsun!', 'dogru');
+        }, 1000);
+      }
+
+      // 700ms sonra sonraki kelimeye geç
+      setTimeout(function(){
+        if (recState === 'listening' || recState === 'idle') {
+          sonrakiKelimeyeGec();
+        }
+      }, 700);
     }
   } else {
+    // ❌ Yanlış
     span.className = 'word wrong';
-    setTimeout(() => {
-      if (currentWordIndex < targetWords.length && wordSpans[currentWordIndex] === span) {
+    yanlisSayisi++;
+
+    setTimeout(function(){
+      if (currentWordIndex < targetWords.length) {
         span.className = 'word active';
       }
-    }, 400);
-  }
-}
+    }, 420);
 
-// ─── Tüm alternatifleri kontrol et ───────────────────────────────────────────
-function checkAlternatives(result) {
-  for (let a = 0; a < result.length; a++) {
-    const tokenler = normalizeText(result[a].transcript);
-    if (tokenler.length === 0) continue;
-    const token = tokenler[0];
-    const hedef = targetWords[currentWordIndex];
-    if (kelimeEslesir(token, hedef)) {
-      return token;
+    if (yanlisSayisi >= 3) {
+      // 3 yanlışta öğretmen kalıbıyla ipucu ver
+      var hedefMetin = SEVIYELER[currentSeviye].kelimeler[currentKelimeIndex];
+      btnGec.disabled = true;
+      setTimeout(function(){
+        seslendir('Doğrusu şuydu: ' + hedefMetin, 0.78, 1.05);
+        gosterGeri('Doğrusu: ' + hedefMetin, 'yanlis');
+        setTimeout(sonrakiKelimeyeGec, 1800);
+      }, 300);
+    } else if (yanlisSayisi === 2) {
+      gosterGeri('Tekrar dene! 💪', 'yanlis');
     }
   }
-  // Hiçbiri tutmadıysa en iyi tahmini döndür
-  return normalizeText(result[0].transcript)[0] || '';
 }
 
-// ─── UI güncelle ──────────────────────────────────────────────────────────────
-function updateUI() {
-  wordSpans.forEach((span, i) => {
-    if (i === currentWordIndex && !span.classList.contains('correct') && !span.classList.contains('wrong')) {
-      span.className = 'word active';
-    }
-  });
-
-  const eskiPuan = parseInt(scoreDisplay.textContent, 10);
-  scoreDisplay.textContent = score;
-  if (score !== eskiPuan) {
-    scoreDisplay.classList.remove('bump');
-    void scoreDisplay.offsetWidth; // reflow
-    scoreDisplay.classList.add('bump');
-  }
-}
-
-// ─── Sessizlik timeout sıfırla ────────────────────────────────────────────────
+// ─── Sessizlik timeout ────────────────────────────────────────────────────────
 function resetSilenceTimer() {
   if (silenceTimer) clearTimeout(silenceTimer);
   if (recState !== 'listening') return;
-  // 1.8 saniye sessizlik sonrası recognition yeniden başlat
-  silenceTimer = setTimeout(() => {
+  silenceTimer = setTimeout(function(){
     if (recState === 'listening' && currentWordIndex < targetWords.length) {
       safeRestartRecognition();
     }
   }, 1800);
 }
 
-// ─── Recognition güvenli yeniden başlat ──────────────────────────────────────
+// ─── Recognition güvenli restart ─────────────────────────────────────────────
 function safeRestartRecognition() {
-  if (recState !== 'listening' && recState !== 'idle') return;
   if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
   if (restartTimer) clearTimeout(restartTimer);
-  restartTimer = setTimeout(() => {
-    if (recState === 'listening' || recState === 'idle') {
-      if (recognition) {
-        try { recognition.start(); recState = 'listening'; } catch(e) { /* çakışma yoksay */ }
-      }
+  restartTimer = setTimeout(function(){
+    if ((recState === 'listening' || recState === 'idle') && recognition) {
+      try { recognition.start(); recState = 'listening'; } catch(e) {}
     }
   }, 300);
 }
 
-// ─── Global recognition oluştur ───────────────────────────────────────────────
+// ─── Global recognition oluştur ──────────────────────────────────────────────
 function createRecognition() {
   if (!SpeechRecognition) return;
-
-  // Önceki instance temizle
   if (recognition) {
     recognition.onresult = null;
     recognition.onerror  = null;
@@ -579,19 +826,17 @@ function createRecognition() {
     try { recognition.abort(); } catch(e) {}
     recognition = null;
   }
-
   recognition = new SpeechRecognition();
-  recognition.lang           = 'tr-TR';
-  recognition.continuous     = false;   // tek kelime moduna uygun
-  recognition.interimResults = true;
-  recognition.maxAlternatives = 5;      // 5 alternatif: çocuk sesi için tolerans
-
+  recognition.lang            = 'tr-TR';
+  recognition.continuous      = false;
+  recognition.interimResults  = true;
+  recognition.maxAlternatives = 5;
   recognition.onresult = handleSpeechResult;
   recognition.onerror  = handleSpeechError;
   recognition.onend    = handleRecognitionEnd;
 }
 
-// ─── Tanıma başlat ────────────────────────────────────────────────────────────
+// ─── Tanıma başlat ───────────────────────────────────────────────────────────
 function startRecognition() {
   if (!SpeechRecognition) return;
   if (recState === 'starting' || recState === 'listening') return;
@@ -611,7 +856,7 @@ function startRecognition() {
     gosterHata('Tanıma başlatılamadı: ' + hata.message);
     recState = 'idle';
     btnStart.disabled = false;
-    btnStop.disabled = true;
+    btnStop.disabled  = true;
     return;
   }
 
@@ -620,15 +865,12 @@ function startRecognition() {
   micStatus.textContent = '🎤 Dinliyorum...';
 }
 
-// ─── Tanıma durdur ────────────────────────────────────────────────────────────
+// ─── Tanıma durdur ───────────────────────────────────────────────────────────
 function stopRecognition() {
   recState = 'stopping';
   if (restartTimer) { clearTimeout(restartTimer); restartTimer = null; }
   if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
-  if (recognition) {
-    try { recognition.stop(); } catch(e) {}
-  }
-
+  if (recognition) { try { recognition.stop(); } catch(e) {} }
   micIndicator.classList.remove('active');
   micStatus.classList.remove('listening');
   if (micStatus.textContent === '🎤 Dinliyorum...') {
@@ -641,22 +883,15 @@ function stopRecognition() {
 // ─── Konuşma sonucu ───────────────────────────────────────────────────────────
 function handleSpeechResult(event) {
   if (!event || !event.results) return;
-
-  // Interim gösterim (sadece son result)
-  const lastResult = event.results[event.results.length - 1];
-  interimText.textContent = lastResult[0].transcript;
-
-  // Sessizlik sayacını sıfırla (kullanıcı konuşuyor)
+  // Interim: sadece son result (gereksiz birleştirme yok)
+  interimText.textContent = event.results[event.results.length - 1][0].transcript;
   resetSilenceTimer();
 
-  // Yalnızca final sonuçları işle
-  for (let i = event.resultIndex; i < event.results.length; i++) {
+  for (var i = event.resultIndex; i < event.results.length; i++) {
     if (!event.results[i].isFinal) continue;
-
-    // Tüm alternatifleri kontrol et (maxAlternatives = 5)
     if (currentWordIndex < targetWords.length) {
-      const enIyiKelime = checkAlternatives(event.results[i]);
-      if (enIyiKelime) validateWord(enIyiKelime);
+      var enIyi = checkAlternatives(event.results[i]);
+      if (enIyi) validateWord(enIyi);
     }
   }
 }
@@ -664,88 +899,82 @@ function handleSpeechResult(event) {
 // ─── Hata işle ───────────────────────────────────────────────────────────────
 function handleSpeechError(event) {
   lastError = event.error;
-
   if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
     gosterHata('Mikrofon izni reddedildi. Lütfen tarayıcı ayarlarından izin ver.');
     recState = 'idle';
     btnStart.disabled = false;
-    btnStop.disabled = true;
-  } else if (event.error === 'no-speech') {
-    // Sessizlik: timeout zaten yönetiyor, burada ekstra işlem yok
+    btnStop.disabled  = true;
   } else if (event.error === 'network') {
     gosterHata('Ağ hatası. İnternet bağlantını kontrol et.');
   }
-  // Diğer hatalar (audio-capture vb.) onend ile yönetilir
 }
 
 // ─── Tanıma bitti ────────────────────────────────────────────────────────────
 function handleRecognitionEnd() {
   if (recState === 'stopping' || recState === 'idle') return;
   if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
-
-  // Mikrofon kesildi ya da continuous=false nedeniyle bitti → kontrollü restart
   if (recState === 'listening' && currentWordIndex < targetWords.length) {
-    recState = 'idle'; // restart hazırlığı için
+    recState = 'idle';
     safeRestartRecognition();
   }
 }
 
-// ─── Oyun sonu ────────────────────────────────────────────────────────────────
-function endGame() {
-  stopRecognition();
-
-  wordSpans.forEach((span, i) => {
-    if (i >= currentWordIndex && !span.classList.contains('correct')) {
-      span.className = 'word wrong';
-    }
-  });
-
-  congratsBanner.classList.add('visible');
-  btnStop.disabled  = true;
-  btnStart.disabled = false;
-  micStatus.textContent = '🎉 Harika iş çıkardın!';
-  micStatus.classList.remove('listening');
-  micIndicator.classList.remove('active');
-}
-
-// ─── Hata mesajı göster ───────────────────────────────────────────────────────
+// ─── Hata mesajı göster ──────────────────────────────────────────────────────
 function gosterHata(mesaj) {
   errorMsg.textContent = mesaj;
   errorMsg.classList.add('visible');
 }
 
+// ─── Oyunu sıfırla ───────────────────────────────────────────────────────────
+function oyunuSifirla() {
+  currentSeviye       = 0;
+  currentKelimeIndex  = 0;
+  currentWordIndex    = 0;
+  score               = 0;
+  yanlisSayisi        = 0;
+  ustUsteDogruSayisi  = 0;
+  lastError           = null;
+  scoreDisplay.textContent = '0';
+  interimText.textContent  = '';
+  feedbackBubble.className = 'feedback-bubble';
+  congratsBanner.classList.remove('visible');
+  errorMsg.classList.remove('visible');
+  levelOverlay.classList.remove('visible');
+}
+
 // ─── Buton işleyicileri ───────────────────────────────────────────────────────
-btnStart.addEventListener('click', () => {
+btnStart.addEventListener('click', function() {
   if (!SpeechRecognition) return;
   if (recState === 'starting' || recState === 'listening') return;
 
-  // iOS/Safari için ses bağlamını aç
   window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+  sesleriYukle();
 
-  btnStart.disabled = false;
+  btnStart.disabled = true;
   btnStop.disabled  = false;
 
-  currentWordIndex   = 0;
-  score              = 0;
-  processedWordCount = 0;
-  lastError          = null;
-  scoreDisplay.textContent = '0';
-  interimText.textContent  = '';
-  congratsBanner.classList.remove('visible');
-  errorMsg.classList.remove('visible');
-
-  oyunuKur();
+  oyunuSifirla();
+  kelimeyiYukle();
   startRecognition();
 });
 
-btnStop.addEventListener('click', () => {
+btnStop.addEventListener('click', function() {
   stopRecognition();
-  // Kısa gecikme sonrası yeniden başlat
-  setTimeout(() => { btnStart.click(); }, 250);
+  micStatus.textContent = 'Sıfırlanıyor...';
+  setTimeout(function(){ btnStart.click(); }, 250);
+});
+
+btnGec.addEventListener('click', function() {
+  if (btnGec.disabled) return;
+  gecKelime();
+});
+
+btnNextLevel.addEventListener('click', function() {
+  sonrakiSeviyeyeGec();
 });
 
 // ─── İlk yükleme ─────────────────────────────────────────────────────────────
-oyunuKur();
+kelimeyiYukle();
 </script>
 </body>
 </html>
