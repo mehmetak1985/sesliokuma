@@ -545,14 +545,11 @@ const SpeechController = (function () {
   }
 
   function _onEnd() {
-    if (recState === 'stopping') { recState = 'idle'; return; }
-    if (lastError === 'not-allowed' || lastError === 'service-not-allowed') { recState = 'idle'; return; }
     recState = 'idle';
-
-    // TTS aktifse veya oyun bitmişse restart yok
-    if (isSpeaking) return;
+    if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
     if (currentWordIndex >= targetWords.length) return;
-
+    // TTS aktifse restart yapma — speakCorrection.ut.onend içinde yapacak
+    if (isSpeaking) return;
     scheduleRestart(300);
   }
 
@@ -622,12 +619,17 @@ const SpeechController = (function () {
       const rate  = opts.rate  || 0.80;
       const pitch = opts.pitch || 1.05;
 
-      // Önce TTS iptal, sonra Recognition durdur
+      // TTS başlamadan önce isSpeaking = true — _onEnd'in restart yapmasını engeller
+      isSpeaking = true;
       window.speechSynthesis.cancel();
-      if (recState !== 'idle') _stop(false);
       clearTimers();
 
-      isSpeaking = true;
+      // Recognition'ı sessizce iptal et (abort → _onEnd tetiklenir ama isSpeaking=true olduğu için restart yapmaz)
+      if (recognition && recState !== 'idle') {
+        recState = 'stopping';
+        try { recognition.abort(); } catch (e) {}
+      }
+
       micIndicator.className = 'mic-indicator speaking';
       micStatus.className    = 'mic-status speaking';
       micStatus.textContent  = '🔊 Dinle...';
@@ -646,8 +648,8 @@ const SpeechController = (function () {
         micIndicator.className = 'mic-indicator';
         micStatus.className    = 'mic-status';
         micStatus.textContent  = '';
-        // Oyun bitmemişse mikrofonu yeniden aç
         if (currentWordIndex < targetWords.length) {
+          resetWatchdog();
           scheduleRestart(250);
         }
       };
@@ -656,10 +658,14 @@ const SpeechController = (function () {
         isSpeaking = false;
         micIndicator.className = 'mic-indicator';
         micStatus.className    = 'mic-status';
-        if (currentWordIndex < targetWords.length) scheduleRestart(300);
+        if (currentWordIndex < targetWords.length) {
+          resetWatchdog();
+          scheduleRestart(300);
+        }
       };
 
-      window.speechSynthesis.speak(ut);
+      // Kısa gecikme: abort'un onEnd'i tetiklemesi için zaman tanı
+      setTimeout(() => { window.speechSynthesis.speak(ut); }, 150);
     },
 
     /**
