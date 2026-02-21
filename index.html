@@ -808,4 +808,77 @@ function handleRecognitionEnd() {
   if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
   if (oyunBitti) return;
 
-  // TTS konuşuyo
+  // TTS konuşuyorsa restart etme — utterance.onend halleder
+  if (window.speechSynthesis && window.speechSynthesis.speaking) return;
+
+  if (restartDebounceTimer) clearTimeout(restartDebounceTimer);
+  restartDebounceTimer = setTimeout(() => {
+    if (isListening && !oyunBitti && currentWordIndex < targetWords.length) {
+      startRecognition();
+    }
+  }, 100);
+}
+
+// ─── Hata mesajı göster ───────────────────────────────────────────────────────
+function gosterHata(mesaj) {
+  errorMsg.textContent = mesaj;
+  errorMsg.classList.add('visible');
+}
+
+// ─── Oyunu sıfırla ve başlat ─────────────────────────────────────────────────
+function oyunuSifirlaVeBaslat() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  stopRecognition();
+
+  currentWordIndex = 0;
+  lastError = null;
+  interimKabulEdildi = false;
+  oyunBitti = false;
+  interimText.textContent = '';
+  congratsBanner.classList.remove('visible');
+  errorMsg.classList.remove('visible');
+
+  btnStart.disabled = true;
+  btnStop.disabled = false;
+
+  oyunuKur();
+
+  setTimeout(() => {
+    startRecognition();
+  }, 200);
+}
+
+// ─── Buton işleyicileri ───────────────────────────────────────────────────────
+btnStart.addEventListener('click', () => {
+  if (!SpeechRecognition) return;
+  if (isListening) return;
+
+  window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+
+  currentSentenceIndex = 0;
+  score = 0;
+  scoreDisplay.textContent = '0';
+
+  oyunuSifirlaVeBaslat();
+});
+
+btnStop.addEventListener('click', () => {
+  if (!SpeechRecognition) return;
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  micStatus.textContent = 'Yeniden başlatılıyor...';
+  oyunuSifirlaVeBaslat();
+});
+
+// ─── Sayfa yüklendiğinde ─────────────────────────────────────────────────────
+// Ses listesinin yüklenmesi için bekliyoruz (Chrome'da asenkron)
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => {
+    // Sesler hazır — yapacak bir şey yok, hedefiSeslendir() lazy olarak kullanır
+  };
+  window.speechSynthesis.getVoices(); // tetikle
+}
+
+oyunuKur();
+</script>
+</body>
+</html>
