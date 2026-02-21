@@ -398,8 +398,17 @@ if (!SpeechRecognition) {
   btnStart.disabled = true;
 }
 
-// ─── Hedef metin ─────────────────────────────────────────────────────────────
-const HEDEF_METIN = "Ali topu at";
+// ─── Cümle listesi ───────────────────────────────────────────────────────────
+const CUMLELER = [
+  "Mina balık tut",
+  "Arda araba sür",
+  "Lale çanta al",
+  "Kamil kalem bul",
+  "Duru masa sil",
+  "Ali topu at"
+];
+let cumleIndex = 0;
+const HEDEF_METIN = () => CUMLELER[cumleIndex % CUMLELER.length];
 
 // ─── Oyun durumu ──────────────────────────────────────────────────────────────
 let targetWords        = [];
@@ -524,9 +533,11 @@ const SpeechController = (function () {
 
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (!event.results[i].isFinal) continue;
-      if (currentWordIndex < targetWords.length) {
-        const enIyi = checkAlternatives(event.results[i]);
-        if (enIyi) validateWord(enIyi);
+      // Transcript'teki tüm kelimeleri sırayla işle
+      const tumTokenler = normalizeText(event.results[i][0].transcript);
+      for (let t = 0; t < tumTokenler.length; t++) {
+        if (currentWordIndex >= targetWords.length) break;
+        validateWord(tumTokenler[t]);
       }
     }
   }
@@ -757,11 +768,12 @@ function updateUI() {
 
 // ─── Oyunu kur ────────────────────────────────────────────────────────────────
 function oyunuKur() {
-  targetWords = normalizeText(HEDEF_METIN);
+  const metin = HEDEF_METIN();
+  targetWords = normalizeText(metin);
   const fragment = document.createDocumentFragment();
   wordSpans = [];
 
-  const orijinalKelimeler = HEDEF_METIN.split(/\s+/);
+  const orijinalKelimeler = metin.split(/\s+/);
   targetWords.forEach((kelime, i) => {
     const span = document.createElement('span');
     span.className   = 'word' + (i === 0 ? ' active' : '');
@@ -850,8 +862,11 @@ function endGame() {
   btnStart.disabled = false;
   micStatus.textContent = '🎉 Harika iş çıkardın!';
 
-  // 2 saniye sonra otomatik yeniden başlat
-  setTimeout(() => { btnStart.click(); }, 2000);
+  // 2 saniye sonra sonraki cümleye geç
+  setTimeout(() => {
+    cumleIndex++;
+    btnStart.click();
+  }, 2000);
 }
 
 // ─── Hata mesajı göster ───────────────────────────────────────────────────────
