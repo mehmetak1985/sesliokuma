@@ -80,7 +80,6 @@
     margin-top: 4px;
   }
 
-  /* Cümle numarası göstergesi */
   .sentence-badge {
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -393,8 +392,6 @@ if (!SpeechRecognition) {
 }
 
 // ─── CÜMLE LİSTESİ ───────────────────────────────────────────────────────────
-// Buraya istediğin kadar cümle ekleyebilirsin.
-// Oyun her başladığında sıradaki cümleye geçer, sonuncudan sonra başa döner.
 const CUMLELER = [
   "Ali",
   "Ilık süt",
@@ -422,33 +419,77 @@ let recognition = null;
 
 let restartDebounceTimer = null;
 let lastError = null;
-
-// Interim'de doğru kabul edilen kelime tekrar sayılmasın
 let interimKabulEdildi = false;
 
+// Oyun bitti mi flag — çift endGame tetiklenmesini engeller
+let oyunBitti = false;
+
 // ─── DOM referansları ─────────────────────────────────────────────────────────
-const btnStart        = document.getElementById('btnStart');
-const btnStop         = document.getElementById('btnStop');
-const wordCard        = document.getElementById('wordCard');
-const scoreDisplay    = document.getElementById('scoreDisplay');
-const micIndicator    = document.getElementById('micIndicator');
-const micStatus       = document.getElementById('micStatus');
-const interimText     = document.getElementById('interimText');
-const congratsBanner  = document.getElementById('congratsBanner');
-const errorMsg        = document.getElementById('errorMsg');
-const sentenceBadge   = document.getElementById('sentenceBadge');
+const btnStart       = document.getElementById('btnStart');
+const btnStop        = document.getElementById('btnStop');
+const wordCard       = document.getElementById('wordCard');
+const scoreDisplay   = document.getElementById('scoreDisplay');
+const micIndicator   = document.getElementById('micIndicator');
+const micStatus      = document.getElementById('micStatus');
+const interimText    = document.getElementById('interimText');
+const congratsBanner = document.getElementById('congratsBanner');
+const errorMsg       = document.getElementById('errorMsg');
+const sentenceBadge  = document.getElementById('sentenceBadge');
 
-// ─── Oyunu kur: aktif cümleye göre span'ları oluştur ─────────────────────────
+// ─── TTS: Doğru kelimeyi seslendir ───────────────────────────────────────────
+// Yanlış okuma veya hece yutması durumunda hedef kelimeyi tarayıcı sesiyle okur.
+// Mikrofonu TTS sırasında durdurur, bittikten sonra yeniden başlatır.
+function hedefiSeslendir(metin) {
+  try {
+    if (!window.speechSynthesis) return;
+
+    // Önce sırayı temizle
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(metin);
+    utterance.lang = 'tr-TR';
+    utterance.rate = 0.85;   // biraz yavaş — öğrenci için net telaffuz
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    // Türkçe ses varsa kullan
+    const sesler = window.speechSynthesis.getVoices();
+    const trSes = sesler.find(v => v.lang === 'tr-TR' || v.lang.startsWith('tr'));
+    if (trSes) utterance.voice = trSes;
+
+    // TTS konuşurken mikrofonu durdur, bitince yeniden başlat
+    utterance.onstart = () => {
+      if (recognition) {
+        try { recognition.abort(); } catch(e) {}
+        recognition = null;
+      }
+    };
+
+    utterance.onend = () => {
+      // TTS bittikten sonra dinlemeye devam et (oyun hâlâ aktifse)
+      if (isListening && !oyunBitti && currentWordIndex < targetWords.length) {
+        setTimeout(() => startRecognition(), 300);
+      }
+    };
+
+    window.speechSynthesis.speak(utterance);
+  } catch(e) {
+    // TTS desteklenmiyorsa sessizce devam et
+  }
+}
+
+// ─── Oyunu kur ───────────────────────────────────────────────────────────────
 function oyunuKur() {
-  const cumleMevcutIndex = currentSentenceIndex % CUMLELER.length;
-  const aktifCumle = CUMLELER[cumleMevcutIndex];
+  const idx = currentSentenceIndex % CUMLELER.length;
+  const aktifCumle = CUMLELER[idx];
 
-  sentenceBadge.textContent = `Cümle ${cumleMevcutIndex + 1} / ${CUMLELER.length}`;
+  sentenceBadge.textContent = `Cümle ${idx + 1} / ${CUMLELER.length}`;
 
   const orijinalKelimeler = aktifCumle.split(/\s+/);
   targetWords = normalizeText(aktifCumle);
   wordSpans = [];
   interimKabulEdildi = false;
+  oyunBitti = false;
 
   const fragment = document.createDocumentFragment();
   targetWords.forEach((kelime, i) => {
@@ -480,10 +521,6 @@ function normalizeText(metin) {
 }
 
 // ─── Kelime eşleşme kontrolü ──────────────────────────────────────────────────
-// Tam eşleşme öncelikli.
-// Türkçe suffix toleransı: hedef en az 3 harf ise ve konuşulan hedefle başlıyorsa
-// veya hedef konuşulanla başlıyorsa (ek almış/almamış form) kabul et.
-// Minimum örtüşme: 3 karakter — kısa yanlış eşleşmeleri engeller.
 /**
  * @param {string} konusulan
  * @param {string} hedef
@@ -494,19 +531,17 @@ function kelimeEslesiyor(konusulan, hedef) {
   if (konusulan === hedef) return true;
 
   const minLen = Math.min(konusulan.length, hedef.length);
-  // İki karakter veya daha kısa kelimelerde sadece tam eşleşme
   if (minLen <= 2) return konusulan === hedef;
 
-  // Türkçe suffix toleransı — en az 3 karakter örtüşmeli
   if (konusulan.startsWith(hedef) && hedef.length >= 3) return true;
   if (hedef.startsWith(konusulan) && konusulan.length >= 3) return true;
 
   return false;
 }
 
-// ─── Transcript içinde hedef kelimeyi ara ─────────────────────────────────────
+// ─── Transcript içinde hedef kelimeyi ara ────────────────────────────────────
 /**
- * @param {string[]} kelimeler  normalize edilmiş token listesi
+ * @param {string[]} kelimeler
  * @returns {boolean}
  */
 function transcriptIsleBul(kelimeler) {
@@ -523,6 +558,7 @@ function transcriptIsleBul(kelimeler) {
  * @param {boolean} dogru
  */
 function validateWord(dogru) {
+  if (oyunBitti) return;
   if (currentWordIndex >= targetWords.length) return;
 
   const span = wordSpans[currentWordIndex];
@@ -531,21 +567,29 @@ function validateWord(dogru) {
     span.className = 'word correct';
     score += 10;
     currentWordIndex++;
-    interimKabulEdildi = false; // sıfırla
+    interimKabulEdildi = false;
 
     const gameOver = currentWordIndex === targetWords.length;
-
     requestAnimationFrame(() => { updateUI(); });
 
     if (gameOver) endGame();
 
   } else {
+    // ─ Yanlış: span'ı kırmızı yap, hedef kelimeyi seslendir
+    const hedefKelime = targetWords[currentWordIndex];
+    const orijinalKelime = wordSpans[currentWordIndex].textContent;
+
     span.className = 'word wrong';
+
+    // Hedef kelimeyi sesli söyle
+    hedefiSeslendir(orijinalKelime || hedefKelime);
+
+    // 800ms sonra active'e geri dön (TTS için biraz daha uzun süre)
     setTimeout(() => {
-      if (currentWordIndex < targetWords.length) {
+      if (!oyunBitti && currentWordIndex < targetWords.length) {
         span.className = 'word active';
       }
-    }, 500);
+    }, 800);
   }
 }
 
@@ -565,40 +609,68 @@ function updateUI() {
 }
 
 // ─── Oyun sonu ────────────────────────────────────────────────────────────────
+// FIX: oyunBitti flag'i ile çift tetikleme engellendi.
+// FIX: btnStart/btnStop disabled durumları ve setTimeout zinciri sadeleştirildi.
 function endGame() {
+  if (oyunBitti) return;
+  oyunBitti = true;
+
   stopRecognition();
 
-  // Tüm kalan kelimeleri yeşil göster (hepsini okuduysa)
   wordSpans.forEach((span) => {
     if (!span.classList.contains('correct')) {
       span.className = 'word correct';
     }
   });
 
-  congratsBanner.textContent = '🎉 Harika! Sonraki cümleye geçiliyor...';
+  const idx = currentSentenceIndex % CUMLELER.length;
+  const sonrakiVar = (idx + 1) < CUMLELER.length;
+
+  congratsBanner.textContent = sonrakiVar
+    ? '🎉 Harika! Sonraki cümleye geçiliyor...'
+    : '🏆 Tebrikler! Tüm cümleleri tamamladın!';
   congratsBanner.classList.add('visible');
-  btnStop.disabled = true;
-  btnStart.disabled = false;
+
   micStatus.textContent = '🎉 Harika iş çıkardın!';
   micStatus.classList.remove('listening');
   micIndicator.classList.remove('active');
 
-  // 1.5 saniye sonra otomatik olarak sonraki cümleye geç
+  // Butonları geçiş süresi boyunca kilitle
+  btnStart.disabled = true;
+  btnStop.disabled = true;
+
   setTimeout(() => {
-    currentSentenceIndex++;
     congratsBanner.classList.remove('visible');
-    oyunuSifirlaVeBaslat();
-  }, 1500);
+
+    if (sonrakiVar) {
+      // Sonraki cümleye geç
+      currentSentenceIndex++;
+      btnStop.disabled = false;
+      oyunuSifirlaVeBaslat();
+    } else {
+      // Tüm cümleler bitti — başa dön, skoru sıfırla
+      currentSentenceIndex = 0;
+      score = 0;
+      scoreDisplay.textContent = '0';
+      btnStart.disabled = false;
+      btnStop.disabled = true;
+      micStatus.textContent = 'Başlamak için düğmeye bas';
+    }
+  }, 2000);
 }
 
 // ─── Tanıma başlat ────────────────────────────────────────────────────────────
 function startRecognition() {
   if (!SpeechRecognition) return;
+  if (oyunBitti) return;
 
   if (recognition) {
     try { recognition.abort(); } catch(e) {}
     recognition = null;
   }
+
+  // TTS konuşuyorsa başlatma — utterance.onend halleder
+  if (window.speechSynthesis && window.speechSynthesis.speaking) return;
 
   errorMsg.classList.remove('visible');
   errorMsg.textContent = '';
@@ -650,14 +722,10 @@ function stopRecognition() {
 }
 
 // ─── Konuşma sonucu işle ─────────────────────────────────────────────────────
-// Strateji:
-// 1. Interim transcript'te hedef kelimeyi ara → bulunursa anında doğru kabul et.
-//    interimKabulEdildi flag'i ile aynı kelime iki kez sayılmaz.
-// 2. isFinal geldiğinde: eğer interim'de zaten kabul edilmediyse alternatifleri dene.
-//    Hiç eşleşme yoksa yanlış işle.
 function handleSpeechResult(event) {
   try {
-    if (!event || !event.results || currentWordIndex >= targetWords.length) return;
+    if (!event || !event.results) return;
+    if (oyunBitti || currentWordIndex >= targetWords.length) return;
 
     let interimTranscript = '';
     let finalGeldi = false;
@@ -670,10 +738,10 @@ function handleSpeechResult(event) {
       }
     }
 
-    // Gösterim
-    interimText.textContent = interimTranscript.trim() || event.results[event.results.length - 1][0].transcript;
+    interimText.textContent = interimTranscript.trim() ||
+      event.results[event.results.length - 1][0].transcript;
 
-    // 1. Interim'de hedefi ara (henüz kabul edilmediyse)
+    // 1. Interim'de hedefi ara
     if (!interimKabulEdildi && interimTranscript) {
       const interimKelimeler = normalizeText(interimTranscript);
       if (transcriptIsleBul(interimKelimeler)) {
@@ -705,7 +773,6 @@ function handleSpeechResult(event) {
       }
     }
 
-    // Final geldikten sonra interimKabulEdildi'yi sıfırla
     if (finalGeldi) {
       interimKabulEdildi = false;
     }
@@ -726,7 +793,7 @@ function handleSpeechError(event) {
       btnStart.disabled = false;
       btnStop.disabled = true;
     } else if (event.error === 'no-speech') {
-      // onend restart halleder
+      // onend halleder
     } else if (event.error === 'network') {
       gosterHata('Ağ hatası. İnternet bağlantını kontrol et.');
     }
@@ -739,67 +806,6 @@ function handleSpeechError(event) {
 function handleRecognitionEnd() {
   if (!isListening) return;
   if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
+  if (oyunBitti) return;
 
-  if (restartDebounceTimer) clearTimeout(restartDebounceTimer);
-  restartDebounceTimer = setTimeout(() => {
-    if (isListening && currentWordIndex < targetWords.length) {
-      startRecognition();
-    }
-  }, 100);
-}
-
-// ─── Hata mesajı göster ───────────────────────────────────────────────────────
-function gosterHata(mesaj) {
-  errorMsg.textContent = mesaj;
-  errorMsg.classList.add('visible');
-}
-
-// ─── Oyunu sıfırla ve başlat ─────────────────────────────────────────────────
-function oyunuSifirlaVeBaslat() {
-  stopRecognition();
-
-  currentWordIndex = 0;
-  lastError = null;
-  interimKabulEdildi = false;
-  interimText.textContent = '';
-  congratsBanner.classList.remove('visible');
-  errorMsg.classList.remove('visible');
-
-  btnStart.disabled = true;
-  btnStop.disabled = false;
-
-  oyunuKur();
-
-  setTimeout(() => {
-    startRecognition();
-  }, 150);
-}
-
-// ─── Buton işleyicileri ───────────────────────────────────────────────────────
-btnStart.addEventListener('click', () => {
-  if (!SpeechRecognition) return;
-  if (isListening) return;
-
-  window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-
-  // Başla her zaman ilk cümleden başlar, skoru sıfırlar
-  currentSentenceIndex = 0;
-  score = 0;
-  scoreDisplay.textContent = '0';
-
-  oyunuSifirlaVeBaslat();
-});
-
-btnStop.addEventListener('click', () => {
-  if (!SpeechRecognition) return;
-  window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-  micStatus.textContent = 'Yeniden başlatılıyor...';
-  // Tekrar: aynı cümleyi tekrar oynat, skoru korur
-  oyunuSifirlaVeBaslat();
-});
-
-// ─── Sayfa yüklendiğinde ─────────────────────────────────────────────────────
-oyunuKur();
-</script>
-</body>
-</html>
+  // TTS konuşuyo
