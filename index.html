@@ -6,7 +6,6 @@
 <title>Sesli Okuma Oyunu</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  "use strict";
   :root {
     --bg: #0f1b2d;
     --surface: #1a2d46;
@@ -75,7 +74,11 @@
     text-shadow: 0 0 20px rgba(255,209,102,0.4), 0 4px 8px rgba(0,0,0,0.5);
     letter-spacing: -0.5px;
   }
-  .subtitle { font-size: 0.95rem; color: var(--text-muted); margin-top: 4px; }
+  .subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
 
   .score-card {
     background: var(--surface);
@@ -88,13 +91,19 @@
     box-shadow: var(--shadow);
   }
   .score-icon { font-size: 1.6rem; }
-  .score-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .score-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
   .score-value {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
     font-size: 2rem;
     color: var(--accent);
     line-height: 1;
+    transition: transform 0.15s ease;
   }
   .score-value.bump { animation: scoreBump 0.3s ease; }
   @keyframes scoreBump {
@@ -127,21 +136,22 @@
     border: 3px solid transparent;
     transition: all 0.25s ease;
     cursor: default;
+    letter-spacing: 0.5px;
     color: var(--text);
+    background: transparent;
   }
-
   .word.active {
     background: rgba(255, 209, 102, 0.15);
     border-color: var(--yellow);
     color: var(--yellow);
     transform: scale(1.08);
+    box-shadow: 0 0 20px rgba(255,209,102,0.3);
     animation: pulse 1.2s ease-in-out infinite;
   }
   @keyframes pulse {
     0%, 100% { box-shadow: 0 0 20px rgba(255,209,102,0.3); }
     50% { box-shadow: 0 0 36px rgba(255,209,102,0.6); }
   }
-
   .word.correct {
     background: rgba(6, 214, 160, 0.15);
     border-color: var(--green);
@@ -154,7 +164,6 @@
     70% { transform: scale(0.97) rotate(1deg); }
     100% { transform: scale(1) rotate(0deg); }
   }
-
   .word.wrong {
     background: rgba(239, 71, 111, 0.15);
     border-color: var(--red);
@@ -169,7 +178,12 @@
     80% { transform: translateX(4px); }
   }
 
-  .mic-area { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .mic-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
   .mic-indicator {
     width: 80px;
     height: 80px;
@@ -181,6 +195,7 @@
     justify-content: center;
     font-size: 2rem;
     transition: all 0.3s ease;
+    box-shadow: var(--shadow);
   }
   .mic-indicator.active {
     background: rgba(239, 71, 111, 0.15);
@@ -191,10 +206,24 @@
     0%, 100% { box-shadow: 0 0 0 0 rgba(239, 71, 111, 0.4); }
     50% { box-shadow: 0 0 0 16px rgba(239, 71, 111, 0); }
   }
-  .mic-status { font-size: 0.85rem; color: var(--text-muted); text-align: center; min-height: 20px; }
+  .mic-status {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    min-height: 20px;
+    transition: color 0.3s;
+  }
   .mic-status.listening { color: var(--red); }
 
-  .interim-text { font-size: 0.9rem; color: var(--text-muted); font-style: italic; min-height: 22px; text-align: center; }
+  .interim-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+    min-height: 22px;
+    text-align: center;
+    max-width: 400px;
+    transition: opacity 0.2s;
+  }
 
   .button-row { display: flex; gap: 16px; }
   .btn {
@@ -207,11 +236,31 @@
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    letter-spacing: 0.5px;
   }
   .btn:active { transform: scale(0.96); }
-  .btn-start { background: linear-gradient(135deg, var(--green), #04b88a); color: #0a2a1f; }
-  .btn-stop { background: linear-gradient(135deg, var(--red), #d63060); color: #000; }
-  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-start {
+    background: linear-gradient(135deg, var(--green), #04b88a);
+    color: #0a2a1f;
+  }
+  .btn-start:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(6,214,160,0.4);
+  }
+  .btn-stop {
+    background: linear-gradient(135deg, var(--red), #d63060);
+    color: #000;
+  }
+  .btn-stop:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(239,71,111,0.4);
+  }
+  .btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none;
+  }
 
   .congrats-banner {
     display: none;
@@ -224,13 +273,14 @@
     border-radius: var(--radius);
     text-align: center;
     width: 100%;
+    box-shadow: 0 8px 32px rgba(255,209,102,0.5);
     animation: congratsIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
   }
-  .congrats-banner.visible { display: block; }
   @keyframes congratsIn {
-    0% { transform: scale(0.5) opacity: 0; }
-    100% { transform: scale(1) opacity: 1; }
+    0% { transform: scale(0.5) rotate(-4deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
   }
+  .congrats-banner.visible { display: block; }
 
   .error-msg {
     display: none;
@@ -238,18 +288,29 @@
     font-size: 0.9rem;
     text-align: center;
     background: rgba(239,71,111,0.1);
-    padding: 10px;
+    border: 1px solid rgba(239,71,111,0.3);
     border-radius: 12px;
+    padding: 10px 20px;
     width: 100%;
   }
   .error-msg.visible { display: block; }
+
+  .no-support {
+    display: none;
+    color: var(--accent);
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 20px;
+  }
+  .no-support.visible { display: block; }
 </style>
 </head>
 <body>
 
 <div class="stars" id="stars"></div>
 
-<div class="game-container">
+<div class="game-container" id="gameContainer">
+
   <div class="title-area">
     <h1>🌟 Sesli Okuma Oyunu</h1>
     <p class="subtitle">Kelimeyi sesli oku ve puan kazan!</p>
@@ -277,200 +338,413 @@
     <button class="btn btn-stop" id="btnStop" disabled>🔄 Tekrar</button>
   </div>
 
-  <div class="congrats-banner" id="congratsBanner">🎉 Tebrikler! Harika okudun! 🎉</div>
+  <div class="congrats-banner" id="congratsBanner">
+    🎉 Tebrikler! Harika okudun! 🎉
+  </div>
+
   <div class="error-msg" id="errorMsg"></div>
+
+  <div class="no-support" id="noSupport">
+    😔 Üzgünüm, tarayıcın sesli tanıma özelliğini desteklemiyor. Lütfen Google Chrome kullan.
+  </div>
+
 </div>
 
 <script>
 "use strict";
 
-// --- DOM Önbelleğe Alma (Performans için) ---
-const elements = {
-  stars: document.getElementById('stars'),
-  btnStart: document.getElementById('btnStart'),
-  btnStop: document.getElementById('btnStop'),
-  wordCard: document.getElementById('wordCard'),
-  scoreDisplay: document.getElementById('scoreDisplay'),
-  micIndicator: document.getElementById('micIndicator'),
-  micStatus: document.getElementById('micStatus'),
-  interimText: document.getElementById('interimText'),
-  congratsBanner: document.getElementById('congratsBanner'),
-  errorMsg: document.getElementById('errorMsg')
-};
-
-// --- Arka Plan Yıldızları ---
+// ─── Yıldız arka planı ───────────────────────────────────────────────────────
 (function yaratYildizlar() {
+  const starsEl = document.getElementById('stars');
   const fragment = document.createDocumentFragment();
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 80; i++) {
     const s = document.createElement('div');
     s.className = 'star';
     const boyut = Math.random() * 3 + 1;
-    s.style.cssText = `width:${boyut}px; height:${boyut}px; left:${Math.random()*100}%; top:${Math.random()*100}%; --d:${2 + Math.random()*4}s; --delay:${Math.random()*5}s;`;
+    s.style.cssText = `width:${boyut}px;height:${boyut}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*5}s;`;
     fragment.appendChild(s);
   }
-  elements.stars.appendChild(fragment);
+  starsEl.appendChild(fragment);
 })();
 
-// --- Oyun Değişkenleri ---
-const HEDEF_METIN = "Ali topu at";
-let targetWords = [];
-let wordSpans = [];
-let currentWordIndex = 0;
-let score = 0;
-let isListening = false;
-let recognition = null;
-let helperTimer = null;
-
+// ─── Tarayıcı desteği ────────────────────────────────────────────────────────
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-// --- Normalizasyon ---
-function normalizeText(metin) {
-  if (!metin) return [];
-  return metin.replace(/I/g, 'ı').replace(/İ/g, 'i').toLocaleLowerCase('tr-TR')
-              .replace(/[^\p{L}\s]/gu, '').trim().split(/\s+/).filter(t => t.length > 0);
+// ─── DOM referansları (tek seferlik) ─────────────────────────────────────────
+const btnStart        = document.getElementById('btnStart');
+const btnStop         = document.getElementById('btnStop');
+const wordCard        = document.getElementById('wordCard');
+const scoreDisplay    = document.getElementById('scoreDisplay');
+const micIndicator    = document.getElementById('micIndicator');
+const micStatus       = document.getElementById('micStatus');
+const interimText     = document.getElementById('interimText');
+const congratsBanner  = document.getElementById('congratsBanner');
+const errorMsg        = document.getElementById('errorMsg');
+const noSupport       = document.getElementById('noSupport');
+
+if (!SpeechRecognition) {
+  noSupport.classList.add('visible');
+  btnStart.disabled = true;
 }
 
-// --- Oyunu Kur ---
+// ─── Hedef metin ─────────────────────────────────────────────────────────────
+const HEDEF_METIN = "Ali topu at";
+
+// ─── Durum değişkenleri ───────────────────────────────────────────────────────
+let targetWords       = [];
+let wordSpans         = [];
+let currentWordIndex  = 0;
+let score             = 0;
+let processedWordCount = 0;
+
+// ─── Tanıma durumu (state machine) ───────────────────────────────────────────
+// 'idle' | 'starting' | 'listening' | 'stopping'
+let recState          = 'idle';
+let lastError         = null;
+let restartTimer      = null;
+let silenceTimer      = null;   // 1.8 saniyelik sessizlik timeout
+
+/** @type {SpeechRecognition|null} */
+let recognition       = null;
+
+// ─── Türkçe normalizasyon ─────────────────────────────────────────────────────
+function normalizeText(metin) {
+  if (!metin || typeof metin !== 'string') return [];
+  let sonuc = metin.replace(/I/g, 'ı').replace(/İ/g, 'i').toLocaleLowerCase('tr-TR');
+  sonuc = sonuc.replace(/[^\p{L}\s]/gu, '');
+  return sonuc.split(/\s+/).filter(t => t.length > 0);
+}
+
+// ─── Levenshtein mesafesi (harf toleransı) ────────────────────────────────────
+// Çocuk sesi veya makine hatalarında 2 harf farkına kadar kabul et
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+  const dp = [];
+  for (let i = 0; i <= m; i++) {
+    dp[i] = [i];
+  }
+  for (let j = 0; j <= n; j++) {
+    dp[0][j] = j;
+  }
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i-1] === b[j-1]
+        ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    }
+  }
+  return dp[m][n];
+}
+
+/**
+ * İki kelimeyi karşılaştır.
+ * Tolerans: kelime uzunluğuna göre dinamik.
+ *   ≤3 harf  → 1 harf farkı kabul
+ *   4-6 harf → 2 harf farkı kabul
+ *   7+ harf  → 3 harf farkı kabul
+ * Ayrıca hedef kelimenin sesli harfleri konuşulan kelimede varsa bonusu hesaba kat.
+ */
+function kelimeEslesir(konusulan, hedef) {
+  if (konusulan === hedef) return true;
+  const dist = levenshtein(konusulan, hedef);
+  const maxLen = Math.max(hedef.length, konusulan.length);
+  let tolerans;
+  if (hedef.length <= 3) tolerans = 1;
+  else if (hedef.length <= 6) tolerans = 2;
+  else tolerans = 3;
+  // İzin verilen maksimum hata payı: kelime uzunluğunun %40'ı ve tolerans'ın minimumu
+  const dinamikTolerans = Math.min(tolerans, Math.floor(maxLen * 0.40));
+  return dist <= dinamikTolerans;
+}
+
+// ─── Oyunu kur ────────────────────────────────────────────────────────────────
 function oyunuKur() {
   targetWords = normalizeText(HEDEF_METIN);
-  elements.wordCard.innerHTML = '';
+  const fragment = document.createDocumentFragment();
   wordSpans = [];
 
   const orijinalKelimeler = HEDEF_METIN.split(/\s+/);
-  targetWords.forEach((_, i) => {
+  targetWords.forEach((kelime, i) => {
     const span = document.createElement('span');
     span.className = 'word' + (i === 0 ? ' active' : '');
-    span.textContent = orijinalKelimeler[i];
-    elements.wordCard.appendChild(span);
+    span.textContent = orijinalKelimeler[i] || kelime;
+    span.dataset.index = i;
+    fragment.appendChild(span);
     wordSpans.push(span);
   });
+
+  wordCard.innerHTML = '';
+  wordCard.appendChild(fragment);
 }
 
-// --- Yardımcı Seslendirme ---
-function yardimliSeslendir(kelime) {
-  const utterance = new SpeechSynthesisUtterance(kelime);
-  utterance.lang = 'tr-TR';
-  utterance.rate = 0.8;
-  window.speechSynthesis.speak(utterance);
-}
-
-// --- Kelime Doğrulama (Hızlı Tepki Modu) ---
-function validateWord(gelenMetin) {
+// ─── Kelime doğrulama ─────────────────────────────────────────────────────────
+function validateWord(konusulanKelime) {
   if (currentWordIndex >= targetWords.length) return;
 
-  const kelimeler = normalizeText(gelenMetin);
+  const tokenler = normalizeText(konusulanKelime);
+  if (tokenler.length === 0) return;
+
+  const token = tokenler[0];
   const hedef = targetWords[currentWordIndex];
-  
-  // Konuşulan her bir kelimeyi kontrol et
-  if (kelimeler.some(k => k === hedef)) {
-    clearTimeout(helperTimer); // Doğru bildiği için sayacı sıfırla
-    
-    const span = wordSpans[currentWordIndex];
+  const span  = wordSpans[currentWordIndex];
+
+  if (kelimeEslesir(token, hedef)) {
     span.className = 'word correct';
-    
     score += 10;
     currentWordIndex++;
+    requestAnimationFrame(updateUI);
 
-    requestAnimationFrame(() => {
-      elements.scoreDisplay.textContent = score;
-      elements.scoreDisplay.classList.add('bump');
-      setTimeout(() => elements.scoreDisplay.classList.remove('bump'), 300);
-      
-      if (currentWordIndex < targetWords.length) {
-        wordSpans[currentWordIndex].className = 'word active';
-        startHelperTimer(); // Yeni kelime için zamanlayıcıyı başlat
-      } else {
-        endGame();
+    if (currentWordIndex === targetWords.length) {
+      endGame();
+    }
+  } else {
+    span.className = 'word wrong';
+    setTimeout(() => {
+      if (currentWordIndex < targetWords.length && wordSpans[currentWordIndex] === span) {
+        span.className = 'word active';
       }
-    });
-    return true;
+    }, 400);
   }
-  return false;
 }
 
-// --- Yardımcı Zamanlayıcı ---
-function startHelperTimer() {
-  clearTimeout(helperTimer);
-  helperTimer = setTimeout(() => {
-    if (isListening && currentWordIndex < targetWords.length) {
-      yardimliSeslendir(targetWords[currentWordIndex]);
-      startHelperTimer(); // Tekrarla
+// ─── Tüm alternatifleri kontrol et ───────────────────────────────────────────
+function checkAlternatives(result) {
+  for (let a = 0; a < result.length; a++) {
+    const tokenler = normalizeText(result[a].transcript);
+    if (tokenler.length === 0) continue;
+    const token = tokenler[0];
+    const hedef = targetWords[currentWordIndex];
+    if (kelimeEslesir(token, hedef)) {
+      return token;
     }
-  }, 4000); // 4 saniye sessiz kalırsa yardım et
+  }
+  // Hiçbiri tutmadıysa en iyi tahmini döndür
+  return normalizeText(result[0].transcript)[0] || '';
 }
 
-// --- Ses Tanıma Ayarları ---
-function initRecognition() {
-  recognition = new SpeechRecognition();
-  recognition.lang = 'tr-TR';
-  recognition.continuous = true;
-  recognition.interimResults = true; // Anlık takip açık
-  recognition.maxAlternatives = 3;   // Benzer kelimeleri süz
+// ─── UI güncelle ──────────────────────────────────────────────────────────────
+function updateUI() {
+  wordSpans.forEach((span, i) => {
+    if (i === currentWordIndex && !span.classList.contains('correct') && !span.classList.contains('wrong')) {
+      span.className = 'word active';
+    }
+  });
 
-  recognition.onresult = (event) => {
-    let interim = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        validateWord(transcript);
-      } else {
-        interim += transcript;
-        // Interim (ara sonuç) içindeyken de hızlıca kontrol et
-        if(validateWord(transcript)) break; 
+  const eskiPuan = parseInt(scoreDisplay.textContent, 10);
+  scoreDisplay.textContent = score;
+  if (score !== eskiPuan) {
+    scoreDisplay.classList.remove('bump');
+    void scoreDisplay.offsetWidth; // reflow
+    scoreDisplay.classList.add('bump');
+  }
+}
+
+// ─── Sessizlik timeout sıfırla ────────────────────────────────────────────────
+function resetSilenceTimer() {
+  if (silenceTimer) clearTimeout(silenceTimer);
+  if (recState !== 'listening') return;
+  // 1.8 saniye sessizlik sonrası recognition yeniden başlat
+  silenceTimer = setTimeout(() => {
+    if (recState === 'listening' && currentWordIndex < targetWords.length) {
+      safeRestartRecognition();
+    }
+  }, 1800);
+}
+
+// ─── Recognition güvenli yeniden başlat ──────────────────────────────────────
+function safeRestartRecognition() {
+  if (recState !== 'listening' && recState !== 'idle') return;
+  if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
+  if (restartTimer) clearTimeout(restartTimer);
+  restartTimer = setTimeout(() => {
+    if (recState === 'listening' || recState === 'idle') {
+      if (recognition) {
+        try { recognition.start(); recState = 'listening'; } catch(e) { /* çakışma yoksay */ }
       }
     }
-    elements.interimText.textContent = interim;
-  };
-
-  recognition.onerror = (e) => {
-    if (e.error === 'no-speech') return;
-    elements.errorMsg.textContent = "Hata: " + e.error;
-    elements.errorMsg.classList.add('visible');
-  };
-
-  recognition.onend = () => {
-    if (isListening) recognition.start();
-  };
+  }, 300);
 }
 
-// --- Oyun Kontrolleri ---
-function endGame() {
-  isListening = false;
-  recognition.stop();
-  clearTimeout(helperTimer);
-  elements.congratsBanner.classList.add('visible');
-  elements.micStatus.textContent = "🎉 Harika okudun!";
-  elements.btnStart.disabled = false;
-  elements.btnStop.disabled = true;
-  elements.micIndicator.classList.remove('active');
-}
-
-elements.btnStart.addEventListener('click', () => {
+// ─── Global recognition oluştur ───────────────────────────────────────────────
+function createRecognition() {
   if (!SpeechRecognition) return;
-  
+
+  // Önceki instance temizle
+  if (recognition) {
+    recognition.onresult = null;
+    recognition.onerror  = null;
+    recognition.onend    = null;
+    try { recognition.abort(); } catch(e) {}
+    recognition = null;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang           = 'tr-TR';
+  recognition.continuous     = false;   // tek kelime moduna uygun
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 5;      // 5 alternatif: çocuk sesi için tolerans
+
+  recognition.onresult = handleSpeechResult;
+  recognition.onerror  = handleSpeechError;
+  recognition.onend    = handleRecognitionEnd;
+}
+
+// ─── Tanıma başlat ────────────────────────────────────────────────────────────
+function startRecognition() {
+  if (!SpeechRecognition) return;
+  if (recState === 'starting' || recState === 'listening') return;
+
+  errorMsg.classList.remove('visible');
+  errorMsg.textContent = '';
+  lastError = null;
+
+  createRecognition();
+  recState = 'starting';
+
+  try {
+    recognition.start();
+    recState = 'listening';
+    resetSilenceTimer();
+  } catch (hata) {
+    gosterHata('Tanıma başlatılamadı: ' + hata.message);
+    recState = 'idle';
+    btnStart.disabled = false;
+    btnStop.disabled = true;
+    return;
+  }
+
+  micIndicator.classList.add('active');
+  micStatus.classList.add('listening');
+  micStatus.textContent = '🎤 Dinliyorum...';
+}
+
+// ─── Tanıma durdur ────────────────────────────────────────────────────────────
+function stopRecognition() {
+  recState = 'stopping';
+  if (restartTimer) { clearTimeout(restartTimer); restartTimer = null; }
+  if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
+  if (recognition) {
+    try { recognition.stop(); } catch(e) {}
+  }
+
+  micIndicator.classList.remove('active');
+  micStatus.classList.remove('listening');
+  if (micStatus.textContent === '🎤 Dinliyorum...') {
+    micStatus.textContent = 'Başlamak için düğmeye bas';
+  }
+  interimText.textContent = '';
+  recState = 'idle';
+}
+
+// ─── Konuşma sonucu ───────────────────────────────────────────────────────────
+function handleSpeechResult(event) {
+  if (!event || !event.results) return;
+
+  // Interim gösterim (sadece son result)
+  const lastResult = event.results[event.results.length - 1];
+  interimText.textContent = lastResult[0].transcript;
+
+  // Sessizlik sayacını sıfırla (kullanıcı konuşuyor)
+  resetSilenceTimer();
+
+  // Yalnızca final sonuçları işle
+  for (let i = event.resultIndex; i < event.results.length; i++) {
+    if (!event.results[i].isFinal) continue;
+
+    // Tüm alternatifleri kontrol et (maxAlternatives = 5)
+    if (currentWordIndex < targetWords.length) {
+      const enIyiKelime = checkAlternatives(event.results[i]);
+      if (enIyiKelime) validateWord(enIyiKelime);
+    }
+  }
+}
+
+// ─── Hata işle ───────────────────────────────────────────────────────────────
+function handleSpeechError(event) {
+  lastError = event.error;
+
+  if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+    gosterHata('Mikrofon izni reddedildi. Lütfen tarayıcı ayarlarından izin ver.');
+    recState = 'idle';
+    btnStart.disabled = false;
+    btnStop.disabled = true;
+  } else if (event.error === 'no-speech') {
+    // Sessizlik: timeout zaten yönetiyor, burada ekstra işlem yok
+  } else if (event.error === 'network') {
+    gosterHata('Ağ hatası. İnternet bağlantını kontrol et.');
+  }
+  // Diğer hatalar (audio-capture vb.) onend ile yönetilir
+}
+
+// ─── Tanıma bitti ────────────────────────────────────────────────────────────
+function handleRecognitionEnd() {
+  if (recState === 'stopping' || recState === 'idle') return;
+  if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
+
+  // Mikrofon kesildi ya da continuous=false nedeniyle bitti → kontrollü restart
+  if (recState === 'listening' && currentWordIndex < targetWords.length) {
+    recState = 'idle'; // restart hazırlığı için
+    safeRestartRecognition();
+  }
+}
+
+// ─── Oyun sonu ────────────────────────────────────────────────────────────────
+function endGame() {
+  stopRecognition();
+
+  wordSpans.forEach((span, i) => {
+    if (i >= currentWordIndex && !span.classList.contains('correct')) {
+      span.className = 'word wrong';
+    }
+  });
+
+  congratsBanner.classList.add('visible');
+  btnStop.disabled  = true;
+  btnStart.disabled = false;
+  micStatus.textContent = '🎉 Harika iş çıkardın!';
+  micStatus.classList.remove('listening');
+  micIndicator.classList.remove('active');
+}
+
+// ─── Hata mesajı göster ───────────────────────────────────────────────────────
+function gosterHata(mesaj) {
+  errorMsg.textContent = mesaj;
+  errorMsg.classList.add('visible');
+}
+
+// ─── Buton işleyicileri ───────────────────────────────────────────────────────
+btnStart.addEventListener('click', () => {
+  if (!SpeechRecognition) return;
+  if (recState === 'starting' || recState === 'listening') return;
+
+  // iOS/Safari için ses bağlamını aç
+  window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+
+  btnStart.disabled = false;
+  btnStop.disabled  = false;
+
+  currentWordIndex   = 0;
+  score              = 0;
+  processedWordCount = 0;
+  lastError          = null;
+  scoreDisplay.textContent = '0';
+  interimText.textContent  = '';
+  congratsBanner.classList.remove('visible');
+  errorMsg.classList.remove('visible');
+
   oyunuKur();
-  initRecognition();
-  
-  currentWordIndex = 0;
-  score = 0;
-  isListening = true;
-  
-  elements.scoreDisplay.textContent = '0';
-  elements.congratsBanner.classList.remove('visible');
-  elements.errorMsg.classList.remove('visible');
-  elements.btnStart.disabled = true;
-  elements.btnStop.disabled = false;
-  elements.micIndicator.classList.add('active');
-  elements.micStatus.textContent = "🎤 Dinliyorum...";
-
-  recognition.start();
-  startHelperTimer();
+  startRecognition();
 });
 
-elements.btnStop.addEventListener('click', () => {
-  location.reload();
+btnStop.addEventListener('click', () => {
+  stopRecognition();
+  // Kısa gecikme sonrası yeniden başlat
+  setTimeout(() => { btnStart.click(); }, 250);
 });
 
+// ─── İlk yükleme ─────────────────────────────────────────────────────────────
 oyunuKur();
 </script>
 </body>
