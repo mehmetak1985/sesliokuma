@@ -477,7 +477,7 @@ const SpeechController = (function () {
     }
     recognition = new SpeechRecognition();
     recognition.lang            = 'tr-TR';
-    recognition.continuous      = false;
+    recognition.continuous      = true;
     recognition.interimResults  = true;
     recognition.maxAlternatives = 5;
     recognition.onresult = _onResult;
