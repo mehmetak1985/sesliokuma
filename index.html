@@ -420,13 +420,14 @@ let yanlisSayac        = 0;   // yanlış telaffuz sayacı (TTS tetikleme için)
 const SpeechController = (function () {
 
   // ── İç durum ────────────────────────────────────────────────────────────
-  let recognition  = null;
-  let recState     = 'idle';   // 'idle' | 'starting' | 'listening' | 'stopping'
-  let isSpeaking   = false;
-  let lastError    = null;
-  let silenceTimer = null;
-  let restartTimer = null;
-  let trVoiceCache = null;
+  let recognition   = null;
+  let recState      = 'idle';   // 'idle' | 'starting' | 'listening' | 'stopping'
+  let isSpeaking    = false;
+  let lastError     = null;
+  let silenceTimer  = null;
+  let restartTimer  = null;
+  let watchdogTimer = null;   // recognition sessizce düştüyse yakalar
+  let trVoiceCache  = null;
 
   // ── Türkçe ses seç ────────────────────────────────────────────────────
   function getTrVoice() {
@@ -443,8 +444,26 @@ const SpeechController = (function () {
 
   // ── Timer yardımcıları ────────────────────────────────────────────────
   function clearTimers() {
-    if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
-    if (restartTimer) { clearTimeout(restartTimer); restartTimer = null; }
+    if (silenceTimer)  { clearTimeout(silenceTimer);  silenceTimer  = null; }
+    if (restartTimer)  { clearTimeout(restartTimer);  restartTimer  = null; }
+    if (watchdogTimer) { clearTimeout(watchdogTimer); watchdogTimer = null; }
+  }
+
+  // Watchdog: recognition sessizce düştüyse 3sn içinde yakalar ve restart yapar
+  function resetWatchdog() {
+    if (watchdogTimer) clearTimeout(watchdogTimer);
+    watchdogTimer = setTimeout(() => {
+      watchdogTimer = null;
+      if (isSpeaking) return;
+      if (currentWordIndex >= targetWords.length) return;
+      if (recState !== 'listening') {
+        // Recognition ayakta değil, yeniden başlat
+        scheduleRestart(100);
+      } else {
+        // Ayakta görünüyor ama emin olmak için watchdog'u yenile
+        resetWatchdog();
+      }
+    }, 3000);
   }
 
   function scheduleRestart(ms) {
@@ -480,16 +499,26 @@ const SpeechController = (function () {
     recognition.continuous      = true;
     recognition.interimResults  = true;
     recognition.maxAlternatives = 5;
+    recognition.onstart  = _onStart;
     recognition.onresult = _onResult;
     recognition.onerror  = _onError;
     recognition.onend    = _onEnd;
   }
 
   // ── Recognition event handler'ları ───────────────────────────────────
+  function _onStart() {
+    // Recognition gerçekten başladı — state'i güvenle otur
+    recState = 'listening';
+    resetWatchdog();
+    micIndicator.className = 'mic-indicator active';
+    micStatus.className    = 'mic-status listening';
+    micStatus.textContent  = '🎤 Dinliyorum...';
+  }
   function _onResult(event) {
     if (!event || !event.results) return;
-    if (isSpeaking) return;   // TTS aktifken echo koruması — tüm sonuçları yok say
+    if (isSpeaking) return;   // TTS aktifken echo koruması
 
+    resetWatchdog();   // ses geldi → recognition ayakta, watchdog'u yenile
     interimText.textContent = event.results[event.results.length - 1][0].transcript;
     resetSilenceTimer();
 
@@ -541,11 +570,8 @@ const SpeechController = (function () {
 
     try {
       recognition.start();
-      recState = 'listening';
-      resetSilenceTimer();
-      micIndicator.className = 'mic-indicator active';
-      micStatus.className    = 'mic-status listening';
-      micStatus.textContent  = '🎤 Dinliyorum...';
+      recState = 'starting';
+      // micIndicator ve micStatus → _onStart'ta güncellenir
       interimText.textContent = '';
     } catch (e) {
       recState = 'idle';
@@ -580,6 +606,7 @@ const SpeechController = (function () {
      */
     startListening() {
       lastError = null;
+      resetWatchdog();
       scheduleRestart(100);
     },
 
