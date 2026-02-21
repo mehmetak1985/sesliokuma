@@ -728,12 +728,18 @@ const SpeechController = (function () {
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (!event.results[i].isFinal) continue;
       const sonuc = event.results[i];
-      // Her alternatifin tokenlerini hazırla
-      const altTokenler = [];
+
+      // Alternatifleri confidence'a göre azalan sıraya diz
+      const altDizisi = [];
       for (let a = 0; a < sonuc.length; a++) {
-        altTokenler.push(normalizeText(sonuc[a].transcript));
+        altDizisi.push({ transcript: sonuc[a].transcript, confidence: sonuc[a].confidence || 0 });
       }
-      // Ana transcript token sayısını baz al
+      altDizisi.sort((x, y) => y.confidence - x.confidence);
+
+      // Her alternatifin tokenlerini hazırla (confidence sırasında)
+      const altTokenler = altDizisi.map(alt => normalizeText(alt.transcript));
+
+      // Ana transcript token sayısını baz al (en yüksek confidence)
       const anaTokenler = altTokenler[0] || [];
       for (let t = 0; t < anaTokenler.length; t++) {
         if (currentWordIndex >= targetWords.length) break;
