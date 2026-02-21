@@ -533,11 +533,25 @@ const SpeechController = (function () {
 
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (!event.results[i].isFinal) continue;
-      // Transcript'teki tüm kelimeleri sırayla işle
-      const tumTokenler = normalizeText(event.results[i][0].transcript);
-      for (let t = 0; t < tumTokenler.length; t++) {
+      const sonuc = event.results[i];
+      // Her alternatifin tokenlerini hazırla
+      const altTokenler = [];
+      for (let a = 0; a < sonuc.length; a++) {
+        altTokenler.push(normalizeText(sonuc[a].transcript));
+      }
+      // Ana transcript token sayısını baz al
+      const anaTokenler = altTokenler[0] || [];
+      for (let t = 0; t < anaTokenler.length; t++) {
         if (currentWordIndex >= targetWords.length) break;
-        validateWord(tumTokenler[t]);
+        const hedef = targetWords[currentWordIndex];
+        // Bu pozisyon için tüm alternatiflerde eşleşen var mı?
+        let bulunan = null;
+        for (let a = 0; a < altTokenler.length; a++) {
+          const tok = altTokenler[a][t];
+          if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break; }
+        }
+        // Eşleşme yoksa ana token'ı kullan (yanlış olarak işlenir)
+        validateWord(bulunan || anaTokenler[t]);
       }
     }
   }
