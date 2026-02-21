@@ -57,7 +57,6 @@
   }
   .subtitle { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
 
-  /* Üst bilgi şeridi */
   .info-bar {
     background: var(--surface); border: 2px solid var(--surface2);
     border-radius: var(--radius); padding: 10px 24px; width: 100%;
@@ -76,7 +75,6 @@
   .info-seviye { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--accent2); text-align: center; }
   .info-kelime { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 1rem; color: var(--text); }
 
-  /* Kelime kartı wrapper */
   .word-card-wrapper { position: relative; width: 100%; }
   .word-card {
     background: var(--surface); border: 2px solid var(--surface2);
@@ -85,7 +83,6 @@
     align-items: center; gap: 16px; flex-wrap: wrap; min-height: 130px;
   }
 
-  /* Geç butonu */
   .btn-gec {
     position: absolute; bottom: 10px; right: 14px;
     font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.78rem;
@@ -96,7 +93,6 @@
   .btn-gec:hover:not(:disabled) { opacity: 1; background: rgba(255,255,255,0.1); }
   .btn-gec:disabled { opacity: 0.15; cursor: not-allowed; }
 
-  /* Kelime span */
   .word {
     font-family: 'Nunito', sans-serif; font-weight: 900;
     font-size: clamp(2rem, 8vw, 3.5rem); padding: 8px 18px;
@@ -136,7 +132,6 @@
     80% { transform: translateX(4px); }
   }
 
-  /* Geri bildirim */
   .feedback-bubble {
     font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 1rem;
     min-height: 26px; text-align: center; color: var(--accent2);
@@ -145,7 +140,6 @@
   .feedback-bubble.show { opacity: 1; }
   .feedback-bubble.yanlis { color: var(--text-muted); font-style: italic; }
 
-  /* Mikrofon */
   .mic-area { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .mic-indicator {
     width: 72px; height: 72px; border-radius: 50%;
@@ -157,15 +151,23 @@
     background: rgba(239,71,111,0.15); border-color: var(--red);
     animation: micPulse 1s ease-in-out infinite;
   }
+  .mic-indicator.speaking {
+    background: rgba(255,209,102,0.15); border-color: var(--yellow);
+    animation: speakPulse 0.8s ease-in-out infinite;
+  }
   @keyframes micPulse {
     0%,100% { box-shadow: 0 0 0 0 rgba(239,71,111,0.4); }
     50% { box-shadow: 0 0 0 16px rgba(239,71,111,0); }
   }
+  @keyframes speakPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255,209,102,0.4); }
+    50% { box-shadow: 0 0 0 16px rgba(255,209,102,0); }
+  }
   .mic-status { font-size: 0.82rem; color: var(--text-muted); text-align: center; min-height: 20px; transition: color 0.3s; }
   .mic-status.listening { color: var(--red); }
+  .mic-status.speaking { color: var(--yellow); }
   .interim-text { font-size: 0.88rem; color: var(--text-muted); font-style: italic; min-height: 20px; text-align: center; max-width: 400px; }
 
-  /* Butonlar */
   .button-row { display: flex; gap: 16px; }
   .btn {
     font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.1rem;
@@ -179,7 +181,6 @@
   .btn-stop:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(239,71,111,0.4); }
   .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; box-shadow: none; }
 
-  /* Seviye overlay */
   .level-overlay {
     display: none; position: absolute; inset: 0;
     border-radius: var(--radius); background: rgba(15,27,45,0.96);
@@ -204,7 +205,6 @@
   }
   .btn-next-level:hover { transform: translateY(-2px); }
 
-  /* Tebrikler */
   .congrats-banner {
     display: none; background: linear-gradient(135deg, #ffd166, #ff9f1c);
     color: #1a0a00; font-family: 'Nunito', sans-serif; font-weight: 900;
@@ -218,7 +218,6 @@
     100% { transform: scale(1) rotate(0deg); opacity: 1; }
   }
 
-  /* Başlamadan önce placeholder */
   .word-placeholder {
     font-family: 'Nunito', sans-serif; font-weight: 700;
     font-size: 1.1rem; color: var(--text-muted); text-align: center;
@@ -245,7 +244,6 @@
     <p class="subtitle">Kelimeyi sesli oku ve puan kazan!</p>
   </div>
 
-  <!-- Bilgi şeridi -->
   <div class="info-bar">
     <div class="info-item">
       <div class="info-label">Puan</div>
@@ -261,7 +259,6 @@
     </div>
   </div>
 
-  <!-- Kelime kartı -->
   <div class="word-card-wrapper">
     <div class="word-card" id="wordCard">
       <div class="word-placeholder">▶ Başla düğmesine bas</div>
@@ -377,72 +374,288 @@ var currentSeviye      = 0;
 var currentKelimeIndex = 0;
 var yanlisSayisi       = 0;
 var ustUsteDogruSayisi = 0;
-var oyunBasladi        = false;  // ← YENİ: oyun başlamadan hiçbir şey çalışmaz
+var oyunBasladi        = false;
+var feedbackTimer      = null;
 
-// ─── Recognition durumu ───────────────────────────────────────────────────────
-var recState     = 'idle';
-var lastError    = null;
-var restartTimer = null;
-var silenceTimer = null;
-var recognition  = null;
+// ═══════════════════════════════════════════════════════════════════════════════
+// SpeechController — TTS ve Recognition lifecycle'ını merkezi olarak yönetir.
+// Temel kural: TTS aktifken Recognition kapalı, Recognition aktifken TTS kapalı.
+// ═══════════════════════════════════════════════════════════════════════════════
+var SpeechController = (function() {
 
-// ─── Seslendirme aktif mi flag ────────────────────────────────────────────────
-// DÜZELTME: Seslendirme sırasında mikrofonu kapat, bitince aç
-var seslendirmeAktif = false;
-var feedbackTimer    = null;
+  // ── Dahili durum ──────────────────────────────────────────────────────────
+  var recognition    = null;
+  var recState       = 'idle';   // 'idle' | 'starting' | 'listening' | 'stopping'
+  var isSpeaking     = false;
+  var silenceTimer   = null;
+  var restartTimer   = null;
+  var lastError      = null;
+  var pendingRestart = false;   // TTS bitince mikrofon açılsın mı?
+  var trVoiceCache   = null;
 
-// ─── Sesler yüklendi mi ───────────────────────────────────────────────────────
-var trSesCache = null;
-function trSesiBul() {
-  if (trSesCache) return trSesCache;
-  var sesler = window.speechSynthesis.getVoices();
-  trSesCache = sesler.find(function(s){ return s.lang === 'tr-TR' && s.localService; })
-            || sesler.find(function(s){ return s.lang === 'tr-TR'; })
-            || null;
-  return trSesCache;
-}
-if (window.speechSynthesis) {
-  window.speechSynthesis.onvoiceschanged = function() { trSesCache = null; trSesiBul(); };
-}
-
-/**
- * Seslendirme — recognition ile çakışmayı önlemek için
- * mikrofonu durdurur, bittikten sonra yeniden başlatır.
- */
-function seslendir(metin, hiz, perde, bitinceMikrofon) {
-  if (!window.speechSynthesis) return;
-  hiz             = hiz   || 0.82;
-  perde           = perde || 1.08;
-  bitinceMikrofon = bitinceMikrofon !== false; // varsayılan true
-
-  window.speechSynthesis.cancel();
-
-  // Mikrofonu geçici durdur (kendi sesini algılamasın)
-  if (bitinceMikrofon && recognition && recState === 'listening') {
-    try { recognition.stop(); } catch(e) {}
+  // ── Ses seçimi ────────────────────────────────────────────────────────────
+  function getTrVoice() {
+    if (trVoiceCache) return trVoiceCache;
+    var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    trVoiceCache = voices.find(function(v){ return v.lang === 'tr-TR' && v.localService; })
+                || voices.find(function(v){ return v.lang === 'tr-TR'; })
+                || null;
+    return trVoiceCache;
+  }
+  if (window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = function() {
+      trVoiceCache = null;
+      getTrVoice();
+    };
   }
 
-  var ut = new SpeechSynthesisUtterance(metin);
-  ut.lang   = 'tr-TR';
-  ut.rate   = hiz;
-  ut.pitch  = perde;
-  ut.volume = 1;
-  var ses = trSesiBul();
-  if (ses) ut.voice = ses;
+  // ── Recognition iç yardımcılar ────────────────────────────────────────────
+  function clearTimers() {
+    if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
+    if (restartTimer) { clearTimeout(restartTimer); restartTimer = null; }
+  }
 
-  ut.onend = function() {
-    seslendirmeAktif = false;
-    // Oyun devam ediyorsa mikrofonu yeniden başlat
-    if (bitinceMikrofon && oyunBasladi && recState === 'idle') {
-      setTimeout(function() {
-        if (oyunBasladi) startRecognition();
-      }, 200);
+  function resetSilenceTimer() {
+    if (silenceTimer) clearTimeout(silenceTimer);
+    if (recState !== 'listening') return;
+    silenceTimer = setTimeout(function() {
+      if (recState === 'listening' && oyunBasladi && !isSpeaking) {
+        _stopRecognition(true); // sessizlik → kısa restart
+      }
+    }, 2000);
+  }
+
+  function _buildRecognition() {
+    if (!SR) return;
+    // Önceki instance'ı temizle
+    if (recognition) {
+      recognition.onresult = null;
+      recognition.onerror  = null;
+      recognition.onend    = null;
+      recognition.onspeechstart = null;
+      try { recognition.abort(); } catch(e) {}
+      recognition = null;
     }
-  };
+    recognition = new SR();
+    recognition.lang            = 'tr-TR';
+    recognition.continuous      = false;
+    recognition.interimResults  = true;
+    recognition.maxAlternatives = 5;
+    recognition.onresult = _onResult;
+    recognition.onerror  = _onError;
+    recognition.onend    = _onEnd;
+    recognition.onspeechstart = function() { resetSilenceTimer(); };
+  }
 
-  seslendirmeAktif = true;
-  window.speechSynthesis.speak(ut);
-}
+  function _onResult(event) {
+    if (!event || !event.results) return;
+    if (isSpeaking) return; // TTS aktifken sonuçları yok say (echo koruması)
+
+    var last = event.results[event.results.length - 1];
+    interimText.textContent = last[0].transcript;
+    resetSilenceTimer();
+
+    for (var i = event.resultIndex; i < event.results.length; i++) {
+      if (!event.results[i].isFinal) continue;
+      if (currentWordIndex < targetWords.length) {
+        var best = checkAlternatives(event.results[i]);
+        if (best) validateWord(best);
+      }
+    }
+  }
+
+  function _onError(event) {
+    lastError = event.error;
+    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+      errorMsg.textContent = 'Mikrofon izni reddedildi. Tarayıcı ayarlarından izin ver.';
+      errorMsg.classList.add('visible');
+      recState    = 'idle';
+      oyunBasladi = false;
+      btnStart.disabled = false;
+      btnStop.disabled  = true;
+      return;
+    }
+    if (event.error === 'network') {
+      errorMsg.textContent = 'Ağ hatası. İnternet bağlantını kontrol et.';
+      errorMsg.classList.add('visible');
+    }
+    // 'no-speech', 'aborted' → onEnd ile yönetilir
+  }
+
+  function _onEnd() {
+    // Kasıtlı durdurulmuşsa restart istemiyoruz
+    if (recState === 'stopping') {
+      recState = 'idle';
+      return;
+    }
+    recState = 'idle';
+
+    // TTS aktifse veya oyun bittiyse restart yok
+    if (!oyunBasladi || isSpeaking) return;
+    if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
+
+    // Kısa gecikme ile güvenli restart
+    _scheduleRestart(300);
+  }
+
+  function _scheduleRestart(delay) {
+    if (restartTimer) clearTimeout(restartTimer);
+    restartTimer = setTimeout(function() {
+      restartTimer = null;
+      if (oyunBasladi && !isSpeaking && recState === 'idle') {
+        _startRecognition();
+      }
+    }, delay || 300);
+  }
+
+  function _startRecognition() {
+    if (!SR) return;
+    if (recState === 'starting' || recState === 'listening') return;
+    if (isSpeaking) return;
+    if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
+
+    errorMsg.classList.remove('visible');
+    lastError = null;
+    _buildRecognition();
+    recState = 'starting';
+
+    try {
+      recognition.start();
+      recState = 'listening';
+      resetSilenceTimer();
+      micIndicator.className = 'mic-indicator active';
+      micStatus.className    = 'mic-status listening';
+      micStatus.textContent  = '🎤 Dinliyorum...';
+      interimText.textContent = '';
+    } catch(e) {
+      recState = 'idle';
+      // Zaten başlatılmış hatası olabilir, bir süre sonra tekrar dene
+      if (e.name === 'InvalidStateError') {
+        _scheduleRestart(500);
+      } else {
+        errorMsg.textContent = 'Mikrofon başlatılamadı: ' + e.message;
+        errorMsg.classList.add('visible');
+      }
+    }
+  }
+
+  function _stopRecognition(scheduleRestart) {
+    clearTimers();
+    if (recState === 'idle') return;
+    recState = 'stopping';
+    if (recognition) { try { recognition.stop(); } catch(e) {} }
+    micIndicator.className = 'mic-indicator';
+    micStatus.className    = 'mic-status';
+    micStatus.textContent  = isSpeaking ? '🔊 Dinle...' : 'Başlamak için düğmeye bas';
+    interimText.textContent = '';
+    // onEnd'de recState = 'idle' olacak, oradan restart
+    if (scheduleRestart) {
+      pendingRestart = true;
+    }
+  }
+
+  // ── Public API ────────────────────────────────────────────────────────────
+  return {
+
+    // Sadece yanlış okumada çağrılır (veya öğretici TTS için)
+    speak: function(text, opts, onDone) {
+      if (!window.speechSynthesis) {
+        if (onDone) onDone();
+        return;
+      }
+      opts = opts || {};
+      var rate  = opts.rate  || 0.82;
+      var pitch = opts.pitch || 1.08;
+
+      // Mevcut TTS'i iptal et
+      window.speechSynthesis.cancel();
+
+      // Recognition'ı güvenle durdur (TTS sırasında aktif olmamalı)
+      if (recState === 'listening' || recState === 'starting') {
+        _stopRecognition(false);
+      }
+      clearTimers(); // Restart timer'larını da temizle
+
+      isSpeaking = true;
+      pendingRestart = false;
+
+      // Mikrofon göstergesini konuşma moduna al
+      micIndicator.className = 'mic-indicator speaking';
+      micStatus.className    = 'mic-status speaking';
+      micStatus.textContent  = '🔊 Dinle...';
+      interimText.textContent = '';
+
+      var ut    = new SpeechSynthesisUtterance(text);
+      ut.lang   = 'tr-TR';
+      ut.rate   = rate;
+      ut.pitch  = pitch;
+      ut.volume = 1;
+      var voice = getTrVoice();
+      if (voice) ut.voice = voice;
+
+      ut.onend = function() {
+        isSpeaking = false;
+        // Mikrofon göstergesini sıfırla
+        micIndicator.className = 'mic-indicator';
+        micStatus.className    = 'mic-status';
+        micStatus.textContent  = '';
+        interimText.textContent = '';
+
+        if (onDone) onDone();
+
+        // Oyun devam ediyorsa mikrofonu aç
+        if (oyunBasladi) {
+          _scheduleRestart(250);
+        }
+      };
+
+      ut.onerror = function() {
+        isSpeaking = false;
+        micIndicator.className = 'mic-indicator';
+        micStatus.className    = 'mic-status';
+        if (onDone) onDone();
+        if (oyunBasladi) _scheduleRestart(300);
+      };
+
+      window.speechSynthesis.speak(ut);
+    },
+
+    // Tanımayı başlat (oyun başlangıcı / seviye geçişi sonrası)
+    startListening: function() {
+      if (!isSpeaking) {
+        _scheduleRestart(100);
+      }
+      // isSpeaking ise speak().onend içinden otomatik başlar
+    },
+
+    // Tam durdur (oyun bitti / sıfırla)
+    stopAll: function() {
+      isSpeaking = false;
+      pendingRestart = false;
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      clearTimers();
+      // Recognition'ı durdur ama restart bekleme
+      if (recState !== 'idle') {
+        recState = 'stopping';
+        if (recognition) { try { recognition.stop(); } catch(e) {} }
+        // onEnd fired → recState = 'idle'
+      }
+      micIndicator.className = 'mic-indicator';
+      micStatus.className    = 'mic-status';
+      micStatus.textContent  = 'Başlamak için düğmeye bas';
+      interimText.textContent = '';
+    },
+
+    // Sadece TTS iptal (recognition dokunma)
+    cancelSpeech: function() {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      isSpeaking = false;
+    },
+
+    isSpeaking: function() { return isSpeaking; },
+    isListening: function() { return recState === 'listening'; }
+  };
+})();
 
 // ─── Türkçe normalizasyon ─────────────────────────────────────────────────────
 function normalizeText(metin) {
@@ -473,7 +686,7 @@ function levenshtein(a, b) {
 // ─── Toleranslı eşleşme ───────────────────────────────────────────────────────
 function kelimeEslesir(konusulan, hedef) {
   if (konusulan === hedef) return true;
-  var dist = levenshtein(konusulan, hedef);
+  var dist     = levenshtein(konusulan, hedef);
   var tolerans = hedef.length <= 3 ? 1 : hedef.length <= 6 ? 2 : 3;
   return dist <= Math.min(tolerans, Math.floor(Math.max(hedef.length, konusulan.length) * 0.40));
 }
@@ -493,7 +706,7 @@ function checkAlternatives(result) {
 function gosterGeri(mesaj, tip) {
   if (feedbackTimer) clearTimeout(feedbackTimer);
   feedbackBubble.textContent = mesaj;
-  feedbackBubble.className = 'feedback-bubble show' + (tip === 'yanlis' ? ' yanlis' : '');
+  feedbackBubble.className   = 'feedback-bubble show' + (tip === 'yanlis' ? ' yanlis' : '');
   feedbackTimer = setTimeout(function(){
     feedbackBubble.classList.remove('show');
   }, 2500);
@@ -540,10 +753,9 @@ function kelimeyiYukle() {
   btnGec.disabled = false;
   updateInfoBar();
 
-  // Öğretmen modeli: yeni kelimeyi sesli oku
-  // DÜZELTME: Kısa gecikme ile — DOM render'ı tamamlandıktan sonra
+  // Öğretmen modeli: yeni kelimeyi sesli oku, bittikten sonra mikrofon açılır
   setTimeout(function() {
-    seslendir(metin, 0.78, 1.10, true);
+    SpeechController.speak(metin, { rate: 0.78, pitch: 1.10 });
   }, 300);
 }
 
@@ -553,8 +765,8 @@ function gecKelime() {
   btnGec.disabled = true;
   var hedefMetin = SEVIYELER[currentSeviye].kelimeler[currentKelimeIndex];
   gosterGeri('Doğrusu: ' + hedefMetin, 'yanlis');
-  seslendir('Doğrusu şuydu: ' + hedefMetin, 0.80, 1.05, true);
-  // Seslendirme bitince (onend) mikrofon açılacak, ondan sonra kelime geçilecek
+  // TTS → onend'de mikrofon açılır, sonra kelime geçilir
+  SpeechController.speak('Doğrusu şuydu: ' + hedefMetin, { rate: 0.80, pitch: 1.05 });
   setTimeout(sonrakiKelimeyeGec, 2000);
 }
 
@@ -576,26 +788,39 @@ function seviyeTamamlandi() {
   var sev = SEVIYELER[currentSeviye];
 
   if (currentSeviye >= SEVIYELER.length - 1) {
-    // Tüm oyun bitti
     oyunBasladi = false;
-    stopRecognition();
+    SpeechController.stopAll();
     congratsBanner.classList.add('visible');
     btnStop.disabled  = true;
     btnStart.disabled = false;
     micStatus.textContent = '🏆 Tüm seviyeleri bitirdin!';
-    micStatus.classList.remove('listening');
-    micIndicator.classList.remove('active');
-    seslendir('Tebrikler! Tüm seviyeleri tamamladın! Süpersin!', 0.85, 1.10, false);
+    micIndicator.className = 'mic-indicator';
+    // Bitiriş sesi — mikrofon açılmasın
+    SpeechController.cancelSpeech();
+    if (window.speechSynthesis) {
+      var ut    = new SpeechSynthesisUtterance('Tebrikler! Tüm seviyeleri tamamladın! Süpersin!');
+      ut.lang   = 'tr-TR';
+      ut.rate   = 0.85;
+      ut.pitch  = 1.10;
+      ut.volume = 1;
+      window.speechSynthesis.speak(ut);
+    }
     return;
   }
 
-  // Seviye geçiş overlay
   overlayTitle.textContent = '🎉 Seviye ' + sev.seviye + ' Tamamlandı!';
   overlaySub.textContent   = 'Toplam Puan: ' + score;
   levelOverlay.classList.add('visible');
-  // Mikrofonu durdur, sonraki seviyeye geçişte yeniden başlayacak
-  stopRecognition();
-  seslendir('Seviye ' + sev.seviye + ' tamamlandı! Harikasın!', 0.85, 1.10, false);
+  SpeechController.stopAll();
+  // Seviye tamamlandı sesi — bu sırada mikrofon kapalı kalmalı
+  if (window.speechSynthesis) {
+    var ut2    = new SpeechSynthesisUtterance('Seviye ' + sev.seviye + ' tamamlandı! Harikasın!');
+    ut2.lang   = 'tr-TR';
+    ut2.rate   = 0.85;
+    ut2.pitch  = 1.10;
+    ut2.volume = 1;
+    window.speechSynthesis.speak(ut2);
+  }
 }
 
 // ─── Sonraki seviye ───────────────────────────────────────────────────────────
@@ -605,7 +830,7 @@ function sonrakiSeviyeyeGec() {
   currentKelimeIndex    = 0;
   ustUsteDogruSayisi    = 0;
   kelimeyiYukle();
-  // kelimeyiYukle sonrası seslendirme bitince mikrofon açılır (onend callback)
+  // kelimeyiYukle içinde seslendir çağrılır, onend'de mikrofon açılır
 }
 
 // ─── Kelime doğrulama ─────────────────────────────────────────────────────────
@@ -621,7 +846,7 @@ function validateWord(konusulanKelime) {
   var span  = wordSpans[currentWordIndex];
 
   if (kelimeEslesir(token, hedef)) {
-    // ✅ Doğru
+    // ✅ Doğru — ses YOK
     span.className = 'word correct';
     currentWordIndex++;
 
@@ -632,25 +857,20 @@ function validateWord(konusulanKelime) {
     }
 
     if (currentWordIndex >= targetWords.length) {
-      // Kelime/cümle tamamlandı
       ustUsteDogruSayisi++;
       updateScore(SEVIYELER[currentSeviye].puan);
       yanlisSayisi = 0;
 
       var msg = DOGRU_MESAJLAR[Math.floor(Math.random() * DOGRU_MESAJLAR.length)];
-      gosterGeri(msg + ' 🌟', 'dogru');
-
-      // Motivasyon: 3 üst üste doğru
       if (ustUsteDogruSayisi > 0 && ustUsteDogruSayisi % 3 === 0) {
         msg = 'Mükemmel gidiyorsun!';
         gosterGeri(msg + ' 🔥', 'dogru');
+      } else {
+        gosterGeri(msg + ' 🌟', 'dogru');
       }
 
-      // Seslendirip sonra geç — seslendirme onend'de mikrofon açılacak
-      // DÜZELTME: Önce seslendir, onend callback'te sonrakiKelimeyeGec çağır
-      var afterMsg = msg;
-      seslendir(afterMsg, 0.90, 1.15, false);
-      setTimeout(sonrakiKelimeyeGec, 900);
+      // Doğru okumada TTS YOK — sadece kısa gecikme ile geç
+      setTimeout(sonrakiKelimeyeGec, 700);
     }
 
   } else {
@@ -668,140 +888,13 @@ function validateWord(konusulanKelime) {
       btnGec.disabled = true;
       var hedefMetin = SEVIYELER[currentSeviye].kelimeler[currentKelimeIndex];
       gosterGeri('Doğrusu: ' + hedefMetin, 'yanlis');
-      seslendir('Doğrusu şuydu: ' + hedefMetin, 0.78, 1.05, true);
+      // ❌ YALNIZCA yanlışta TTS çalışır
+      SpeechController.speak('Doğrusu şuydu: ' + hedefMetin, { rate: 0.78, pitch: 1.05 });
       setTimeout(sonrakiKelimeyeGec, 2200);
     } else if (yanlisSayisi === 2) {
       gosterGeri('Tekrar dene! 💪', 'yanlis');
     }
   }
-}
-
-// ─── Sessizlik timeout ────────────────────────────────────────────────────────
-function resetSilenceTimer() {
-  if (silenceTimer) clearTimeout(silenceTimer);
-  if (recState !== 'listening') return;
-  silenceTimer = setTimeout(function() {
-    if (recState === 'listening' && oyunBasladi) {
-      safeRestart();
-    }
-  }, 2000);
-}
-
-// ─── Güvenli yeniden başlat ───────────────────────────────────────────────────
-function safeRestart() {
-  if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
-  if (seslendirmeAktif) return; // seslendirme varsa bekleme
-  if (restartTimer) clearTimeout(restartTimer);
-  restartTimer = setTimeout(function() {
-    if (oyunBasladi && recState === 'idle' && !seslendirmeAktif) {
-      startRecognition();
-    }
-  }, 300);
-}
-
-// ─── Recognition oluştur ──────────────────────────────────────────────────────
-function createRecognition() {
-  if (!SR) return;
-  if (recognition) {
-    recognition.onresult = null;
-    recognition.onerror  = null;
-    recognition.onend    = null;
-    try { recognition.abort(); } catch(e) {}
-    recognition = null;
-  }
-  recognition = new SR();
-  recognition.lang            = 'tr-TR';
-  recognition.continuous      = false;
-  recognition.interimResults  = true;
-  recognition.maxAlternatives = 5;
-  recognition.onresult = handleSpeechResult;
-  recognition.onerror  = handleSpeechError;
-  recognition.onend    = handleRecognitionEnd;
-}
-
-// ─── Tanıma başlat ───────────────────────────────────────────────────────────
-function startRecognition() {
-  if (!SR) return;
-  if (recState === 'starting' || recState === 'listening') return;
-  if (seslendirmeAktif) return; // seslendirme varsa başlatma
-
-  errorMsg.classList.remove('visible');
-  lastError = null;
-  createRecognition();
-  recState = 'starting';
-
-  try {
-    recognition.start();
-    recState = 'listening';
-    resetSilenceTimer();
-    micIndicator.classList.add('active');
-    micStatus.classList.add('listening');
-    micStatus.textContent = '🎤 Dinliyorum...';
-  } catch(e) {
-    recState = 'idle';
-    errorMsg.textContent = 'Mikrofon başlatılamadı: ' + e.message;
-    errorMsg.classList.add('visible');
-  }
-}
-
-// ─── Tanıma durdur ───────────────────────────────────────────────────────────
-function stopRecognition() {
-  recState = 'stopping';
-  if (restartTimer) { clearTimeout(restartTimer); restartTimer = null; }
-  if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
-  if (recognition) { try { recognition.stop(); } catch(e) {} }
-  micIndicator.classList.remove('active');
-  micStatus.classList.remove('listening');
-  micStatus.textContent = 'Başlamak için düğmeye bas';
-  interimText.textContent = '';
-  recState = 'idle';
-}
-
-// ─── Konuşma sonucu ───────────────────────────────────────────────────────────
-function handleSpeechResult(event) {
-  if (!event || !event.results || seslendirmeAktif) return;
-
-  interimText.textContent = event.results[event.results.length - 1][0].transcript;
-  resetSilenceTimer();
-
-  for (var i = event.resultIndex; i < event.results.length; i++) {
-    if (!event.results[i].isFinal) continue;
-    if (currentWordIndex < targetWords.length) {
-      var enIyi = checkAlternatives(event.results[i]);
-      if (enIyi) validateWord(enIyi);
-    }
-  }
-}
-
-// ─── Hata işle ───────────────────────────────────────────────────────────────
-function handleSpeechError(event) {
-  lastError = event.error;
-  if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-    errorMsg.textContent = 'Mikrofon izni reddedildi. Tarayıcı ayarlarından izin ver.';
-    errorMsg.classList.add('visible');
-    recState = 'idle';
-    oyunBasladi = false;
-    btnStart.disabled = false;
-    btnStop.disabled  = true;
-  } else if (event.error === 'network') {
-    errorMsg.textContent = 'Ağ hatası. İnternet bağlantını kontrol et.';
-    errorMsg.classList.add('visible');
-  }
-  // 'no-speech', 'aborted' → onend ile yönetilir
-}
-
-// ─── Tanıma bitti ────────────────────────────────────────────────────────────
-function handleRecognitionEnd() {
-  if (recState === 'stopping') { recState = 'idle'; return; }
-  if (!oyunBasladi) { recState = 'idle'; return; }
-  if (lastError === 'not-allowed' || lastError === 'service-not-allowed') { recState = 'idle'; return; }
-
-  // DÜZELTME: recState'i önce idle yap, sonra restart
-  recState = 'idle';
-  if (!seslendirmeAktif) {
-    safeRestart();
-  }
-  // seslendirme aktifse, seslendir().onend içinde safeRestart çağrılacak
 }
 
 // ─── Oyunu sıfırla ───────────────────────────────────────────────────────────
@@ -812,23 +905,21 @@ function oyunuSifirla() {
   score               = 0;
   yanlisSayisi        = 0;
   ustUsteDogruSayisi  = 0;
-  lastError           = null;
-  seslendirmeAktif    = false;
   scoreDisplay.textContent = '0';
   interimText.textContent  = '';
   feedbackBubble.className = 'feedback-bubble';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
   levelOverlay.classList.remove('visible');
-  if (feedbackTimer) clearTimeout(feedbackTimer);
+  if (feedbackTimer) { clearTimeout(feedbackTimer); feedbackTimer = null; }
 }
 
 // ─── Buton işleyicileri ───────────────────────────────────────────────────────
 btnStart.addEventListener('click', function() {
   if (!SR) return;
-  if (recState === 'starting' || recState === 'listening') return;
+  if (SpeechController.isListening()) return;
 
-  // Ses bağlamını aç (iOS/Safari için gerekli)
+  // Safari/iOS için ses bağlamını kullanıcı etkileşimiyle başlat
   if (window.speechSynthesis) {
     var dummy = new SpeechSynthesisUtterance('');
     dummy.volume = 0;
@@ -839,17 +930,15 @@ btnStart.addEventListener('click', function() {
   btnStop.disabled  = false;
   oyunBasladi       = true;
 
+  SpeechController.stopAll();
   oyunuSifirla();
   kelimeyiYukle();
-  // DÜZELTME: kelimeyiYukle seslendirme yapar ve onend'de mikrofon açar
-  // Bu yüzden burada startRecognition çağırmıyoruz
-  // seslendir().onend callback'i startRecognition'ı çağıracak
+  // kelimeyiYukle → SpeechController.speak → onend → startListening otomatik
 });
 
 btnStop.addEventListener('click', function() {
   oyunBasladi = false;
-  window.speechSynthesis.cancel();
-  stopRecognition();
+  SpeechController.stopAll();
   btnStart.disabled = false;
   btnStop.disabled  = true;
   btnGec.disabled   = true;
@@ -866,7 +955,6 @@ btnGec.addEventListener('click', function() {
 
 btnNextLevel.addEventListener('click', function() {
   sonrakiSeviyeyeGec();
-  // kelimeyiYukle -> seslendir -> onend -> startRecognition
 });
 </script>
 </body>
