@@ -125,6 +125,26 @@
     gap: 16px;
     flex-wrap: wrap;
     min-height: 120px;
+    position: relative;
+  }
+
+  .btn-skip {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    background: transparent;
+    border: 1px solid var(--surface2);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-family: 'Baloo 2', cursive;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-skip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .word {
@@ -335,7 +355,9 @@
     </div>
   </div>
 
-  <div class="word-card" id="wordCard"></div>
+  <div class="word-card" id="wordCard">
+    <button class="btn-skip" id="btnSkip">Cümleyi Geç</button>
+  </div>
 
   <div class="mic-area">
     <div class="mic-indicator" id="micIndicator">🎤</div>
@@ -384,6 +406,7 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 // ─── DOM referansları ─────────────────────────────────────────────────────────
 const btnStart       = document.getElementById('btnStart');
 const btnStop        = document.getElementById('btnStop');
+const btnSkip        = document.getElementById('btnSkip');
 const wordCard       = document.getElementById('wordCard');
 const scoreDisplay   = document.getElementById('scoreDisplay');
 const micIndicator   = document.getElementById('micIndicator');
@@ -1031,6 +1054,27 @@ btnStart.addEventListener('click', () => {
 
 btnStop.addEventListener('click', () => {
   SpeechController.stopAll();
+  setTimeout(() => { btnStart.click(); }, 250);
+});
+
+btnSkip.addEventListener('click', () => {
+  SpeechController.stopAll();
+  cumleIndex++;
+  if (cumleIndex >= CUMLE_GRUPLARI[grupIndex].length) {
+    cumleIndex = 0;
+    if (grupIndex < CUMLE_GRUPLARI.length - 1) {
+      grupIndex++;
+    }
+  }
+  currentWordIndex   = 0;
+  score              = 0;
+  processedWordCount = 0;
+  yanlisSayac        = 0;
+  scoreDisplay.textContent = '0';
+  interimText.textContent  = '';
+  congratsBanner.classList.remove('visible');
+  errorMsg.classList.remove('visible');
+  oyunuKur();
   setTimeout(() => { btnStart.click(); }, 250);
 });
 
