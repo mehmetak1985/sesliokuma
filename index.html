@@ -168,7 +168,7 @@
     background: rgba(239, 71, 111, 0.15);
     border-color: var(--red);
     color: var(--red);
-    animation: shake 0.4s ease;
+    animation: shake 0.25s ease;
   }
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
@@ -767,19 +767,37 @@ function validateWord(konusulanKelime) {
 
   } else {
     // ❌ Yanlış
-    span.className = 'word wrong';
     yanlisSayac++;
 
-    setTimeout(() => {
-      if (currentWordIndex < targetWords.length && wordSpans[currentWordIndex] === span) {
-        span.className = 'word active';
-      }
-    }, 400);
+    if (yanlisSayac === 1) {
+      // İlk yanlış: hafif sarı ipucu efekti
+      span.style.transform   = 'scale(1.06)';
+      span.style.background  = 'rgba(255,209,102,0.18)';
+      span.style.borderColor = 'var(--yellow)';
+      span.style.color       = 'var(--yellow)';
+      setTimeout(() => {
+        if (currentWordIndex < targetWords.length && wordSpans[currentWordIndex] === span) {
+          span.style.transform   = '';
+          span.style.background  = '';
+          span.style.borderColor = '';
+          span.style.color       = '';
+          span.className = 'word active';
+        }
+      }, 250);
+    } else {
+      // 2. ve sonraki yanlış: shake animasyonu
+      span.className = 'word wrong';
+      setTimeout(() => {
+        if (currentWordIndex < targetWords.length && wordSpans[currentWordIndex] === span) {
+          span.className = 'word active';
+        }
+      }, 250);
+    }
 
     // 2. yanlışta telaffuzu seslendir
     if (yanlisSayac >= 2) {
       yanlisSayac = 0;
-      SpeechController.speakCorrection(hedef, { rate: 0.78, pitch: 1.05 });
+      SpeechController.speakCorrection(hedef, { rate: 0.72, pitch: 1.05 });
     }
   }
 }
@@ -798,6 +816,9 @@ function endGame() {
   btnStop.disabled  = true;
   btnStart.disabled = false;
   micStatus.textContent = '🎉 Harika iş çıkardın!';
+
+  // 2 saniye sonra otomatik yeniden başlat
+  setTimeout(() => { btnStart.click(); }, 2000);
 }
 
 // ─── Hata mesajı göster ───────────────────────────────────────────────────────
