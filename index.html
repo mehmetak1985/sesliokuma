@@ -662,7 +662,7 @@ const SpeechController = (function () {
       if (recState === 'listening' && !isSpeaking && currentWordIndex < targetWords.length) {
         _stop(true); // sessizlik → restart
       }
-    }, 1800);
+    }, 3500);
   }
 
   // ── Recognition iç inşa ───────────────────────────────────────────────
@@ -721,6 +721,16 @@ const SpeechController = (function () {
         for (let a = 0; a < altTokenler.length; a++) {
           const tok = altTokenler[a][t];
           if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break; }
+        }
+        // Pozisyon eşleşmedi — tüm alternatiflerde herhangi bir pozisyonda ara
+        if (!bulunan) {
+          for (let a = 0; a < altTokenler.length; a++) {
+            for (let p = 0; p < altTokenler[a].length; p++) {
+              const tok = altTokenler[a][p];
+              if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break; }
+            }
+            if (bulunan) break;
+          }
         }
         // Eşleşme yoksa ana token'ı kullan (yanlış olarak işlenir)
         validateWord(bulunan || anaTokenler[t]);
