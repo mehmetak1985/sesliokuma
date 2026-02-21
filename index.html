@@ -879,7 +879,18 @@ function endGame() {
   // 2 saniye sonra sonraki cümleye geç
   setTimeout(() => {
     cumleIndex++;
-    btnStart.click();
+    currentWordIndex   = 0;
+    score              = 0;
+    processedWordCount = 0;
+    yanlisSayac        = 0;
+    scoreDisplay.textContent = '0';
+    interimText.textContent  = '';
+    congratsBanner.classList.remove('visible');
+    errorMsg.classList.remove('visible');
+    btnStop.disabled  = false;
+    btnStart.disabled = false;
+    oyunuKur();
+    SpeechController.startListening();
   }, 2000);
 }
 
