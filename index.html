@@ -398,17 +398,116 @@ if (!SpeechRecognition) {
   btnStart.disabled = true;
 }
 
-// ─── Cümle listesi ───────────────────────────────────────────────────────────
-const CUMLELER = [
-  "Mina balık tut",
-  "Arda araba sür",
-  "Lale çanta al",
-  "Kamil kalem bul",
-  "Duru masa sil",
-  "Ali topu at"
+// ─── Cümle listesi (MEB Harf Grupları) ───────────────────────────────────────
+// Grup 1: E L A K İ N
+// Grup 2: + O M U T Ü Y
+// Grup 3: + Ö R I(=ı) D S B
+// Grup 4: + Z Ç G Ş C P
+// Grup 5: + H V Ğ F J
+// Her cümle doğrulanmıştır: yalnızca ilgili ve önceki grupların harflerini içerir.
+
+const CUMLE_GRUPLARI = [
+  // ── Grup 1: E L A K İ N ──────────────────────────────────────────────────
+  [
+    "Ali kal",
+    "Lale al",
+    "İnek kal",
+    "Ekin al",
+    "Kale al",
+    "Ali kale",
+    "İnek al",
+    "Kel kal",
+    "Lale kal",
+    "Ali ile kal",
+    "İnek kale",
+    "Ekin ile al",
+    "Kale kal",
+    "Ali inek",
+    "Lale ile kal",
+  ],
+  // ── Grup 2: + O M U T Ü Y ───────────────────────────────────────────────
+  [
+    "Mete kal",
+    "Ütü al",
+    "Yol kal",
+    "Okul al",
+    "Mutlu ol",
+    "Mete yolu al",
+    "Tüm yol kal",
+    "Yolun otu",
+    "Mutlu lale",
+    "Okulun yolu",
+    "Ütüyü al",
+    "Ütü koy",
+    "Mete okul",
+    "Tüm okul",
+    "Yolu taklit et",
+  ],
+  // ── Grup 3: + Ö R I(ı) D S B ────────────────────────────────────────────
+  [
+    "Arı bal al",
+    "Balık al",
+    "Bırak onu",
+    "Dere kal",
+    "Resim kal",
+    "Söyle bana",
+    "Dondurma al",
+    "Araba sür",
+    "Bal kadar",
+    "Sıra kal",
+    "Bırak al",
+    "Dere balık",
+    "Arı uyu",
+    "Ördek al",
+    "Büyük ördek",
+  ],
+  // ── Grup 4: + Z Ç G Ş C P ───────────────────────────────────────────────
+  [
+    "Çiçek al",
+    "Gül bak",
+    "Şeker al",
+    "Çanta bul",
+    "Pazara git",
+    "Gözlük al",
+    "Çocuk gel",
+    "Şeker çok",
+    "Çilek al",
+    "Pazarda bul",
+    "Gözleri sil",
+    "Çanta doldur",
+    "Şeker bul",
+    "Çiçek bak",
+    "Pazarda kal",
+  ],
+  // ── Grup 5: + H V Ğ F J ─────────────────────────────────────────────────
+  [
+    "Hava güzel",
+    "Filmi gör",
+    "Vahşi hayvan",
+    "Hafif gel",
+    "Varmak için git",
+    "Filmi ver",
+    "Havaya bak",
+    "Ağaç var",
+    "Hava çok güzel",
+    "Filmi bitir",
+    "Fırın al",
+    "Havuz var",
+    "Fındık al",
+    "Hızla gel",
+    "Yavaş git",
+  ],
 ];
+
+// Gruplar sırayla ilerler; her grup bitince sonraki başlar
+let grupIndex  = 0;
 let cumleIndex = 0;
-const HEDEF_METIN = () => CUMLELER[cumleIndex % CUMLELER.length];
+
+const CUMLELER = CUMLE_GRUPLARI[grupIndex];
+const HEDEF_METIN = () => {
+  const grup = CUMLE_GRUPLARI[grupIndex];
+  return grup[cumleIndex % grup.length];
+};
 
 // ─── Oyun durumu ──────────────────────────────────────────────────────────────
 let targetWords        = [];
@@ -879,6 +978,14 @@ function endGame() {
   // 2 saniye sonra sonraki cümleye geç
   setTimeout(() => {
     cumleIndex++;
+    // Mevcut grubun tüm cümleleri bitti → sonraki gruba geç
+    if (cumleIndex >= CUMLE_GRUPLARI[grupIndex].length) {
+      cumleIndex = 0;
+      if (grupIndex < CUMLE_GRUPLARI.length - 1) {
+        grupIndex++;
+        micStatus.textContent = '🌟 Yeni harf grubu başlıyor!';
+      }
+    }
     currentWordIndex   = 0;
     score              = 0;
     processedWordCount = 0;
