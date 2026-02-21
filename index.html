@@ -753,10 +753,8 @@ function kelimeyiYukle() {
   btnGec.disabled = false;
   updateInfoBar();
 
-  // Öğretmen modeli: yeni kelimeyi sesli oku, bittikten sonra mikrofon açılır
-  setTimeout(function() {
-    SpeechController.speak(metin, { rate: 0.78, pitch: 1.10 });
-  }, 300);
+  // TTS YOK — kelime ekranda gösterilir, mikrofon hemen açılır
+  SpeechController.startListening();
 }
 
 // ─── Kelimeyi geç ────────────────────────────────────────────────────────────
@@ -918,13 +916,6 @@ function oyunuSifirla() {
 btnStart.addEventListener('click', function() {
   if (!SR) return;
   if (SpeechController.isListening()) return;
-
-  // Safari/iOS için ses bağlamını kullanıcı etkileşimiyle başlat
-  if (window.speechSynthesis) {
-    var dummy = new SpeechSynthesisUtterance('');
-    dummy.volume = 0;
-    window.speechSynthesis.speak(dummy);
-  }
 
   btnStart.disabled = true;
   btnStop.disabled  = false;
