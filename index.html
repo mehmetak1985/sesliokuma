@@ -711,6 +711,20 @@ const SpeechController = (function () {
     interimText.textContent = event.results[event.results.length - 1][0].transcript;
     resetSilenceTimer();
 
+    // ── Interim: sadece tam eşleşme kabul et ─────────────────────────────
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) continue;           // final'ler aşağıda işlenir
+      if (currentWordIndex >= targetWords.length) break;
+      const hedef   = targetWords[currentWordIndex];
+      const tokenler = normalizeText(event.results[i][0].transcript);
+      for (let t = 0; t < tokenler.length; t++) {
+        if (currentWordIndex >= targetWords.length) break;
+        if (tokenler[t] === targetWords[currentWordIndex]) {
+          validateWord(tokenler[t]);
+        }
+      }
+    }
+
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (!event.results[i].isFinal) continue;
       const sonuc = event.results[i];
