@@ -1,18 +1,8 @@
 "use strict";
 
 // ─── Yıldız arka planı ───────────────────────────────────────────────────────
-(function yaratYildizlar() {
-  const starsEl  = document.getElementById('stars');
-  const fragment = document.createDocumentFragment();
-  for (let i = 0; i < 80; i++) {
-    const s    = document.createElement('div');
-    s.className = 'star';
-    const boyut = Math.random() * 3 + 1;
-    s.style.cssText = `width:${boyut}px;height:${boyut}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*5}s;`;
-    fragment.appendChild(s);
-  }
-  starsEl.appendChild(fragment);
-})();
+// yaratYildizlar — .stars gizli, devre dışı
+// (function yaratYildizlar() { ... })();
 
 // ─── Tarayıcı desteği ────────────────────────────────────────────────────────
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1616,7 +1606,7 @@ function koyunRecBuild() {
 
     if (event.results[event.results.length - 1].isFinal) {
       koyunInterimText.textContent = '';
-      koyunCevapKontrol(transcript);
+      _koyunSesliKontrol(transcript);
     }
   };
 
@@ -1749,11 +1739,23 @@ function kelimeOyunuGoster() {
 // ═══════════════════════════════════════════════════════════════
 
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let _audioCtx = null;
+
+function _getAudioCtx() {
+  if (!AudioCtx) return null;
+  if (!_audioCtx || _audioCtx.state === 'closed') {
+    try { _audioCtx = new AudioCtx(); } catch(e) { return null; }
+  }
+  if (_audioCtx.state === 'suspended') {
+    _audioCtx.resume().catch(() => {});
+  }
+  return _audioCtx;
+}
 
 function sesCal(tip) {
-  if (!AudioCtx) return;
+  const ctx = _getAudioCtx();
+  if (!ctx) return;
   try {
-    const ctx = new AudioCtx();
 
     if (tip === 'dogru') {
       // Neşeli iki nota: do → mi
@@ -1786,17 +1788,11 @@ function sesCal(tip) {
       });
     }
 
-    // Context'i otomatik kapat
-    setTimeout(() => ctx.close(), 1000);
   } catch(e) {}
 }
 
-// ─── koyunCevapKontrol'e ses entegrasyonu ─────────────────────
-// Orijinal fonksiyonu saklayıp ses eklenmiş versiyonla değiştir
-const _koyunCevapKontrolOrijinal = koyunCevapKontrol;
-
-// Global scope'ta override et
-window._koyunSesliKontrol = function(soylenen) {
+// ─── Ses entegreli cevap kontrolü ────────────────────────────
+function _koyunSesliKontrol(soylenen) {
   const hedef  = koyunSiralamis[koyunIndex];
   const tokenler = normalizeText(soylenen);
   const dogru  = tokenler.some(t => kelimeEslesir(t, hedef));
@@ -1845,18 +1841,4 @@ window._koyunSesliKontrol = function(soylenen) {
   }
 };
 
-// koyunRec.onresult'ta _koyunSesliKontrol çağrılsın diye
-// koyunRecBuild fonksiyonunu güncelle — onresult'u override et
-const _koyunRecBuildOrijinal = koyunRecBuild;
-koyunRecBuild = function() {
-  _koyunRecBuildOrijinal();
-  // onresult'u ses entegreli versiyonla değiştir
-  koyunRec.onresult = (event) => {
-    const transcript = event.results[event.results.length - 1][0].transcript;
-    koyunInterimText.textContent = transcript;
-    if (event.results[event.results.length - 1].isFinal) {
-      koyunInterimText.textContent = '';
-      window._koyunSesliKontrol(transcript);
-    }
-  };
-};
+// koyunRecBuild içinde _koyunSesliKontrol direkt çağrılıyor — override gerekmez
