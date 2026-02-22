@@ -123,84 +123,6 @@
     transform: scale(0.95);
   }
 
-  .mode-selector {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-  }
-  .mode-label {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    letter-spacing: 2px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-  }
-  .story-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 16px;
-    border-radius: 50px;
-    border: 2px solid var(--surface2);
-    background: transparent;
-    color: var(--text-muted);
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .story-btn.active {
-    border-color: #a78bfa;
-    background: rgba(167,139,250,0.15);
-    color: #a78bfa;
-    box-shadow: 0 0 12px rgba(167,139,250,0.3);
-  }
-  .story-btn:hover:not(.active) {
-    border-color: var(--text-muted);
-    color: var(--text);
-  }
-
-  .story-progress {
-    display: none;
-    width: 100%;
-    background: var(--surface);
-    border: 2px solid var(--surface2);
-    border-radius: var(--radius);
-    padding: 12px 20px;
-    box-shadow: var(--shadow);
-  }
-  .story-progress.visible { display: block; }
-  .story-progress-title {
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: #a78bfa;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-  .story-progress-bar-wrap {
-    background: var(--surface2);
-    border-radius: 8px;
-    height: 8px;
-    overflow: hidden;
-  }
-  .story-progress-bar {
-    height: 100%;
-    border-radius: 8px;
-    background: linear-gradient(90deg, #a78bfa, #7c3aed);
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-  .story-progress-text {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-top: 5px;
-    text-align: right;
-  }
-
   .score-card {
     background: var(--surface);
     border: 2px solid var(--surface2);
@@ -460,6 +382,241 @@
   }
   .error-msg.visible { display: block; }
 
+
+  /* ─── Sekme şeridi ──────────────────────────────────────────────────────── */
+  .tab-strip {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border: 2px solid var(--surface2);
+    border-radius: 50px;
+    padding: 4px;
+    margin-top: 10px;
+  }
+  .tab-btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 6px 18px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+  }
+  .tab-btn.active {
+    background: #a78bfa;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(167,139,250,0.4);
+  }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+
+  /* ─── Hikaye ilerleme çubuğu ─────────────────────────────────────────────── */
+  .story-progress {
+    display: none;
+    width: 100%;
+    background: var(--surface);
+    border: 2px solid var(--surface2);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    box-shadow: var(--shadow);
+  }
+  .story-progress.visible { display: block; }
+  .story-progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .story-progress-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #a78bfa;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .story-nav-btn {
+    background: var(--surface2);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #a78bfa;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .story-nav-btn:hover {
+    background: #a78bfa;
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(167,139,250,0.4);
+  }
+  .story-nav-btn:active { transform: scale(0.95); }
+  .story-progress-bar-wrap {
+    background: var(--surface2);
+    border-radius: 8px;
+    height: 7px;
+    overflow: hidden;
+  }
+  .story-progress-bar {
+    height: 100%;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #a78bfa, #7c3aed);
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .story-progress-text {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+    text-align: right;
+  }
+
+  /* ─── Rapor overlay ──────────────────────────────────────────────────────── */
+  .report-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 18, 30, 0.88);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .report-overlay.visible {
+    display: flex;
+    animation: reportFadeIn 0.35s ease;
+  }
+  @keyframes reportFadeIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .report-card {
+    background: var(--surface);
+    border: 2px solid var(--surface2);
+    border-radius: 28px;
+    padding: 32px 36px;
+    width: min(92vw, 440px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+  }
+  .report-emoji { font-size: 3rem; }
+  .report-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--accent);
+  }
+  .report-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: -10px;
+  }
+  .report-stats {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .report-stat {
+    background: var(--surface2);
+    border-radius: 16px;
+    padding: 12px 20px;
+    min-width: 90px;
+    flex: 1;
+  }
+  .report-stat-val {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+  .report-stat-val.green  { color: var(--green); }
+  .report-stat-val.red    { color: var(--red); }
+  .report-stat-val.yellow { color: var(--yellow); }
+  .report-stat-lbl {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .report-hard-words {
+    background: var(--surface2);
+    border-radius: 14px;
+    padding: 10px 16px;
+    width: 100%;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .report-hard-words strong { color: var(--red); font-weight: 700; }
+  .hw-title {
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .report-btn-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+  }
+  .report-btn {
+    flex: 1;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    padding: 12px 10px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .report-btn:active { transform: scale(0.96); }
+  .report-btn.primary {
+    background: linear-gradient(135deg, var(--green), #04b88a);
+    color: #0a2a1f;
+    box-shadow: 0 4px 14px rgba(6,214,160,0.3);
+  }
+  .report-btn.secondary {
+    background: var(--surface2);
+    color: var(--text-muted);
+  }
+  .report-timer-bar-wrap {
+    width: 100%;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .report-timer-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    transition: width linear;
+  }
+
   .no-support {
     display: none;
     color: var(--accent);
@@ -489,14 +646,18 @@
         <button class="lvl-btn" data-level="4" style="--lvl-color:#118ab2">5</button>
       </div>
     </div>
-    <div class="mode-selector">
-      <span class="mode-label">MOD</span>
-      <button class="story-btn" id="btnHikaye">📖 Hikaye</button>
+    <div class="tab-strip">
+      <button class="tab-btn active" id="tabAlistirma">📝 Alıştırma</button>
+      <button class="tab-btn" id="tabHikaye">📖 Hikaye</button>
     </div>
   </div>
 
   <div class="story-progress" id="storyProgress">
-    <div class="story-progress-title" id="storyTitle">📖 Hikaye</div>
+    <div class="story-progress-header">
+      <button class="story-nav-btn" id="btnHikayeGeri">&#9664;</button>
+      <div class="story-progress-title" id="storyTitle">📖 Hikaye</div>
+      <button class="story-nav-btn" id="btnHikayeIleri">&#9654;</button>
+    </div>
     <div class="story-progress-bar-wrap">
       <div class="story-progress-bar" id="storyBar"></div>
     </div>
@@ -538,6 +699,39 @@
 
 </div>
 
+<!-- ─── Rapor Overlay ──────────────────────────────────────────────────────── -->
+<div class="report-overlay" id="reportOverlay">
+  <div class="report-card">
+    <div class="report-emoji" id="reportEmoji">🌟</div>
+    <div class="report-title" id="reportTitle">Bölüm Tamamlandı!</div>
+    <div class="report-subtitle" id="reportSubtitle"></div>
+    <div class="report-stats">
+      <div class="report-stat">
+        <div class="report-stat-val green" id="reportDogru">0</div>
+        <div class="report-stat-lbl">Doğru</div>
+      </div>
+      <div class="report-stat">
+        <div class="report-stat-val red" id="reportYanlis">0</div>
+        <div class="report-stat-lbl">Yanlış</div>
+      </div>
+      <div class="report-stat">
+        <div class="report-stat-val yellow" id="reportPuan">0</div>
+        <div class="report-stat-lbl">Puan</div>
+      </div>
+    </div>
+    <div class="report-hard-words" id="reportHardWords" style="display:none">
+      <span class="hw-title">En çok takılan kelimeler</span>
+      <span id="reportHardList"></span>
+    </div>
+    <div class="report-timer-bar-wrap" id="reportTimerWrap" style="display:none">
+      <div class="report-timer-bar" id="reportTimerBar" style="width:100%"></div>
+    </div>
+    <div class="report-btn-row" id="reportBtnRow">
+      <button class="report-btn primary" id="reportBtnNext">▶ Devam</button>
+    </div>
+  </div>
+</div>
+
 <script>
 "use strict";
 
@@ -569,12 +763,28 @@ const micStatus      = document.getElementById('micStatus');
 const interimText    = document.getElementById('interimText');
 const congratsBanner = document.getElementById('congratsBanner');
 const errorMsg       = document.getElementById('errorMsg');
-const noSupport      = document.getElementById('noSupport');
-const btnHikaye      = document.getElementById('btnHikaye');
-const storyProgress  = document.getElementById('storyProgress');
-const storyTitle     = document.getElementById('storyTitle');
-const storyBar       = document.getElementById('storyBar');
+const noSupport         = document.getElementById('noSupport');
+const tabAlistirma      = document.getElementById('tabAlistirma');
+const tabHikaye         = document.getElementById('tabHikaye');
+const storyProgress     = document.getElementById('storyProgress');
+const storyTitle        = document.getElementById('storyTitle');
+const storyBar          = document.getElementById('storyBar');
 const storyProgressText = document.getElementById('storyProgressText');
+const btnHikayeGeri     = document.getElementById('btnHikayeGeri');
+const btnHikayeIleri    = document.getElementById('btnHikayeIleri');
+const reportOverlay     = document.getElementById('reportOverlay');
+const reportEmoji       = document.getElementById('reportEmoji');
+const reportTitle       = document.getElementById('reportTitle');
+const reportSubtitle    = document.getElementById('reportSubtitle');
+const reportDogru       = document.getElementById('reportDogru');
+const reportYanlis      = document.getElementById('reportYanlis');
+const reportPuan        = document.getElementById('reportPuan');
+const reportHardWords   = document.getElementById('reportHardWords');
+const reportHardList    = document.getElementById('reportHardList');
+const reportTimerWrap   = document.getElementById('reportTimerWrap');
+const reportTimerBar    = document.getElementById('reportTimerBar');
+const reportBtnRow      = document.getElementById('reportBtnRow');
+const reportBtnNext     = document.getElementById('reportBtnNext');
 
 if (!SpeechRecognition) {
   noSupport.classList.add('visible');
@@ -718,14 +928,43 @@ const HIKAYE_GRUPLARI = [
   ]
 ];
 
+const HIKAYE_ISIMLERI = ['Henna ve Kediler', 'Mustafa ve Ayakkabısı'];
+
+// ─── localStorage yardımcıları ────────────────────────────────────────────────
+const LS_KEY = 'sesliOkumaOyunu_v1';
+function kaydet() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      grupIndex, cumleIndex, hikayeModu, hikayeIndex, hikayeCumle, totalScore
+    }));
+  } catch(e) {}
+}
+function yukle() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+    if (!d) return;
+    grupIndex   = d.grupIndex   || 0;
+    cumleIndex  = d.cumleIndex  || 0;
+    hikayeModu  = d.hikayeModu  || false;
+    hikayeIndex = d.hikayeIndex || 0;
+    hikayeCumle = d.hikayeCumle || 0;
+    totalScore  = d.totalScore  || 0;
+  } catch(e) {}
+}
+
 // Gruplar sırayla ilerler; her grup bitince sonraki başlar
 let grupIndex  = 0;
 let cumleIndex = 0;
 
 // ─── Hikaye Modu Durumu ───────────────────────────────────────────────────────
 let hikayeModu    = false;
-let hikayeIndex   = 0;  // hangi hikaye
-let hikayeCumle   = 0;  // hikayede kaçıncı cümle
+let hikayeIndex   = 0;
+let hikayeCumle   = 0;
+
+// ─── Bölüm istatistikleri (rapor için) ───────────────────────────────────────
+let bolumDogru    = 0;
+let bolumYanlis   = 0;
+let kelimeHatalar = {};  // { kelime: hataAdedi }
 
 const CUMLELER = CUMLE_GRUPLARI[grupIndex];
 const HEDEF_METIN = () => {
@@ -1100,33 +1339,29 @@ function levenshtein(a, b) {
   return dp[m][n];
 }
 
-// ─── Toleranslı eşleşme ───────────────────────────────────────────────────────
-// hikayeMod=true ise daha sıkı eşik uygulanır
+// ─── Toleranslı eşleşme (katmanlı, mod farkındalıklı) ────────────────────────
 function kelimeEslesir(konusulan, hedef) {
   if (konusulan === hedef) return true;
-  const dist   = levenshtein(konusulan, hedef);
-  const maxLen = Math.max(hedef.length, konusulan.length);
-  const dogruluk = (1 - dist / maxLen) * 100;  // yüzde olarak
+  const dist     = levenshtein(konusulan, hedef);
+  const maxLen   = Math.max(hedef.length, konusulan.length);
+  const dogruluk = (1 - dist / maxLen) * 100;
 
   if (hikayeModu) {
-    // ── Hikaye modu: daha sıkı eşikler ──────────────────────────────
+    // ── Hikaye modu: daha sıkı ────────────────────────────────────────
     let esik;
-    if (hedef.length <= 5)       esik = 75;
-    else if (hedef.length <= 8)  esik = 80;
-    else                         esik = 85;
+    if (hedef.length <= 5)      esik = 75;
+    else if (hedef.length <= 8) esik = 80;
+    else                        esik = 85;
     return dogruluk >= esik;
   }
 
-  // ── Normal mod: toleranslı, R/L gelişmemiş dil için esnek ────────
-  // Levenshtein mesafe toleransı
+  // ── Normal mod: R/L gelişmekte olan dil için toleranslı ───────────
   let tolerans;
   if (hedef.length <= 3)      tolerans = 1;
   else if (hedef.length <= 5) tolerans = 2;
   else if (hedef.length <= 8) tolerans = 3;
   else                        tolerans = 4;
 
-  // Doğruluk eşiği — düşürüldü (R/L telaffuz zorluğu için)
-  // Eski: %70 sabit → Yeni: uzunluğa göre %55-65
   let minDogruluk;
   if (hedef.length <= 4)      minDogruluk = 55;
   else if (hedef.length <= 6) minDogruluk = 62;
@@ -1200,6 +1435,7 @@ function validateWord(konusulanKelime) {
     span.className = 'word correct';
     score      += 10;
     totalScore += 10;
+    bolumDogru++;
     yanlisSayac = 0;   // doğru olunca yanlış sayacını sıfırla
     currentWordIndex++;
     requestAnimationFrame(updateUI);
@@ -1211,6 +1447,8 @@ function validateWord(konusulanKelime) {
   } else {
     // ❌ Yanlış
     yanlisSayac++;
+    bolumYanlis++;
+    kelimeHatalar[hedef] = (kelimeHatalar[hedef] || 0) + 1;
 
     if (yanlisSayac === 1) {
       // İlk yanlış: hafif sarı ipucu efekti
@@ -1245,6 +1483,101 @@ function validateWord(konusulanKelime) {
   }
 }
 
+// ─── Rapor göster ────────────────────────────────────────────────────────────
+function gosterRapor(opts) {
+  // opts: { emoji, title, subtitle, autoMs (0=manuel), onDevam, onTekrar }
+  reportEmoji.textContent    = opts.emoji   || '🌟';
+  reportTitle.textContent    = opts.title   || 'Tamamlandı!';
+  reportSubtitle.textContent = opts.subtitle || '';
+  reportDogru.textContent    = bolumDogru;
+  reportYanlis.textContent   = bolumYanlis;
+  reportPuan.textContent     = score;
+
+  // En çok hata yapılan kelimeler (max 3)
+  const hatalar = Object.entries(kelimeHatalar)
+    .sort((a,b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([k]) => k);
+  if (hatalar.length > 0) {
+    reportHardList.innerHTML = hatalar.map(k => `<strong>${k}</strong>`).join('  ·  ');
+    reportHardWords.style.display = 'block';
+  } else {
+    reportHardWords.style.display = 'none';
+  }
+
+  // Butonları ayarla
+  reportBtnRow.innerHTML = '';
+  if (opts.onTekrar) {
+    const btn = document.createElement('button');
+    btn.className = 'report-btn secondary';
+    btn.textContent = '🔄 Tekrar Oku';
+    btn.onclick = () => { kapatRapor(); opts.onTekrar(); };
+    reportBtnRow.appendChild(btn);
+  }
+  const btnNext = document.createElement('button');
+  btnNext.className = 'report-btn primary';
+  btnNext.textContent = opts.nextLabel || '▶ Devam';
+  btnNext.onclick = () => { kapatRapor(); opts.onDevam(); };
+  reportBtnRow.appendChild(btnNext);
+
+  // Otomatik geçiş timer bar
+  if (opts.autoMs && opts.autoMs > 0) {
+    reportTimerWrap.style.display = 'block';
+    reportTimerBar.style.transition = 'none';
+    reportTimerBar.style.width = '100%';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        reportTimerBar.style.transition = `width ${opts.autoMs}ms linear`;
+        reportTimerBar.style.width = '0%';
+      });
+    });
+    const t = setTimeout(() => { kapatRapor(); opts.onDevam(); }, opts.autoMs);
+    reportBtnRow.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => clearTimeout(t), { once: true });
+    });
+  } else {
+    reportTimerWrap.style.display = 'none';
+  }
+
+  reportOverlay.classList.add('visible');
+}
+
+function kapatRapor() {
+  reportOverlay.classList.remove('visible');
+}
+
+// ─── Bölüm istatistiklerini sıfırla ──────────────────────────────────────────
+function sifirlaIstatistik() {
+  bolumDogru    = 0;
+  bolumYanlis   = 0;
+  kelimeHatalar = {};
+}
+
+// ─── Sonraki cümleye geç (ortak) ─────────────────────────────────────────────
+function sonrakiCumleyeGec() {
+  if (hikayeModu) {
+    hikayeCumle++;
+    const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
+    if (hikayeCumle >= hikaye.length) {
+      hikayeCumle = 0;
+      if (hikayeIndex < HIKAYE_GRUPLARI.length - 1) hikayeIndex++;
+      else hikayeIndex = 0;
+    }
+    updateStoryProgress();
+  } else {
+    cumleIndex++;
+    if (cumleIndex >= CUMLE_GRUPLARI[grupIndex].length) {
+      cumleIndex = 0;
+      if (grupIndex < CUMLE_GRUPLARI.length - 1) {
+        grupIndex++;
+        micStatus.textContent = '🌟 Yeni harf grubu başlıyor!';
+        syncLevelButtons();
+      }
+    }
+  }
+  kaydet();
+}
+
 // ─── Oyun sonu ────────────────────────────────────────────────────────────────
 function endGame() {
   SpeechController.stopAll();
@@ -1262,52 +1595,121 @@ function endGame() {
   btnStart.disabled = false;
   micStatus.textContent = '🎉 Harika iş çıkardın!';
 
-  // 2 saniye sonra sonraki cümleye geç
   if (endGameTimer) clearTimeout(endGameTimer);
-  endGameTimer = setTimeout(() => {
-    endGameTimer = null;
 
-    if (hikayeModu) {
-      // ── Hikaye modu ilerleme ──────────────────────────────────────
-      hikayeCumle++;
-      const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
-      if (hikayeCumle >= hikaye.length) {
-        // Hikaye bitti → sonraki hikayeye geç veya başa dön
-        hikayeCumle = 0;
-        if (hikayeIndex < HIKAYE_GRUPLARI.length - 1) {
-          hikayeIndex++;
-          micStatus.textContent = '📖 Yeni hikaye başlıyor!';
-        } else {
-          hikayeIndex = 0;
-          micStatus.textContent = '🌟 Tüm hikayeler bitti! Baştan başlıyor.';
-        }
-      }
-      updateStoryProgress();
+  if (hikayeModu) {
+    // ── Hikaye modunda: cümle bitti, bir sonraki cümleye geç (2sn otomatik)
+    // Hikayenin son cümlesi miydi? Kontrol et
+    const hikaye      = HIKAYE_GRUPLARI[hikayeIndex];
+    const sonCumle    = (hikayeCumle === hikaye.length - 1);
+
+    if (sonCumle) {
+      // Hikaye tamamen bitti → tam rapor, manuel geçiş
+      endGameTimer = setTimeout(() => {
+        endGameTimer = null;
+        congratsBanner.classList.remove('visible');
+        errorMsg.classList.remove('visible');
+        btnStop.disabled  = false;
+        btnStart.disabled = false;
+
+        const dogruYuzde = bolumDogru + bolumYanlis > 0
+          ? Math.round((bolumDogru / (bolumDogru + bolumYanlis)) * 100) : 100;
+        const emoji = dogruYuzde >= 90 ? '🏆' : dogruYuzde >= 70 ? '⭐' : '💪';
+
+        gosterRapor({
+          emoji,
+          title: '📖 Hikaye Bitti!',
+          subtitle: HIKAYE_ISIMLERI[hikayeIndex] + ' · %' + dogruYuzde + ' doğru',
+          autoMs: 0,
+          nextLabel: '▶ Sonraki Hikaye',
+          onTekrar: () => {
+            // Aynı hikayeyi başa sar
+            hikayeCumle = 0;
+            sifirlaIstatistik();
+            resetCumle();
+          },
+          onDevam: () => {
+            sonrakiCumleyeGec();
+            sifirlaIstatistik();
+            resetCumle();
+          }
+        });
+      }, 1200);
+
     } else {
-      // ── Normal mod ilerleme ───────────────────────────────────────
-      cumleIndex++;
-      if (cumleIndex >= CUMLE_GRUPLARI[grupIndex].length) {
-        cumleIndex = 0;
-        if (grupIndex < CUMLE_GRUPLARI.length - 1) {
-          grupIndex++;
-          micStatus.textContent = '🌟 Yeni harf grubu başlıyor!';
-          syncLevelButtons();
-        }
-      }
+      // Hikaye devam ediyor → 2sn sonra otomatik geç
+      endGameTimer = setTimeout(() => {
+        endGameTimer = null;
+        congratsBanner.classList.remove('visible');
+        errorMsg.classList.remove('visible');
+        btnStop.disabled  = false;
+        btnStart.disabled = false;
+        sifirlaIstatistik();
+        sonrakiCumleyeGec();
+        resetCumle();
+      }, 2000);
     }
 
-    currentWordIndex   = 0;
-    score              = 0;
-    processedWordCount = 0;
-    yanlisSayac        = 0;
-    interimText.textContent  = '';
-    congratsBanner.classList.remove('visible');
-    errorMsg.classList.remove('visible');
-    btnStop.disabled  = false;
-    btnStart.disabled = false;
-    oyunuKur();
-    SpeechController.startListening();
-  }, 2000);
+  } else {
+    // ── Normal mod: cümle bitti
+    // Bölümün son cümlesi miydi?
+    const sonCumle = (cumleIndex === CUMLE_GRUPLARI[grupIndex].length - 1);
+
+    if (sonCumle) {
+      // Bölüm bitti → rapor göster, 4sn otomatik geçiş
+      endGameTimer = setTimeout(() => {
+        endGameTimer = null;
+        congratsBanner.classList.remove('visible');
+        errorMsg.classList.remove('visible');
+        btnStop.disabled  = false;
+        btnStart.disabled = false;
+
+        const dogruYuzde = bolumDogru + bolumYanlis > 0
+          ? Math.round((bolumDogru / (bolumDogru + bolumYanlis)) * 100) : 100;
+        const emoji = dogruYuzde >= 90 ? '🏆' : dogruYuzde >= 70 ? '⭐' : '💪';
+        const bolumNo = grupIndex + 1;
+
+        gosterRapor({
+          emoji,
+          title: bolumNo + '. Bölüm Tamamlandı!',
+          subtitle: 'Harika iş çıkardın! %' + dogruYuzde + ' doğru',
+          autoMs: 5000,
+          nextLabel: '▶ Sonraki Bölüm',
+          onDevam: () => {
+            sonrakiCumleyeGec();
+            sifirlaIstatistik();
+            resetCumle();
+          }
+        });
+      }, 1200);
+
+    } else {
+      // Normal cümle geçişi
+      endGameTimer = setTimeout(() => {
+        endGameTimer = null;
+        congratsBanner.classList.remove('visible');
+        errorMsg.classList.remove('visible');
+        btnStop.disabled  = false;
+        btnStart.disabled = false;
+        sifirlaIstatistik();
+        sonrakiCumleyeGec();
+        resetCumle();
+      }, 2000);
+    }
+  }
+}
+
+// ─── Cümle sıfırla ve başlat (ortak) ─────────────────────────────────────────
+function resetCumle() {
+  currentWordIndex   = 0;
+  score              = 0;
+  processedWordCount = 0;
+  yanlisSayac        = 0;
+  interimText.textContent  = '';
+  congratsBanner.classList.remove('visible');
+  errorMsg.classList.remove('visible');
+  oyunuKur();
+  SpeechController.startListening();
 }
 
 // ─── Hata mesajı göster ───────────────────────────────────────────────────────
@@ -1325,6 +1727,8 @@ btnStart.addEventListener('click', () => {
   btnStop.disabled  = false;
 
   if (endGameTimer) { clearTimeout(endGameTimer); endGameTimer = null; }
+  kapatRapor();
+  sifirlaIstatistik();
   currentWordIndex   = 0;
   score              = 0;
   processedWordCount = 0;
@@ -1346,25 +1750,9 @@ btnStop.addEventListener('click', () => {
 btnSkip.addEventListener('click', () => {
   if (endGameTimer) { clearTimeout(endGameTimer); endGameTimer = null; }
   SpeechController.stopAll();
-  if (hikayeModu) {
-    hikayeCumle++;
-    const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
-    if (hikayeCumle >= hikaye.length) {
-      hikayeCumle = 0;
-      if (hikayeIndex < HIKAYE_GRUPLARI.length - 1) hikayeIndex++;
-      else hikayeIndex = 0;
-    }
-    updateStoryProgress();
-  } else {
-    cumleIndex++;
-    if (cumleIndex >= CUMLE_GRUPLARI[grupIndex].length) {
-      cumleIndex = 0;
-      if (grupIndex < CUMLE_GRUPLARI.length - 1) {
-        grupIndex++;
-        syncLevelButtons();
-      }
-    }
-  }
+  kapatRapor();
+  sifirlaIstatistik();
+  sonrakiCumleyeGec();
   currentWordIndex   = 0;
   score              = 0;
   processedWordCount = 0;
@@ -1379,16 +1767,23 @@ btnSkip.addEventListener('click', () => {
 // ─── Seviye butonları ─────────────────────────────────────────────────────────
 function syncLevelButtons() {
   document.querySelectorAll('.lvl-btn').forEach(btn => {
-    btn.classList.toggle('active', parseInt(btn.dataset.level) === grupIndex);
+    const aktif = !hikayeModu && parseInt(btn.dataset.level) === grupIndex;
+    btn.classList.toggle('active', aktif);
+    btn.style.opacity = hikayeModu ? '0.25' : '';
   });
+  tabAlistirma.classList.toggle('active', !hikayeModu);
+  tabHikaye.classList.toggle('active', hikayeModu);
 }
 
 document.querySelectorAll('.lvl-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    if (hikayeModu) return;
     const secilenGrup = parseInt(btn.dataset.level);
     if (secilenGrup === grupIndex) return;
     if (endGameTimer) { clearTimeout(endGameTimer); endGameTimer = null; }
     SpeechController.stopAll();
+    kapatRapor();
+    sifirlaIstatistik();
     grupIndex          = secilenGrup;
     cumleIndex         = 0;
     currentWordIndex   = 0;
@@ -1400,44 +1795,63 @@ document.querySelectorAll('.lvl-btn').forEach(btn => {
     errorMsg.classList.remove('visible');
     syncLevelButtons();
     oyunuKur();
+    kaydet();
     setTimeout(() => { btnStart.click(); }, 250);
   });
 });
 
-// ─── Hikaye ilerleme UI ──────────────────────────────────────────────────────
+// ─── Hikaye navigasyon butonları ─────────────────────────────────────────────
+function hikayeSecGit(hedefIndex) {
+  if (!hikayeModu) return;
+  if (endGameTimer) { clearTimeout(endGameTimer); endGameTimer = null; }
+  SpeechController.stopAll();
+  kapatRapor();
+  sifirlaIstatistik();
+  hikayeIndex        = ((hedefIndex % HIKAYE_GRUPLARI.length) + HIKAYE_GRUPLARI.length) % HIKAYE_GRUPLARI.length;
+  hikayeCumle        = 0;
+  currentWordIndex   = 0;
+  score              = 0;
+  processedWordCount = 0;
+  yanlisSayac        = 0;
+  interimText.textContent = '';
+  congratsBanner.classList.remove('visible');
+  errorMsg.classList.remove('visible');
+  updateStoryProgress();
+  kaydet();
+  oyunuKur();
+  setTimeout(() => { btnStart.click(); }, 250);
+}
+
+btnHikayeGeri.addEventListener('click',  () => hikayeSecGit(hikayeIndex - 1));
+btnHikayeIleri.addEventListener('click', () => hikayeSecGit(hikayeIndex + 1));
+
+// ─── Hikaye ilerleme UI ───────────────────────────────────────────────────────
 function updateStoryProgress() {
   if (!hikayeModu) return;
   const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
   const toplam = hikaye.length;
-  const mevcut = hikayeCumle + 1;
   const yuzde  = Math.round((hikayeCumle / toplam) * 100);
-  const isimler = ['📖 Henna ve Kediler', '📖 Mustafa ve Ayakkabısı'];
-  storyTitle.textContent       = isimler[hikayeIndex] || '📖 Hikaye';
-  storyBar.style.width         = yuzde + '%';
-  storyProgressText.textContent = mevcut + ' / ' + toplam;
+  storyTitle.textContent        = '📖 ' + HIKAYE_ISIMLERI[hikayeIndex];
+  storyBar.style.width          = yuzde + '%';
+  storyProgressText.textContent = (hikayeCumle + 1) + ' / ' + toplam;
 }
 
-// ─── Hikaye butonu ────────────────────────────────────────────────────────────
-btnHikaye.addEventListener('click', () => {
+// ─── Sekme butonları ──────────────────────────────────────────────────────────
+function setMod(hikaye) {
+  if (hikayeModu === hikaye) return;
   if (endGameTimer) { clearTimeout(endGameTimer); endGameTimer = null; }
   SpeechController.stopAll();
-
-  hikayeModu = !hikayeModu;
-  btnHikaye.classList.toggle('active', hikayeModu);
-
+  kapatRapor();
+  sifirlaIstatistik();
+  hikayeModu = hikaye;
   if (hikayeModu) {
     hikayeIndex = 0;
     hikayeCumle = 0;
     storyProgress.classList.add('visible');
     updateStoryProgress();
-    // Seviye butonlarını pasif göster (hikaye modunda kullanılmıyor)
-    document.querySelectorAll('.lvl-btn').forEach(b => b.style.opacity = '0.25');
   } else {
     storyProgress.classList.remove('visible');
-    document.querySelectorAll('.lvl-btn').forEach(b => b.style.opacity = '');
-    syncLevelButtons();
   }
-
   currentWordIndex   = 0;
   score              = 0;
   processedWordCount = 0;
@@ -1445,9 +1859,14 @@ btnHikaye.addEventListener('click', () => {
   interimText.textContent  = '';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
+  syncLevelButtons();
   oyunuKur();
+  kaydet();
   setTimeout(() => { btnStart.click(); }, 250);
-});
+}
+
+tabAlistirma.addEventListener('click', () => setMod(false));
+tabHikaye.addEventListener('click',    () => setMod(true));
 
 // ─── Ses seviyesi → mic daire efekti ─────────────────────────────────────────
 (function () {
@@ -1490,6 +1909,11 @@ btnHikaye.addEventListener('click', () => {
 })();
 
 // ─── İlk yükleme ─────────────────────────────────────────────────────────────
+yukle();   // localStorage'dan kaldığı yeri yükle
+syncLevelButtons();
+// storyProgress sadece hikaye modundaysa görünür
+storyProgress.classList.toggle('visible', hikayeModu);
+if (hikayeModu) updateStoryProgress();
 oyunuKur();
 </script>
 </body>
