@@ -1754,7 +1754,7 @@ function _getAudioCtx() {
 }
 
 function sesCal(tip) {
-  if (!sesAcik) return;
+  if (typeof sesAcik !== 'undefined' && !sesAcik) return;
   const ctx = _getAudioCtx();
   if (!ctx) return;
   try {
