@@ -1743,3 +1743,120 @@ function kelimeOyunuGoster() {
   koyunMicStatus.textContent = 'Başlamak için düğmeye bas';
 }
 
+
+// ═══════════════════════════════════════════════════════════════
+// WEB AUDIO SES EFEKTLERİ
+// ═══════════════════════════════════════════════════════════════
+
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+
+function sesCal(tip) {
+  if (!AudioCtx) return;
+  try {
+    const ctx = new AudioCtx();
+
+    if (tip === 'dogru') {
+      // Neşeli iki nota: do → mi
+      [[523, 0, 0.12], [659, 0.13, 0.22], [784, 0.26, 0.38]].forEach(([frekans, baslangic, bitis]) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(frekans, ctx.currentTime + baslangic);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime + baslangic);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + bitis);
+        osc.start(ctx.currentTime + baslangic);
+        osc.stop(ctx.currentTime + bitis);
+      });
+
+    } else if (tip === 'yanlis') {
+      // Alçalan iki nota: la → fa
+      [[330, 0, 0.15], [247, 0.16, 0.35]].forEach(([frekans, baslangic, bitis]) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(frekans, ctx.currentTime + baslangic);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime + baslangic);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + bitis);
+        osc.start(ctx.currentTime + baslangic);
+        osc.stop(ctx.currentTime + bitis);
+      });
+    }
+
+    // Context'i otomatik kapat
+    setTimeout(() => ctx.close(), 1000);
+  } catch(e) {}
+}
+
+// ─── koyunCevapKontrol'e ses entegrasyonu ─────────────────────
+// Orijinal fonksiyonu saklayıp ses eklenmiş versiyonla değiştir
+const _koyunCevapKontrolOrijinal = koyunCevapKontrol;
+
+// Global scope'ta override et
+window._koyunSesliKontrol = function(soylenen) {
+  const hedef  = koyunSiralamis[koyunIndex];
+  const tokenler = normalizeText(soylenen);
+  const dogru  = tokenler.some(t => kelimeEslesir(t, hedef));
+
+  if (dogru) {
+    // Mikrofonu durdur → ses çal → sonraki kelimeye geç
+    koyunAktif = false;
+    if (koyunRec) { try { koyunRec.abort(); } catch(e) {} }
+    koyunRecState = 'idle';
+
+    koyunSkor += 15;
+    totalScore += 15;
+    koyunScoreEl.textContent = koyunSkor;
+    koyunHint.textContent    = hedef;
+    koyunHint.className      = 'koyun-hint revealed';
+    koyunResult.textContent  = '✅ Harika! +15 puan';
+    koyunResult.className    = 'koyun-result dogru';
+    koyunCard.className      = 'koyun-card correct-flash';
+
+    setTimeout(() => sesCal('dogru'), 50);
+
+    setTimeout(() => {
+      koyunAktif = true;
+      koyunSonraki();
+      setTimeout(() => koyunRecBaslat(), 300);
+    }, 1000);
+
+  } else {
+    // Mikrofonu kısa dur → ses çal → tekrar dinle
+    koyunAktif = false;
+    if (koyunRec) { try { koyunRec.abort(); } catch(e) {} }
+    koyunRecState = 'idle';
+
+    koyunYanlis++;
+    koyunResult.textContent = '❌ Tekrar dene!';
+    koyunResult.className   = 'koyun-result yanlis';
+    koyunCard.className     = 'koyun-card wrong-flash';
+
+    setTimeout(() => sesCal('yanlis'), 50);
+
+    setTimeout(() => {
+      koyunCard.className = 'koyun-card';
+      koyunAktif = true;
+      koyunRecBaslat();
+    }, 700);
+  }
+};
+
+// koyunRec.onresult'ta _koyunSesliKontrol çağrılsın diye
+// koyunRecBuild fonksiyonunu güncelle — onresult'u override et
+const _koyunRecBuildOrijinal = koyunRecBuild;
+koyunRecBuild = function() {
+  _koyunRecBuildOrijinal();
+  // onresult'u ses entegreli versiyonla değiştir
+  koyunRec.onresult = (event) => {
+    const transcript = event.results[event.results.length - 1][0].transcript;
+    koyunInterimText.textContent = transcript;
+    if (event.results[event.results.length - 1].isFinal) {
+      koyunInterimText.textContent = '';
+      window._koyunSesliKontrol(transcript);
+    }
+  };
+};
