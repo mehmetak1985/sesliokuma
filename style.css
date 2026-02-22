@@ -48,18 +48,8 @@ body {
   background-repeat: no-repeat;
 }
 
-/* Görsel yüklenemezse yedek gradyan */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(180deg,
-    #87ceeb 0%, #b3e5fc 45%,
-    #c8e6c9 65%, #66bb6a 80%, #388e3c 100%
-  );
-  z-index: -1;
-}
-body::after { display: none; }
+body::before { display: none; }
+body::after  { display: none; }
 
 /* Yıldızlar — artık kullanılmıyor, gizliyoruz */
 .stars { display: none; }
