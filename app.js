@@ -1754,6 +1754,7 @@ function _getAudioCtx() {
 }
 
 function sesCal(tip) {
+  if (!sesAcik) return;
   const ctx = _getAudioCtx();
   if (!ctx) return;
   try {
@@ -1891,9 +1892,4 @@ btnSesToggle.addEventListener('click', () => {
   try { localStorage.setItem('sesliOkuma_ses', sesAcik); } catch(e) {}
 });
 
-// sesCal fonksiyonunu ses ayarına bağla
-const _sesCalOrijinal = sesCal;
-sesCal = function(tip) {
-  if (!sesAcik) return;
-  _sesCalOrijinal(tip);
-};
+// sesCal içinde sesAcik kontrolü mevcut — override gerekmez
