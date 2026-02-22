@@ -264,14 +264,14 @@ const HIKAYE_GRUPLARI = [
     "Emir eşyalarını düzenli koyması gerektiğini anladı.",
     "Soru: Emir kalemini nerede buldu?"
   ],
-  // Hikaye 13: Beyaz ve Paylaşmak
+  // Hikaye 13: Beyza ve Paylaşmak
   [
-    "Beyaz parkta bisküviyle oturuyordu.",
+    "Beyza parkta bisküviyle oturuyordu.",
     "Yanındaki çocuk üzgün görünüyordu çünkü yiyeceği yoktu.",
-    "Beyaz bisküvisini ikiye böldü ve yarısını verdi.",
+    "Beyza bisküvisini ikiye böldü ve yarısını verdi.",
     "Çocuk gülümsedi.",
-    "Beyaz paylaşmanın insanı mutlu ettiğini fark etti.",
-    "Soru: Beyaz neden mutlu oldu?"
+    "Beyza paylaşmanın insanı mutlu ettiğini fark etti.",
+    "Soru: Beyza neden mutlu oldu?"
   ],
   // Hikaye 14: Kaan ve Zamanında Uyanmak
   [
@@ -370,7 +370,7 @@ const HIKAYE_ISIMLERI = [
   'Yağmur ve Kütüphane',
   'Çiçek ve Dostluk',
   'Emir ve Kayıp Kalem',
-  'Beyaz ve Paylaşmak',
+  'Beyza ve Paylaşmak',
   'Kaan ve Zamanında Uyanmak',
   'Elvan ve Bitki',
   'Berk ve Kırılan Bardak',
@@ -1404,3 +1404,73 @@ syncLevelButtons();
 storyProgress.classList.toggle('visible', hikayeModu);
 if (hikayeModu) updateStoryProgress();
 oyunuKur();
+
+// ─── Ana Menü Geçiş Sistemi ───────────────────────────────────────────────────
+const menuScreen   = document.getElementById('menuScreen');
+const btnBack      = document.getElementById('btnBack');
+const menuScoreText  = document.getElementById('menuScoreText');
+const menuTotalScore = document.getElementById('menuTotalScore');
+const menuLevelText  = document.getElementById('menuLevelText');
+const menuLevelBar   = document.getElementById('menuLevelBar');
+
+function menuGoster() {
+  // Menü skorunu güncelle
+  menuScoreText.textContent  = totalScore;
+  menuTotalScore.textContent = totalScore;
+  menuLevelText.textContent  = grupIndex + 1;
+  menuLevelBar.style.width   = ((cumleIndex / 15) * 100) + '%';
+
+  // Oyun ekranını gizle, menüyü göster
+  gameContainer.style.display = 'none';
+  menuScreen.style.display    = 'flex';
+  SpeechController.stopAll();
+}
+
+function oyunEkraniGoster(hikayeModuSecim) {
+  // Mod ayarla
+  if (hikayeModuSecim !== undefined && hikayeModuSecim !== hikayeModu) {
+    hikayeModu = hikayeModuSecim;
+    if (hikayeModu) {
+      hikayeIndex = 0; hikayeCumle = 0;
+      storyProgress.classList.add('visible');
+      updateStoryProgress();
+    } else {
+      storyProgress.classList.remove('visible');
+    }
+    syncLevelButtons();
+    oyunuKur();
+    kaydet();
+  }
+
+  // Menüyü gizle, oyun ekranını göster
+  menuScreen.style.display    = 'none';
+  gameContainer.style.display = 'flex';
+
+  // Otomatik başlat
+  setTimeout(() => { btnStart.click(); }, 200);
+}
+
+// Menü kart butonları
+document.querySelectorAll('.menu-card-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mod = btn.dataset.mod;
+    oyunEkraniGoster(mod === 'hikaye');
+  });
+});
+
+// Kart alanına tıklama da çalışsın
+document.querySelectorAll('.menu-card').forEach(kart => {
+  kart.addEventListener('click', (e) => {
+    if (e.target.classList.contains('menu-card-btn')) return;
+    const btn = kart.querySelector('.menu-card-btn');
+    if (btn) btn.click();
+  });
+});
+
+// Geri butonu
+btnBack.addEventListener('click', () => {
+  menuGoster();
+});
+
+// İlk açılışta: menüyü göster, oyun ekranını gizle
+menuGoster();
