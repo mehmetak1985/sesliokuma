@@ -1171,6 +1171,7 @@ let totalScore         = 0;   // oyun boyunca toplam puan
 let processedWordCount = 0;
 let yanlisSayac        = 0;   // yanlış telaffuz sayacı (TTS tetikleme için)
 let endGameTimer       = null; // race condition koruması
+let navTimer           = null; // hikaye no gösterme timer'ı
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SpeechController
@@ -2002,7 +2003,7 @@ function hikayeSecGit(hedefIndex) {
   interimText.textContent = '';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
-  updateStoryProgress();
+  updateStoryProgress(true);  // ◀ ▶ butonunda hikaye no göster
   kaydet();
   oyunuKur();
   setTimeout(() => { btnStart.click(); }, 250);
@@ -2012,14 +2013,30 @@ btnHikayeGeri.addEventListener('click',  () => hikayeSecGit(hikayeIndex - 1));
 btnHikayeIleri.addEventListener('click', () => hikayeSecGit(hikayeIndex + 1));
 
 // ─── Hikaye ilerleme UI ───────────────────────────────────────────────────────
-function updateStoryProgress() {
+function updateStoryProgress(showNav) {
   if (!hikayeModu) return;
   const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
   const toplam = hikaye.length;
   const yuzde  = Math.round((hikayeCumle / toplam) * 100);
-  storyTitle.textContent        = '📖 ' + HIKAYE_ISIMLERI[hikayeIndex];
-  storyBar.style.width          = yuzde + '%';
-  storyProgressText.textContent = (hikayeCumle + 1) + ' / ' + toplam;
+  storyTitle.textContent = '📖 ' + HIKAYE_ISIMLERI[hikayeIndex];
+  storyBar.style.width   = yuzde + '%';
+
+  if (showNav) {
+    // Hikaye no göster
+    storyProgressText.textContent = (hikayeIndex + 1) + ' / ' + HIKAYE_GRUPLARI.length;
+    storyProgressText.style.color = '#a78bfa';
+    if (navTimer) clearTimeout(navTimer);
+    navTimer = setTimeout(() => {
+      navTimer = null;
+      storyProgressText.textContent = (hikayeCumle + 1) + ' / ' + toplam;
+      storyProgressText.style.color = '';
+    }, 1500);
+  } else {
+    // Cümle ilerlemesi göster
+    if (navTimer) { clearTimeout(navTimer); navTimer = null; }
+    storyProgressText.textContent = (hikayeCumle + 1) + ' / ' + toplam;
+    storyProgressText.style.color = '';
+  }
 }
 
 // ─── Sekme butonları ──────────────────────────────────────────────────────────
