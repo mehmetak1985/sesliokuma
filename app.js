@@ -1754,7 +1754,6 @@ function _getAudioCtx() {
 }
 
 function sesCal(tip) {
-  if (typeof sesAcik !== 'undefined' && !sesAcik) return;
   const ctx = _getAudioCtx();
   if (!ctx) return;
   try {
@@ -1844,52 +1843,3 @@ function _koyunSesliKontrol(soylenen) {
 };
 
 // koyunRecBuild içinde _koyunSesliKontrol direkt çağrılıyor — override gerekmez
-
-// ═══════════════════════════════════════════════════════════════
-// AYARLAR PANELİ
-// ═══════════════════════════════════════════════════════════════
-
-let sesAcik = true;
-
-const btnAyarlar      = document.getElementById('btnAyarlar');
-const ayarlarPanel    = document.getElementById('ayarlarPanel');
-const btnAyarlarKapat = document.getElementById('btnAyarlarKapat');
-const btnSesToggle    = document.getElementById('btnSesToggle');
-
-// localStorage'dan ses ayarını yükle
-try {
-  const kayitliSes = localStorage.getItem('sesliOkuma_ses');
-  if (kayitliSes !== null) sesAcik = kayitliSes === 'true';
-} catch(e) {}
-
-function sesToggleGuncelle() {
-  btnSesToggle.dataset.acik = sesAcik ? 'true' : 'false';
-  btnSesToggle.querySelector('.toggle-top').style.transform =
-    sesAcik ? 'translateX(24px)' : 'translateX(0)';
-}
-sesToggleGuncelle();
-
-btnAyarlar.addEventListener('click', () => {
-  ayarlarPanel.style.display = 'flex';
-});
-
-btnAyarlarKapat.addEventListener('click', () => {
-  ayarlarPanel.style.display = 'none';
-});
-
-// Panel dışına tıklayınca kapat
-document.addEventListener('click', (e) => {
-  if (ayarlarPanel.style.display !== 'none' &&
-      !ayarlarPanel.contains(e.target) &&
-      e.target !== btnAyarlar) {
-    ayarlarPanel.style.display = 'none';
-  }
-});
-
-btnSesToggle.addEventListener('click', () => {
-  sesAcik = !sesAcik;
-  sesToggleGuncelle();
-  try { localStorage.setItem('sesliOkuma_ses', sesAcik); } catch(e) {}
-});
-
-// sesCal içinde sesAcik kontrolü mevcut — override gerekmez
