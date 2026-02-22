@@ -264,14 +264,14 @@ const HIKAYE_GRUPLARI = [
     "Emir eşyalarını düzenli koyması gerektiğini anladı.",
     "Soru: Emir kalemini nerede buldu?"
   ],
-  // Hikaye 13: Beyza ve Paylaşmak
+  // Hikaye 13: Beyaz ve Paylaşmak
   [
-    "Beyza parkta bisküviyle oturuyordu.",
+    "Beyaz parkta bisküviyle oturuyordu.",
     "Yanındaki çocuk üzgün görünüyordu çünkü yiyeceği yoktu.",
-    "Beyza bisküvisini ikiye böldü ve yarısını verdi.",
+    "Beyaz bisküvisini ikiye böldü ve yarısını verdi.",
     "Çocuk gülümsedi.",
-    "Beyza paylaşmanın insanı mutlu ettiğini fark etti.",
-    "Soru: Beyza neden mutlu oldu?"
+    "Beyaz paylaşmanın insanı mutlu ettiğini fark etti.",
+    "Soru: Beyaz neden mutlu oldu?"
   ],
   // Hikaye 14: Kaan ve Zamanında Uyanmak
   [
@@ -370,7 +370,7 @@ const HIKAYE_ISIMLERI = [
   'Yağmur ve Kütüphane',
   'Çiçek ve Dostluk',
   'Emir ve Kayıp Kalem',
-  'Beyza ve Paylaşmak',
+  'Beyaz ve Paylaşmak',
   'Kaan ve Zamanında Uyanmak',
   'Elvan ve Bitki',
   'Berk ve Kırılan Bardak',

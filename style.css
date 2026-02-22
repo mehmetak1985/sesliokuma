@@ -42,43 +42,22 @@ body {
   justify-content: center;
   overflow-x: hidden;
   position: relative;
-  background: linear-gradient(180deg,
-    #87ceeb 0%,
-    #b3e5fc 45%,
-    #c8e6c9 65%,
-    #66bb6a 80%,
-    #388e3c 100%
-  );
+  background:
+    url('bg.jpg') center center / cover no-repeat fixed;
 }
 
-/* ── CSS Bulutlar ───────────────────────────────────────────── */
-body::before,
-body::after {
+/* Görsel yüklenemezse yedek gradyan */
+body::before {
   content: '';
   position: fixed;
-  border-radius: 50px;
-  background: rgba(255,255,255,0.82);
-  pointer-events: none;
-  z-index: 0;
+  inset: 0;
+  background: linear-gradient(180deg,
+    #87ceeb 0%, #b3e5fc 45%,
+    #c8e6c9 65%, #66bb6a 80%, #388e3c 100%
+  );
+  z-index: -1;
 }
-body::before {
-  width: 180px; height: 55px;
-  top: 8%; left: 5%;
-  box-shadow:
-    90px -18px 0 20px rgba(255,255,255,0.7),
-    -30px 10px 0 10px rgba(255,255,255,0.6),
-    260px 5px 0 30px rgba(255,255,255,0.75),
-    340px -10px 0 18px rgba(255,255,255,0.65),
-    500px 15px 0 25px rgba(255,255,255,0.7);
-}
-body::after {
-  width: 120px; height: 40px;
-  top: 18%; right: 8%;
-  box-shadow:
-    60px -12px 0 15px rgba(255,255,255,0.65),
-    -60px 8px 0 12px rgba(255,255,255,0.55),
-    200px 3px 0 20px rgba(255,255,255,0.7);
-}
+body::after { display: none; }
 
 /* Yıldızlar — artık kullanılmıyor, gizliyoruz */
 .stars { display: none; }
