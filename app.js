@@ -1404,4 +1404,3 @@ syncLevelButtons();
 storyProgress.classList.toggle('visible', hikayeModu);
 if (hikayeModu) updateStoryProgress();
 oyunuKur();
-</script>
