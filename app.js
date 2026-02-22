@@ -376,7 +376,7 @@ const LS_KEY = 'sesliOkumaOyunu_v1';
 function kaydet() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify({
-      grupIndex, cumleIndex, hikayeModu, hikayeIndex, hikayeCumle, totalScore
+      grupIndex, cumleIndex, hikayeModu, hikayeIndex, hikayeCumle, totalScore, koyunSkor
     }));
   } catch(e) {}
 }
@@ -390,6 +390,7 @@ function yukle() {
     hikayeIndex = d.hikayeIndex || 0;
     hikayeCumle = d.hikayeCumle || 0;
     totalScore  = d.totalScore  || 0;
+    koyunSkor   = d.koyunSkor   || 0;
   } catch(e) {}
 }
 
@@ -407,7 +408,7 @@ let bolumDogru    = 0;
 let bolumYanlis   = 0;
 let kelimeHatalar = {};  // { kelime: hataAdedi }
 
-const CUMLELER = CUMLE_GRUPLARI[grupIndex];
+// CUMLELER kaldırıldı — HEDEF_METIN() fonksiyonu kullanılıyor
 const HEDEF_METIN = () => {
   if (hikayeModu) {
     const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
@@ -1842,3 +1843,57 @@ function _koyunSesliKontrol(soylenen) {
 };
 
 // koyunRecBuild içinde _koyunSesliKontrol direkt çağrılıyor — override gerekmez
+
+// ═══════════════════════════════════════════════════════════════
+// AYARLAR PANELİ
+// ═══════════════════════════════════════════════════════════════
+
+let sesAcik = true;
+
+const btnAyarlar      = document.getElementById('btnAyarlar');
+const ayarlarPanel    = document.getElementById('ayarlarPanel');
+const btnAyarlarKapat = document.getElementById('btnAyarlarKapat');
+const btnSesToggle    = document.getElementById('btnSesToggle');
+
+// localStorage'dan ses ayarını yükle
+try {
+  const kayitliSes = localStorage.getItem('sesliOkuma_ses');
+  if (kayitliSes !== null) sesAcik = kayitliSes === 'true';
+} catch(e) {}
+
+function sesToggleGuncelle() {
+  btnSesToggle.dataset.acik = sesAcik ? 'true' : 'false';
+  btnSesToggle.querySelector('.toggle-top').style.transform =
+    sesAcik ? 'translateX(24px)' : 'translateX(0)';
+}
+sesToggleGuncelle();
+
+btnAyarlar.addEventListener('click', () => {
+  ayarlarPanel.style.display = 'flex';
+});
+
+btnAyarlarKapat.addEventListener('click', () => {
+  ayarlarPanel.style.display = 'none';
+});
+
+// Panel dışına tıklayınca kapat
+document.addEventListener('click', (e) => {
+  if (ayarlarPanel.style.display !== 'none' &&
+      !ayarlarPanel.contains(e.target) &&
+      e.target !== btnAyarlar) {
+    ayarlarPanel.style.display = 'none';
+  }
+});
+
+btnSesToggle.addEventListener('click', () => {
+  sesAcik = !sesAcik;
+  sesToggleGuncelle();
+  try { localStorage.setItem('sesliOkuma_ses', sesAcik); } catch(e) {}
+});
+
+// sesCal fonksiyonunu ses ayarına bağla
+const _sesCalOrijinal = sesCal;
+sesCal = function(tip) {
+  if (!sesAcik) return;
+  _sesCalOrijinal(tip);
+};

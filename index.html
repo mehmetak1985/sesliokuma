@@ -16,17 +16,32 @@
      ═══════════════════════════════════════════════════════════ -->
 <div class="menu-screen" id="menuScreen">
 
-  <!-- Üst bar: Seviye + Puan -->
+  <!-- Üst bar: Ayarlar + Puan -->
   <div class="menu-topbar">
     <div class="menu-topbar-left">
-      <span class="menu-level-badge">Seviye <strong id="menuLevelText">1</strong></span>
-      <div class="menu-level-bar-wrap">
-        <div class="menu-level-bar" id="menuLevelBar" style="width:30%"></div>
-      </div>
+      <!-- Ayarlar butonu -->
+      <button class="ayarlar-btn" id="btnAyarlar" title="Ayarlar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
     </div>
     <div class="menu-topbar-right">
       <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
     </div>
+  </div>
+
+  <!-- Ayarlar Paneli -->
+  <div class="ayarlar-panel" id="ayarlarPanel" style="display:none">
+    <div class="ayarlar-baslik">⚙️ Ayarlar</div>
+    <div class="ayarlar-satir">
+      <span class="ayarlar-etiket">🔊 Ses Efektleri</span>
+      <button class="ayarlar-toggle" id="btnSesToggle" data-acik="true">
+        <span class="toggle-top"></span>
+      </button>
+    </div>
+    <button class="ayarlar-kapat" id="btnAyarlarKapat">✕ Kapat</button>
   </div>
 
   <!-- Logo -->
@@ -42,9 +57,11 @@
     <div class="menu-card menu-card--alistirma" id="menuCardAlistirma">
       <div class="menu-card-label-top">Alıştırma</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">✏️</span>
+        <span class="menu-card-emoji">📝</span>
         <div class="menu-card-deco">
-          <span>✔️</span><span>❓</span><span>✔️</span>
+          <span class="deco-harf">A</span>
+          <span class="deco-harf">B</span>
+          <span class="deco-harf">C</span>
         </div>
       </div>
       <button class="menu-card-btn menu-card-btn--orange" data-mod="alistirma">Alıştırma</button>
@@ -54,9 +71,11 @@
     <div class="menu-card menu-card--kelime" id="menuCardKelime">
       <div class="menu-card-label-top">Kelime Oyunu</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">🎯</span>
+        <span class="menu-card-emoji">🔍</span>
         <div class="menu-card-deco">
-          <span>🔤</span><span>⭐</span><span>🔤</span>
+          <span class="deco-kelime">kedi</span>
+          <span class="deco-kelime">top</span>
+          <span class="deco-kelime">ev</span>
         </div>
       </div>
       <button class="menu-card-btn menu-card-btn--green" data-mod="kelime">Kelime Oyunu</button>
@@ -66,7 +85,10 @@
     <div class="menu-card menu-card--hikaye" id="menuCardHikaye">
       <div class="menu-card-label-top">Hikaye</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">🐑</span>
+        <span class="menu-card-emoji">📖</span>
+        <div class="menu-card-deco">
+          <span>🌟</span><span>🐑</span><span>🌟</span>
+        </div>
       </div>
       <button class="menu-card-btn menu-card-btn--blue" data-mod="hikaye">Hikaye</button>
     </div>
