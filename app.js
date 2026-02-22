@@ -1454,7 +1454,11 @@ function oyunEkraniGoster(hikayeModuSecim) {
 document.querySelectorAll('.menu-card-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const mod = btn.dataset.mod;
-    oyunEkraniGoster(mod === 'hikaye');
+    if (mod === 'kelime') {
+      kelimeOyunuGoster();
+    } else {
+      oyunEkraniGoster(mod === 'hikaye');
+    }
   });
 });
 
@@ -1474,3 +1478,267 @@ btnBack.addEventListener('click', () => {
 
 // İlk açılışta: menüyü göster, oyun ekranını gizle
 menuGoster();
+
+// ═══════════════════════════════════════════════════════════════
+// KELİME OYUNU
+// ═══════════════════════════════════════════════════════════════
+
+// ─── Kelime → Emoji tablosu ───────────────────────────────────
+const KELIME_EMOJI = {
+  // Hayvanlar
+  'kedi':    '🐱',
+  'köpek':   '🐶',
+  'kuş':     '🐦',
+  'balık':   '🐟',
+  'arı':     '🐝',
+  'inek':    '🐄',
+  'at':      '🐴',
+  'tavuk':   '🐔',
+  'kelebek': '🦋',
+  'karınca': '🐜',
+  // Doğa
+  'çiçek':   '🌸',
+  'ağaç':    '🌳',
+  'elma':    '🍎',
+  'güneş':   '☀️',
+  'ay':      '🌙',
+  'yıldız':  '⭐',
+  'bulut':   '☁️',
+  'kar':     '❄️',
+  'yağmur':  '🌧️',
+  // Nesneler
+  'kitap':   '📚',
+  'kalem':   '✏️',
+  'okul':    '🏫',
+  'ev':      '🏠',
+  'araba':   '🚗',
+  'top':     '⚽',
+  'balon':   '🎈',
+  'pasta':   '🎂',
+  'elma':    '🍎',
+  'armut':   '🍐',
+  'muz':     '🍌',
+  'çilek':   '🍓',
+  'portakal':'🍊',
+  // Renkler / Kavramlar
+  'kırmızı': '🔴',
+  'mavi':    '🔵',
+  'yeşil':   '🟢',
+  'sarı':    '🟡',
+  'mor':     '🟣',
+};
+
+// ─── Oyun kelime listesi (görsel olan anlamlı kelimeler) ───────
+const KOYUN_KELIMELER = [
+  'kedi','köpek','kuş','balık','arı','inek','at','tavuk','kelebek',
+  'çiçek','ağaç','elma','güneş','ay','yıldız','bulut',
+  'kitap','kalem','okul','ev','araba','top','balon','pasta',
+  'armut','muz','çilek','portakal',
+  'kırmızı','mavi','yeşil','sarı',
+];
+
+// ─── Kelime Oyunu Durumu ───────────────────────────────────────
+let koyunIndex     = 0;
+let koyunSkor      = 0;
+let koyunYanlis    = 0;
+let koyunAktif     = false;
+let koyunRec       = null;
+let koyunRecState  = 'idle';
+let koyunSiralamis = [];
+
+// ─── DOM ──────────────────────────────────────────────────────
+const koyunScreen       = document.getElementById('koyunScreen');
+const koyunBtnStart     = document.getElementById('koyunBtnStart');
+const koyunBtnSkip      = document.getElementById('koyunBtnSkip');
+const btnKoyunBack      = document.getElementById('btnKoyunBack');
+const koyunEmoji        = document.getElementById('koyunEmoji');
+const koyunHint         = document.getElementById('koyunHint');
+const koyunResult       = document.getElementById('koyunResult');
+const koyunMicIndicator = document.getElementById('koyunMicIndicator');
+const koyunMicStatus    = document.getElementById('koyunMicStatus');
+const koyunInterimText  = document.getElementById('koyunInterimText');
+const koyunScoreEl      = document.getElementById('koyunScore');
+const koyunErrorMsg     = document.getElementById('koyunErrorMsg');
+const koyunCard         = document.getElementById('koyunCard');
+
+// ─── Yardımcılar ──────────────────────────────────────────────
+function koyunKarıstir(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function koyunHintYap(kelime) {
+  // İlk harf göster, geri kalanı nokta
+  return kelime[0] + ' ' + Array(kelime.length - 1).fill('_').join(' ');
+}
+
+function koyunGoster() {
+  const kelime = koyunSiralamis[koyunIndex];
+  const emoji  = KELIME_EMOJI[kelime] || '❓';
+  koyunEmoji.textContent   = emoji;
+  koyunHint.textContent    = koyunHintYap(kelime);
+  koyunHint.className      = 'koyun-hint';
+  koyunResult.textContent  = '';
+  koyunResult.className    = 'koyun-result';
+  koyunScoreEl.textContent = koyunSkor;
+  koyunCard.className      = 'koyun-card';
+}
+
+// ─── Ses tanıma ───────────────────────────────────────────────
+function koyunRecBuild() {
+  if (!SpeechRecognition) return;
+  if (koyunRec) {
+    koyunRec.onresult = null;
+    koyunRec.onerror  = null;
+    koyunRec.onend    = null;
+    try { koyunRec.abort(); } catch(e) {}
+  }
+  koyunRec = new SpeechRecognition();
+  koyunRec.lang           = 'tr-TR';
+  koyunRec.continuous     = false;
+  koyunRec.interimResults = true;
+  koyunRec.maxAlternatives = 3;
+
+  koyunRec.onstart = () => {
+    koyunRecState = 'listening';
+    koyunMicIndicator.className = 'mic-indicator active';
+    koyunMicStatus.className    = 'mic-status listening';
+    koyunMicStatus.textContent  = '🎤 Dinliyorum...';
+  };
+
+  koyunRec.onresult = (event) => {
+    const transcript = event.results[event.results.length - 1][0].transcript;
+    koyunInterimText.textContent = transcript;
+
+    if (event.results[event.results.length - 1].isFinal) {
+      koyunInterimText.textContent = '';
+      koyunCevapKontrol(transcript);
+    }
+  };
+
+  koyunRec.onerror = (e) => {
+    if (e.error === 'not-allowed') {
+      koyunErrorMsg.textContent = 'Mikrofon izni reddedildi.';
+      koyunErrorMsg.classList.add('visible');
+    }
+    koyunRecState = 'idle';
+  };
+
+  koyunRec.onend = () => {
+    koyunRecState = 'idle';
+    koyunMicIndicator.className = 'mic-indicator';
+    koyunMicStatus.className    = 'mic-status';
+    koyunMicStatus.textContent  = 'Tekrar dinlemek için Başla\'ya bas';
+    // Aktifse otomatik yeniden başlat
+    if (koyunAktif) {
+      setTimeout(() => koyunRecBaslat(), 400);
+    }
+  };
+}
+
+function koyunRecBaslat() {
+  if (!SpeechRecognition || !koyunAktif) return;
+  if (koyunRecState === 'listening') return;
+  koyunRecBuild();
+  try {
+    koyunRec.start();
+    koyunRecState = 'listening';
+  } catch(e) {}
+}
+
+function koyunRecDurdur() {
+  koyunAktif = false;
+  koyunRecState = 'idle';
+  if (koyunRec) { try { koyunRec.abort(); } catch(e) {} }
+  koyunMicIndicator.className = 'mic-indicator';
+  koyunMicStatus.className    = 'mic-status';
+  koyunMicStatus.textContent  = 'Başlamak için düğmeye bas';
+  koyunInterimText.textContent = '';
+}
+
+// ─── Cevap kontrolü ───────────────────────────────────────────
+function koyunCevapKontrol(soylenen) {
+  const hedef    = koyunSiralamis[koyunIndex];
+  const tokenler = normalizeText(soylenen);
+  const dogru    = tokenler.some(t => kelimeEslesir(t, hedef));
+
+  if (dogru) {
+    // ✅ Doğru
+    koyunSkor += 15;
+    koyunScoreEl.textContent  = koyunSkor;
+    koyunHint.textContent     = hedef;
+    koyunHint.className       = 'koyun-hint revealed';
+    koyunResult.textContent   = '✅ Harika! +15 puan';
+    koyunResult.className     = 'koyun-result dogru';
+    koyunCard.className       = 'koyun-card correct-flash';
+
+    // totalScore'a da ekle
+    totalScore += 15;
+
+    setTimeout(() => {
+      koyunSonraki();
+    }, 1400);
+
+  } else {
+    // ❌ Yanlış
+    koyunYanlis++;
+    koyunResult.textContent = '❌ Tekrar dene!';
+    koyunResult.className   = 'koyun-result yanlis';
+    koyunCard.className     = 'koyun-card wrong-flash';
+    setTimeout(() => {
+      koyunCard.className = 'koyun-card';
+    }, 400);
+  }
+}
+
+function koyunSonraki() {
+  koyunIndex++;
+  if (koyunIndex >= koyunSiralamis.length) {
+    // Tüm kelimeler bitti — yeniden karıştır
+    koyunSiralamis = koyunKarıstir(KOYUN_KELIMELER);
+    koyunIndex = 0;
+  }
+  koyunGoster();
+}
+
+// ─── Buton işleyicileri ───────────────────────────────────────
+koyunBtnStart.addEventListener('click', () => {
+  koyunAktif = true;
+  koyunErrorMsg.classList.remove('visible');
+  koyunBtnStart.disabled = true;
+  setTimeout(() => { koyunBtnStart.disabled = false; }, 1000);
+  koyunRecBaslat();
+});
+
+koyunBtnSkip.addEventListener('click', () => {
+  koyunResult.textContent = '⏭ Geçildi';
+  koyunResult.className   = 'koyun-result';
+  setTimeout(() => koyunSonraki(), 600);
+});
+
+btnKoyunBack.addEventListener('click', () => {
+  koyunRecDurdur();
+  koyunScreen.style.display = 'none';
+  menuScreen.style.display  = 'flex';
+  menuGoster();
+});
+
+// ─── Menüden Kelime Oyunu'na geçiş ───────────────────────────
+function kelimeOyunuGoster() {
+  menuScreen.style.display    = 'none';
+  gameContainer.style.display = 'none';
+  koyunScreen.style.display   = 'flex';
+
+  // Sıfırla ve başlat
+  koyunSiralamis = koyunKarıstir(KOYUN_KELIMELER);
+  koyunIndex  = 0;
+  koyunSkor   = 0;
+  koyunYanlis = 0;
+  koyunAktif  = false;
+  koyunGoster();
+  koyunMicStatus.textContent = 'Başlamak için düğmeye bas';
+}
