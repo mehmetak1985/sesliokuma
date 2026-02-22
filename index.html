@@ -694,8 +694,8 @@ const SpeechController = (function () {
     }
     recognition = new SpeechRecognition();
     recognition.lang            = 'tr-TR';
-    recognition.continuous      = true;
-    recognition.interimResults  = true;
+    recognition.continuous      = false;
+    recognition.interimResults  = false;
     recognition.maxAlternatives = 5;
     recognition.onstart  = _onStart;
     recognition.onresult = _onResult;
@@ -717,59 +717,68 @@ const SpeechController = (function () {
     if (isSpeaking) return;   // TTS aktifken echo koruması
 
     resetWatchdog();   // ses geldi → recognition ayakta, watchdog'u yenile
-    interimText.textContent = event.results[event.results.length - 1][0].transcript;
     resetSilenceTimer();
 
-    // ── Interim: sadece tam eşleşme kabul et ─────────────────────────────
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) continue;           // final'ler aşağıda işlenir
-      if (currentWordIndex >= targetWords.length) break;
-      const hedef   = targetWords[currentWordIndex];
-      const tokenler = normalizeText(event.results[i][0].transcript);
-      for (let t = 0; t < tokenler.length; t++) {
-        if (currentWordIndex >= targetWords.length) break;
-        if (tokenler[t] === targetWords[currentWordIndex]) {
-          validateWord(tokenler[t]);
-        }
-      }
-    }
-
+    // continuous=false: yalnızca final sonuçlar gelir
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (!event.results[i].isFinal) continue;
+      if (currentWordIndex >= targetWords.length) break;
+
       const sonuc = event.results[i];
 
-      // Alternatifleri confidence'a göre azalan sıraya diz
+      // ── Alternatifleri hazırla: confidence filtresi + gürültü filtresi ──
       const altDizisi = [];
       for (let a = 0; a < sonuc.length; a++) {
-        altDizisi.push({ transcript: sonuc[a].transcript, confidence: sonuc[a].confidence || 0 });
+        const conf       = sonuc[a].confidence || 0;
+        const transcript = sonuc[a].transcript || '';
+        // Confidence 0.3 altını geçersiz say
+        if (conf < 0.3 && conf !== 0) continue;
+        // Gürültü filtresi: 2 harften kısa ve tek harf tekrarı içerenleri at
+        const trimmed = transcript.trim();
+        if (trimmed.length < 2) continue;
+        if (/^(.)\1+$/.test(trimmed)) continue;
+        altDizisi.push({ transcript: trimmed, confidence: conf });
       }
+
+      // Hiç geçerli alternatif kalmadıysa ilk ham sonucu kullan
+      if (altDizisi.length === 0 && sonuc.length > 0) {
+        altDizisi.push({ transcript: sonuc[0].transcript || '', confidence: 0 });
+      }
+
+      // Confidence'a göre azalan sırayla
       altDizisi.sort((x, y) => y.confidence - x.confidence);
 
-      // Her alternatifin tokenlerini hazırla (confidence sırasında)
-      const altTokenler = altDizisi.map(alt => normalizeText(alt.transcript));
+      // interim gösterimi için en iyi transcript
+      if (altDizisi.length > 0) {
+        interimText.textContent = altDizisi[0].transcript;
+      }
 
-      // Ana transcript token sayısını baz al (en yüksek confidence)
+      // ── Her alternatifin tokenlerini hazırla ──────────────────────────
+      const altTokenler = altDizisi.map(alt => normalizeText(alt.transcript));
       const anaTokenler = altTokenler[0] || [];
+
       for (let t = 0; t < anaTokenler.length; t++) {
         if (currentWordIndex >= targetWords.length) break;
         const hedef = targetWords[currentWordIndex];
-        // Bu pozisyon için tüm alternatiflerde eşleşen var mı?
+
+        // Aynı pozisyonda tüm alternatiflerde eşleşme ara
         let bulunan = null;
         for (let a = 0; a < altTokenler.length; a++) {
           const tok = altTokenler[a][t];
           if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break; }
         }
-        // Pozisyon eşleşmedi — tüm alternatiflerde herhangi bir pozisyonda ara
+
+        // Pozisyon eşleşmedi — tüm alternatiflerin tüm tokenlarında ara
         if (!bulunan) {
-          for (let a = 0; a < altTokenler.length; a++) {
+          outer: for (let a = 0; a < altTokenler.length; a++) {
             for (let p = 0; p < altTokenler[a].length; p++) {
               const tok = altTokenler[a][p];
-              if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break; }
+              if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break outer; }
             }
-            if (bulunan) break;
           }
         }
-        // Eşleşme yoksa ana token'ı kullan (yanlış olarak işlenir)
+
+        // Eşleşme yoksa ana token ile validateWord'e gönder (yanlış olarak işlenir)
         validateWord(bulunan || anaTokenler[t]);
       }
     }
@@ -960,25 +969,91 @@ function levenshtein(a, b) {
   return dp[m][n];
 }
 
-// ─── Toleranslı eşleşme ───────────────────────────────────────────────────────
+// ─── Türkçe karakter normalizasyonu (eşleşme için) ───────────────────────────
+function normalizeTR(s) {
+  return s.replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ş/g,'s')
+          .replace(/ö/g,'o').replace(/ü/g,'u').replace(/ı/g,'i');
+}
+
+// ─── Sessiz harfleri çıkar ────────────────────────────────────────────────────
+function sessizHarfler(s) {
+  return s.replace(/[aeıioöuü]/g, '');
+}
+
+// ─── Levenshtein benzerlik yüzdesi ─────────────────────────────────────────────
+function benzerlikYuzdesi(a, b) {
+  const dist   = levenshtein(a, b);
+  const maxLen = Math.max(a.length, b.length);
+  if (maxLen === 0) return 100;
+  return (1 - dist / maxLen) * 100;
+}
+
+// ─── Toleranslı eşleşme (katmanlı) ───────────────────────────────────────────
 function kelimeEslesir(konusulan, hedef) {
-  if (konusulan === hedef) return true;
-  const dist   = levenshtein(konusulan, hedef);
-  const maxLen = Math.max(hedef.length, konusulan.length);
-  let tolerans;
-  if (hedef.length <= 3)      tolerans = 1;
-  else if (hedef.length <= 6) tolerans = 2;
-  else                        tolerans = 3;
-  // Ek güvence: eşleşme için en az %70 doğruluk gerekli
-  const dogruluk = 1 - dist / maxLen;
-  if (dogruluk < 0.70) return false;
-  return dist <= Math.min(tolerans, Math.floor(maxLen * 0.40));
+  if (!konusulan || !hedef) return false;
+
+  // Önce TR normalizasyonu uygula (ç→c, ş→s vb.)
+  const k = normalizeTR(konusulan);
+  const h = normalizeTR(hedef);
+
+  // Katman 0 — Tam eşleşme (normalize edilmiş)
+  if (k === h || konusulan === hedef) return true;
+
+  const hedefLen = hedef.length;
+
+  if (hedefLen <= 4) {
+    // ── KISA KELİME ÖZEL MODU (≤4 harf) ──────────────────────────────
+
+    // Katman A — İçerme kontrolü
+    if (k.includes(h) || h.includes(k)) return true;
+
+    // Katman B — İlk harf + uzunluk toleransı (fark ≤1, 2 değil)
+    if (k[0] === h[0] && Math.abs(k.length - h.length) <= 1) return true;
+
+    // Katman C — Sessiz harf dizisi karşılaştırması
+    const kSessiz = sessizHarfler(k);
+    const hSessiz = sessizHarfler(h);
+    if (kSessiz.length > 0 && kSessiz === hSessiz) return true;
+
+    // Katman D — Levenshtein benzerlik (%65 ve üzeri — 60 değil, daha güvenli)
+    if (benzerlikYuzdesi(k, h) >= 65) return true;
+
+  } else {
+    // ── NORMAL KELİMELER (5 harf ve üzeri) ────────────────────────────
+
+    // Katman 1 — İçerme kontrolü (sadece belirgin uzunluk farkı yoksa)
+    if (Math.abs(k.length - h.length) <= 2 && (k.includes(h) || h.includes(k))) return true;
+
+    // Katman 2 — İlk harf aynı + uzunluk farkı ≤2
+    if (k[0] === h[0] && Math.abs(k.length - h.length) <= 2) {
+      // Ek güvence: en az %70 benzerlik gerekli
+      if (benzerlikYuzdesi(k, h) >= 70) return true;
+    }
+
+    // Katman 3 — Dinamik Levenshtein eşiği
+    let esik;
+    if (hedefLen <= 6)      esik = 70;
+    else if (hedefLen <= 8) esik = 75;
+    else                    esik = 80;
+
+    if (benzerlikYuzdesi(k, h) >= esik) return true;
+  }
+
+  return false;
 }
 
 // ─── Tüm alternatifleri kontrol et ───────────────────────────────────────────
 function checkAlternatives(result) {
   for (let a = 0; a < result.length; a++) {
-    const tokenler = normalizeText(result[a].transcript);
+    const conf       = result[a].confidence || 0;
+    const transcript = result[a].transcript || '';
+    // Confidence filtresi
+    if (conf < 0.3 && conf !== 0) continue;
+    // Gürültü filtresi
+    const trimmed = transcript.trim();
+    if (trimmed.length < 2) continue;
+    if (/^(.)\1+$/.test(trimmed)) continue;
+    const tokenler = normalizeText(trimmed);
     if (tokenler.length === 0) continue;
     if (kelimeEslesir(tokenler[0], targetWords[currentWordIndex])) return tokenler[0];
   }
