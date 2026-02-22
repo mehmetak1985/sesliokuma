@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sesli Okuma Oyunu</title>
+<title>Minik Okur</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -11,7 +11,74 @@
 
 <div class="stars" id="stars"></div>
 
-<div class="game-container" id="gameContainer">
+<!-- ═══════════════════════════════════════════════════════════
+     ANA MENÜ EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="menu-screen" id="menuScreen">
+
+  <!-- Üst bar: Seviye + Puan -->
+  <div class="menu-topbar">
+    <div class="menu-topbar-left">
+      <span class="menu-level-badge">Seviye <strong id="menuLevelText">1</strong></span>
+      <div class="menu-level-bar-wrap">
+        <div class="menu-level-bar" id="menuLevelBar" style="width:30%"></div>
+      </div>
+    </div>
+    <div class="menu-topbar-right">
+      <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
+    </div>
+  </div>
+
+  <!-- Logo -->
+  <div class="menu-logo">
+    <h1 class="menu-title">Minik <span class="menu-title-book">📖</span> Okur</h1>
+    <p class="menu-subtitle">· Ekrandaki kelimeyi oku ve puan kazan! ·</p>
+  </div>
+
+  <!-- Mod kartları -->
+  <div class="menu-cards">
+
+    <!-- Alıştırma -->
+    <div class="menu-card menu-card--alistirma" id="menuCardAlistirma">
+      <div class="menu-card-label-top">Alıştırma</div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">✏️</span>
+        <div class="menu-card-deco">
+          <span>✔️</span><span>❓</span><span>✔️</span>
+        </div>
+      </div>
+      <button class="menu-card-btn menu-card-btn--orange" data-mod="alistirma">Alıştırma</button>
+    </div>
+
+    <!-- Hikaye -->
+    <div class="menu-card menu-card--hikaye" id="menuCardHikaye">
+      <div class="menu-card-label-top">Hikaye</div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">🐑</span>
+      </div>
+      <button class="menu-card-btn menu-card-btn--blue" data-mod="hikaye">Hikaye</button>
+    </div>
+
+  </div>
+
+  <!-- Alt puan şeridi -->
+  <div class="menu-footer">
+    <span>⭐</span>
+    <span>🏅</span>
+    <span>🛡️</span>
+    <span>😊</span>
+    <span class="menu-footer-score">Toplam Puan: <strong id="menuTotalScore">0</strong></span>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OYUN EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="game-container" id="gameContainer" style="display:none">
+
+  <!-- Geri butonu -->
+  <button class="btn-back" id="btnBack">← Menü</button>
 
   <div class="title-area">
     <h1>🌟 Sesli Okuma Oyunu</h1>
@@ -79,7 +146,9 @@
 
 </div>
 
-<!-- ─── Rapor Overlay ──────────────────────────────────────────────────────── -->
+<!-- ═══════════════════════════════════════════════════════════
+     RAPOR OVERLAY
+     ═══════════════════════════════════════════════════════════ -->
 <div class="report-overlay" id="reportOverlay">
   <div class="report-card">
     <div class="report-emoji" id="reportEmoji">🌟</div>
