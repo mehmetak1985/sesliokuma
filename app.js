@@ -1534,7 +1534,7 @@ const KOYUN_KELIMELER = [
   'çiçek','ağaç','elma','güneş','ay','yıldız','bulut',
   'kitap','kalem','okul','ev','araba','top','balon','pasta',
   'armut','muz','çilek','portakal',
-  'kırmızı','mavi','yeşil','sarı',
+  // renkler çıkarıldı — emoji gösterimi uygun değil
 ];
 
 // ─── Kelime Oyunu Durumu ───────────────────────────────────────
@@ -1741,6 +1741,7 @@ function kelimeOyunuGoster() {
   koyunAktif  = false;
   koyunGoster();
   koyunMicStatus.textContent = 'Başlamak için düğmeye bas';
+  setTimeout(() => kediDurum('normal'), 100);
 }
 
 // ─── Kedi Karakter Kontrolü ───────────────────────────────────
@@ -1752,28 +1753,38 @@ const kediYildizlar = document.getElementById('kediYildizlar');
 const kediMesaj     = document.getElementById('kediMesaj');
 
 function kediDurum(durum) {
+  // Elementler hazır değilse çık
+  if (!kediYuzNormal || !kediYuzMutlu || !kediYuzUzgun) return;
   // Tüm yüzleri gizle
   kediYuzNormal.style.display = 'none';
   kediYuzMutlu.style.display  = 'none';
   kediYuzUzgun.style.display  = 'none';
-  kediYildizlar.style.display = 'none';
-  kediSvg.className = 'kedi-svg';
+  if (kediYildizlar) kediYildizlar.style.display = 'none';
+  if (kediSvg) kediSvg.className = 'kedi-svg';
 
   if (durum === 'mutlu') {
     kediYuzMutlu.style.display  = 'block';
     kediYildizlar.style.display = 'block';
+    kediSvg.classList.remove('uzgun');
     kediSvg.classList.add('mutlu');
     kediMesaj.textContent = 'Süpersin! 🎉';
     setTimeout(() => {
-      kediSvg.className = 'kedi-svg';
+      kediSvg.classList.remove('mutlu');
       kediYildizlar.style.display = 'none';
+      kediYuzMutlu.style.display  = 'none';
+      kediYuzNormal.style.display = 'block';
+      kediMesaj.textContent = 'Haydi, söyle! 🎤';
     }, 1400);
   } else if (durum === 'uzgun') {
     kediYuzUzgun.style.display = 'block';
+    kediSvg.classList.remove('mutlu');
     kediSvg.classList.add('uzgun');
     kediMesaj.textContent = 'Tekrar dene! 💪';
     setTimeout(() => {
-      kediDurum('normal');
+      kediSvg.classList.remove('uzgun');
+      kediYuzUzgun.style.display  = 'none';
+      kediYuzNormal.style.display = 'block';
+      kediMesaj.textContent = 'Haydi, söyle! 🎤';
     }, 1400);
   } else {
     kediYuzNormal.style.display = 'block';
