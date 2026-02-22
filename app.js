@@ -1742,3 +1742,60 @@ function kelimeOyunuGoster() {
   koyunGoster();
   koyunMicStatus.textContent = 'Başlamak için düğmeye bas';
 }
+
+// ─── Kedi Karakter Kontrolü ───────────────────────────────────
+const kediSvg       = document.getElementById('kediSvg');
+const kediYuzNormal = document.getElementById('kediYuzNormal');
+const kediYuzMutlu  = document.getElementById('kediYuzMutlu');
+const kediYuzUzgun  = document.getElementById('kediYuzUzgun');
+const kediYildizlar = document.getElementById('kediYildizlar');
+const kediMesaj     = document.getElementById('kediMesaj');
+
+function kediDurum(durum) {
+  // Tüm yüzleri gizle
+  kediYuzNormal.style.display = 'none';
+  kediYuzMutlu.style.display  = 'none';
+  kediYuzUzgun.style.display  = 'none';
+  kediYildizlar.style.display = 'none';
+  kediSvg.className = 'kedi-svg';
+
+  if (durum === 'mutlu') {
+    kediYuzMutlu.style.display  = 'block';
+    kediYildizlar.style.display = 'block';
+    kediSvg.classList.add('mutlu');
+    kediMesaj.textContent = 'Süpersin! 🎉';
+    setTimeout(() => {
+      kediSvg.className = 'kedi-svg';
+      kediYildizlar.style.display = 'none';
+    }, 1400);
+  } else if (durum === 'uzgun') {
+    kediYuzUzgun.style.display = 'block';
+    kediSvg.classList.add('uzgun');
+    kediMesaj.textContent = 'Tekrar dene! 💪';
+    setTimeout(() => {
+      kediDurum('normal');
+    }, 1400);
+  } else {
+    kediYuzNormal.style.display = 'block';
+    kediMesaj.textContent = 'Haydi, söyle! 🎤';
+  }
+}
+
+// koyunCevapKontrol fonksiyonunu kedi ile bağla
+const _eskiCevapKontrol = koyunCevapKontrol;
+// Doğru cevap → kedi mutlu, yanlış → kedi üzgün
+// Not: koyunCevapKontrol içindeki dogru/yanlis bloklarına kediDurum eklendi
+// Bunun yerine sonuç elemanını izleyelim
+const _koyunResultObserver = new MutationObserver(() => {
+  const metin = koyunResult.className;
+  if (metin.includes('dogru')) kediDurum('mutlu');
+  else if (metin.includes('yanlis')) kediDurum('uzgun');
+});
+_koyunResultObserver.observe(koyunResult, { attributes: true, attributeFilter: ['class'] });
+
+// Kelime oyununa girilince kediyi sıfırla
+const _eskiKelimeOyunuGoster = kelimeOyunuGoster;
+function kelimeOyunuGoster() {
+  _eskiKelimeOyunuGoster();
+  kediDurum('normal');
+}

@@ -176,8 +176,78 @@
     <div class="koyun-hint" id="koyunHint">_ _ _ _</div>
   </div>
 
-  <!-- Sonuç banner -->
-  <div class="koyun-result" id="koyunResult"></div>
+  <!-- Sonuç banner + Kedi karakteri -->
+  <div class="koyun-bottom-row">
+
+    <div class="koyun-result" id="koyunResult"></div>
+
+    <!-- SVG Kedi karakteri -->
+    <div class="kedi-wrap" id="kediWrap">
+      <svg class="kedi-svg" id="kediSvg" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+        <!-- Kuyruk -->
+        <path class="kedi-kuyruk" d="M85 115 Q105 100 108 80 Q110 65 98 62" stroke="#e67e22" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <!-- Gövde -->
+        <ellipse cx="60" cy="105" rx="34" ry="28" fill="#f39c12"/>
+        <!-- Baş -->
+        <circle cx="60" cy="65" r="30" fill="#f39c12"/>
+        <!-- Sol kulak -->
+        <polygon points="35,42 28,18 50,38" fill="#f39c12"/>
+        <polygon points="37,40 32,22 48,37" fill="#e84393" class="kedi-ic-kulak"/>
+        <!-- Sağ kulak -->
+        <polygon points="85,42 92,18 70,38" fill="#f39c12"/>
+        <polygon points="83,40 88,22 72,37" fill="#e84393" class="kedi-ic-kulak"/>
+        <!-- Yüz normal -->
+        <g id="kediYuzNormal">
+          <ellipse cx="49" cy="63" rx="5" ry="6" fill="#2c3e50"/>
+          <ellipse cx="71" cy="63" rx="5" ry="6" fill="#2c3e50"/>
+          <ellipse cx="50" cy="62" rx="2" ry="2" fill="white"/>
+          <ellipse cx="72" cy="62" rx="2" ry="2" fill="white"/>
+          <path d="M54 74 Q60 79 66 74" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <line x1="60" y1="74" x2="60" y2="77" stroke="#c0392b" stroke-width="2"/>
+          <line x1="30" y1="68" x2="50" y2="70" stroke="#7f8c8d" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="30" y1="73" x2="50" y2="73" stroke="#7f8c8d" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="70" y1="70" x2="90" y2="68" stroke="#7f8c8d" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="70" y1="73" x2="90" y2="73" stroke="#7f8c8d" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+        <!-- Yüz mutlu -->
+        <g id="kediYuzMutlu" style="display:none">
+          <path d="M44 60 Q49 54 54 60" stroke="#2c3e50" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M66 60 Q71 54 76 60" stroke="#2c3e50" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M50 72 Q60 82 70 72" stroke="#c0392b" stroke-width="3" fill="#e74c3c" stroke-linecap="round"/>
+          <line x1="30" y1="66" x2="50" y2="69" stroke="#7f8c8d" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="70" y1="69" x2="90" y2="66" stroke="#7f8c8d" stroke-width="1.5" stroke-linecap="round"/>
+          <ellipse cx="43" cy="72" rx="7" ry="4" fill="rgba(232,67,147,0.3)"/>
+          <ellipse cx="77" cy="72" rx="7" ry="4" fill="rgba(232,67,147,0.3)"/>
+        </g>
+        <!-- Yüz üzgün -->
+        <g id="kediYuzUzgun" style="display:none">
+          <path d="M44 64 Q49 70 54 64" stroke="#2c3e50" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M66 64 Q71 70 76 64" stroke="#2c3e50" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M52 76 Q60 71 68 76" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="49" cy="72" rx="3" ry="4" fill="#3498db" opacity="0.7"/>
+          <line x1="30" y1="70" x2="50" y2="69" stroke="#7f8c8d" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="70" y1="69" x2="90" y2="70" stroke="#7f8c8d" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+        <!-- Ön patiler -->
+        <ellipse cx="42" cy="130" rx="12" ry="8" fill="#e67e22"/>
+        <ellipse cx="78" cy="130" rx="12" ry="8" fill="#e67e22"/>
+        <line x1="37" y1="133" x2="37" y2="136" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="42" y1="134" x2="42" y2="137" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="47" y1="133" x2="47" y2="136" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="73" y1="133" x2="73" y2="136" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="78" y1="134" x2="78" y2="137" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="83" y1="133" x2="83" y2="136" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Yıldızlar -->
+        <g id="kediYildizlar" style="display:none">
+          <text x="95" y="45" font-size="16" fill="#ffd600">&#11088;</text>
+          <text x="5" y="45" font-size="14" fill="#ffd600">&#10024;</text>
+          <text x="100" y="75" font-size="12" fill="#ffd600">&#10024;</text>
+        </g>
+      </svg>
+      <div class="kedi-mesaj" id="kediMesaj">Haydi, söyle! &#127908;</div>
+    </div>
+
+  </div>
 
   <!-- Mikrofon -->
   <div class="mic-area">
