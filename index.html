@@ -1168,8 +1168,8 @@ let wordSpans          = [];
 let currentWordIndex   = 0;
 let score              = 0;
 let totalScore         = 0;   // oyun boyunca toplam puan
-let processedWordCount = 0;
 let yanlisSayac        = 0;   // yanlış telaffuz sayacı (TTS tetikleme için)
+let yanlisSayacIndex   = -1;  // hangi kelime için sayılıyor (çapraz kelime birikimini önler)
 let endGameTimer       = null; // race condition koruması
 let navTimer           = null; // hikaye no gösterme timer'ı
 
@@ -1390,7 +1390,7 @@ const SpeechController = (function () {
     }
   }
 
-  function _stop(andRestart) {
+  function _stop() {
     clearTimers();
     if (recState === 'idle') return;
     recState = 'stopping';
@@ -1399,10 +1399,6 @@ const SpeechController = (function () {
     micStatus.className    = 'mic-status';
     micStatus.textContent  = 'Başlamak için düğmeye bas';
     interimText.textContent = '';
-    // _onEnd → recState = 'idle' → scheduleRestart varsa çalışır
-    if (andRestart) {
-      // _onEnd içinde zaten scheduleRestart çağrılacak
-    }
   }
 
   // ── Public API ────────────────────────────────────────────────────────
@@ -1624,6 +1620,7 @@ function validateWord(konusulanKelime) {
     totalScore += 10;
     bolumDogru++;
     yanlisSayac = 0;   // doğru olunca yanlış sayacını sıfırla
+    yanlisSayacIndex = -1;
     currentWordIndex++;
     requestAnimationFrame(updateUI);
 
@@ -1633,9 +1630,18 @@ function validateWord(konusulanKelime) {
 
   } else {
     // ❌ Yanlış
+    // yanlisSayac: kelimeye bağlı — farklı kelimelerde birikmez
+    if (yanlisSayacIndex !== currentWordIndex) {
+      yanlisSayac      = 0;
+      yanlisSayacIndex = currentWordIndex;
+    }
     yanlisSayac++;
-    bolumYanlis++;
-    kelimeHatalar[hedef] = (kelimeHatalar[hedef] || 0) + 1;
+
+    // bolumYanlis: kelime başına bir kez say (ilk yanlışta)
+    if (yanlisSayac === 1) {
+      bolumYanlis++;
+      kelimeHatalar[hedef] = (kelimeHatalar[hedef] || 0) + 1;
+    }
 
     if (yanlisSayac === 1) {
       // İlk yanlış: hafif sarı ipucu efekti
@@ -1678,7 +1684,7 @@ function gosterRapor(opts) {
   reportSubtitle.textContent = opts.subtitle || '';
   reportDogru.textContent    = bolumDogru;
   reportYanlis.textContent   = bolumYanlis;
-  reportPuan.textContent     = score;
+  reportPuan.textContent     = totalScore;
 
   // En çok hata yapılan kelimeler (max 3)
   const hatalar = Object.entries(kelimeHatalar)
@@ -1890,8 +1896,7 @@ function endGame() {
 function resetCumle() {
   currentWordIndex   = 0;
   score              = 0;
-  processedWordCount = 0;
-  yanlisSayac        = 0;
+  yanlisSayac        = 0; yanlisSayacIndex = -1;
   interimText.textContent  = '';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
@@ -1918,8 +1923,7 @@ btnStart.addEventListener('click', () => {
   sifirlaIstatistik();
   currentWordIndex   = 0;
   score              = 0;
-  processedWordCount = 0;
-  yanlisSayac        = 0;
+  yanlisSayac        = 0; yanlisSayacIndex = -1;
   interimText.textContent  = '';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
@@ -1942,8 +1946,7 @@ btnSkip.addEventListener('click', () => {
   sonrakiCumleyeGec();
   currentWordIndex   = 0;
   score              = 0;
-  processedWordCount = 0;
-  yanlisSayac        = 0;
+  yanlisSayac        = 0; yanlisSayacIndex = -1;
   interimText.textContent  = '';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
@@ -1975,8 +1978,7 @@ document.querySelectorAll('.lvl-btn').forEach(btn => {
     cumleIndex         = 0;
     currentWordIndex   = 0;
     score              = 0;
-    processedWordCount = 0;
-    yanlisSayac        = 0;
+    yanlisSayac        = 0; yanlisSayacIndex = -1;
     interimText.textContent  = '';
     congratsBanner.classList.remove('visible');
     errorMsg.classList.remove('visible');
@@ -1998,8 +2000,7 @@ function hikayeSecGit(hedefIndex) {
   hikayeCumle        = 0;
   currentWordIndex   = 0;
   score              = 0;
-  processedWordCount = 0;
-  yanlisSayac        = 0;
+  yanlisSayac        = 0; yanlisSayacIndex = -1;
   interimText.textContent = '';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
@@ -2057,8 +2058,7 @@ function setMod(hikaye) {
   }
   currentWordIndex   = 0;
   score              = 0;
-  processedWordCount = 0;
-  yanlisSayac        = 0;
+  yanlisSayac        = 0; yanlisSayacIndex = -1;
   interimText.textContent  = '';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
