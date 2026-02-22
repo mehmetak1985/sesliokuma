@@ -123,6 +123,84 @@
     transform: scale(0.95);
   }
 
+  .mode-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .mode-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+  }
+  .story-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 50px;
+    border: 2px solid var(--surface2);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .story-btn.active {
+    border-color: #a78bfa;
+    background: rgba(167,139,250,0.15);
+    color: #a78bfa;
+    box-shadow: 0 0 12px rgba(167,139,250,0.3);
+  }
+  .story-btn:hover:not(.active) {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  .story-progress {
+    display: none;
+    width: 100%;
+    background: var(--surface);
+    border: 2px solid var(--surface2);
+    border-radius: var(--radius);
+    padding: 12px 20px;
+    box-shadow: var(--shadow);
+  }
+  .story-progress.visible { display: block; }
+  .story-progress-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #a78bfa;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .story-progress-bar-wrap {
+    background: var(--surface2);
+    border-radius: 8px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .story-progress-bar {
+    height: 100%;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #a78bfa, #7c3aed);
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .story-progress-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+    text-align: right;
+  }
+
   .score-card {
     background: var(--surface);
     border: 2px solid var(--surface2);
@@ -411,6 +489,18 @@
         <button class="lvl-btn" data-level="4" style="--lvl-color:#118ab2">5</button>
       </div>
     </div>
+    <div class="mode-selector">
+      <span class="mode-label">MOD</span>
+      <button class="story-btn" id="btnHikaye">📖 Hikaye</button>
+    </div>
+  </div>
+
+  <div class="story-progress" id="storyProgress">
+    <div class="story-progress-title" id="storyTitle">📖 Hikaye</div>
+    <div class="story-progress-bar-wrap">
+      <div class="story-progress-bar" id="storyBar"></div>
+    </div>
+    <div class="story-progress-text" id="storyProgressText">1 / 16</div>
   </div>
 
   <div class="score-card">
@@ -480,6 +570,11 @@ const interimText    = document.getElementById('interimText');
 const congratsBanner = document.getElementById('congratsBanner');
 const errorMsg       = document.getElementById('errorMsg');
 const noSupport      = document.getElementById('noSupport');
+const btnHikaye      = document.getElementById('btnHikaye');
+const storyProgress  = document.getElementById('storyProgress');
+const storyTitle     = document.getElementById('storyTitle');
+const storyBar       = document.getElementById('storyBar');
+const storyProgressText = document.getElementById('storyProgressText');
 
 if (!SpeechRecognition) {
   noSupport.classList.add('visible');
@@ -587,12 +682,57 @@ const CUMLE_GRUPLARI = [
   ],
 ];
 
+// ─── Hikaye Verileri ─────────────────────────────────────────────────────────
+const HIKAYE_GRUPLARI = [
+  // Hikaye 1: Henna ve Kediler
+  [
+    "Henna sabah uyandı.",
+    "Odasında iki küçük kedi vardı.",
+    "Kediler mırladı.",
+    "Henna onlara süt verdi.",
+    "Kediler süt içti.",
+    "Henna onları severdi.",
+    "Sonra birlikte bahçeye çıktılar.",
+    "Kediler çimenlerde koşturdu.",
+    "Kediler kelebekleri kovaladı.",
+    "Henna kedileri izledi ve gülümsedi.",
+    "Gün çok güzeldi.",
+    "Henna kedileri sepetten çıkardı.",
+    "Kediler top oynadı.",
+    "Henna onları izledi.",
+    "Kediler yoruldu.",
+    "Henna onları uyuttu."
+  ],
+  // Hikaye 2: Mustafa ve Ayakkabısı
+  [
+    "Mustafa yeni ayakkabısını giymişti.",
+    "Mustafa çok mutlu oldu.",
+    "Hemen çimlere çıktı.",
+    "Top oynamaya başladı.",
+    "Topu arkadaşına pasladı.",
+    "Birlikte güldüler.",
+    "Mustafa koşarken ayakkabısı parlıyordu.",
+    "Oyun çok eğlenceliydi.",
+    "Oyun bittiğinde topunu topladı.",
+    "Eve dönmeye hazırlandı."
+  ]
+];
+
 // Gruplar sırayla ilerler; her grup bitince sonraki başlar
 let grupIndex  = 0;
 let cumleIndex = 0;
 
+// ─── Hikaye Modu Durumu ───────────────────────────────────────────────────────
+let hikayeModu    = false;
+let hikayeIndex   = 0;  // hangi hikaye
+let hikayeCumle   = 0;  // hikayede kaçıncı cümle
+
 const CUMLELER = CUMLE_GRUPLARI[grupIndex];
 const HEDEF_METIN = () => {
+  if (hikayeModu) {
+    const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
+    return hikaye[hikayeCumle % hikaye.length];
+  }
   const grup = CUMLE_GRUPLARI[grupIndex];
   return grup[cumleIndex % grup.length];
 };
@@ -694,8 +834,8 @@ const SpeechController = (function () {
     }
     recognition = new SpeechRecognition();
     recognition.lang            = 'tr-TR';
-    recognition.continuous      = false;
-    recognition.interimResults  = false;
+    recognition.continuous      = true;
+    recognition.interimResults  = true;
     recognition.maxAlternatives = 5;
     recognition.onstart  = _onStart;
     recognition.onresult = _onResult;
@@ -717,68 +857,59 @@ const SpeechController = (function () {
     if (isSpeaking) return;   // TTS aktifken echo koruması
 
     resetWatchdog();   // ses geldi → recognition ayakta, watchdog'u yenile
+    interimText.textContent = event.results[event.results.length - 1][0].transcript;
     resetSilenceTimer();
 
-    // continuous=false: yalnızca final sonuçlar gelir
+    // ── Interim: sadece tam eşleşme kabul et ─────────────────────────────
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) continue;           // final'ler aşağıda işlenir
+      if (currentWordIndex >= targetWords.length) break;
+      const hedef   = targetWords[currentWordIndex];
+      const tokenler = normalizeText(event.results[i][0].transcript);
+      for (let t = 0; t < tokenler.length; t++) {
+        if (currentWordIndex >= targetWords.length) break;
+        if (tokenler[t] === targetWords[currentWordIndex]) {
+          validateWord(tokenler[t]);
+        }
+      }
+    }
+
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (!event.results[i].isFinal) continue;
-      if (currentWordIndex >= targetWords.length) break;
-
       const sonuc = event.results[i];
 
-      // ── Alternatifleri hazırla: confidence filtresi + gürültü filtresi ──
+      // Alternatifleri confidence'a göre azalan sıraya diz
       const altDizisi = [];
       for (let a = 0; a < sonuc.length; a++) {
-        const conf       = sonuc[a].confidence || 0;
-        const transcript = sonuc[a].transcript || '';
-        // Confidence 0.3 altını geçersiz say
-        if (conf < 0.3 && conf !== 0) continue;
-        // Gürültü filtresi: 2 harften kısa ve tek harf tekrarı içerenleri at
-        const trimmed = transcript.trim();
-        if (trimmed.length < 2) continue;
-        if (/^(.)\1+$/.test(trimmed)) continue;
-        altDizisi.push({ transcript: trimmed, confidence: conf });
+        altDizisi.push({ transcript: sonuc[a].transcript, confidence: sonuc[a].confidence || 0 });
       }
-
-      // Hiç geçerli alternatif kalmadıysa ilk ham sonucu kullan
-      if (altDizisi.length === 0 && sonuc.length > 0) {
-        altDizisi.push({ transcript: sonuc[0].transcript || '', confidence: 0 });
-      }
-
-      // Confidence'a göre azalan sırayla
       altDizisi.sort((x, y) => y.confidence - x.confidence);
 
-      // interim gösterimi için en iyi transcript
-      if (altDizisi.length > 0) {
-        interimText.textContent = altDizisi[0].transcript;
-      }
-
-      // ── Her alternatifin tokenlerini hazırla ──────────────────────────
+      // Her alternatifin tokenlerini hazırla (confidence sırasında)
       const altTokenler = altDizisi.map(alt => normalizeText(alt.transcript));
-      const anaTokenler = altTokenler[0] || [];
 
+      // Ana transcript token sayısını baz al (en yüksek confidence)
+      const anaTokenler = altTokenler[0] || [];
       for (let t = 0; t < anaTokenler.length; t++) {
         if (currentWordIndex >= targetWords.length) break;
         const hedef = targetWords[currentWordIndex];
-
-        // Aynı pozisyonda tüm alternatiflerde eşleşme ara
+        // Bu pozisyon için tüm alternatiflerde eşleşen var mı?
         let bulunan = null;
         for (let a = 0; a < altTokenler.length; a++) {
           const tok = altTokenler[a][t];
           if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break; }
         }
-
-        // Pozisyon eşleşmedi — tüm alternatiflerin tüm tokenlarında ara
+        // Pozisyon eşleşmedi — tüm alternatiflerde herhangi bir pozisyonda ara
         if (!bulunan) {
-          outer: for (let a = 0; a < altTokenler.length; a++) {
+          for (let a = 0; a < altTokenler.length; a++) {
             for (let p = 0; p < altTokenler[a].length; p++) {
               const tok = altTokenler[a][p];
-              if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break outer; }
+              if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break; }
             }
+            if (bulunan) break;
           }
         }
-
-        // Eşleşme yoksa ana token ile validateWord'e gönder (yanlış olarak işlenir)
+        // Eşleşme yoksa ana token'ı kullan (yanlış olarak işlenir)
         validateWord(bulunan || anaTokenler[t]);
       }
     }
@@ -969,91 +1100,46 @@ function levenshtein(a, b) {
   return dp[m][n];
 }
 
-// ─── Türkçe karakter normalizasyonu (eşleşme için) ───────────────────────────
-function normalizeTR(s) {
-  return s.replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ş/g,'s')
-          .replace(/ö/g,'o').replace(/ü/g,'u').replace(/ı/g,'i');
-}
-
-// ─── Sessiz harfleri çıkar ────────────────────────────────────────────────────
-function sessizHarfler(s) {
-  return s.replace(/[aeıioöuü]/g, '');
-}
-
-// ─── Levenshtein benzerlik yüzdesi ─────────────────────────────────────────────
-function benzerlikYuzdesi(a, b) {
-  const dist   = levenshtein(a, b);
-  const maxLen = Math.max(a.length, b.length);
-  if (maxLen === 0) return 100;
-  return (1 - dist / maxLen) * 100;
-}
-
-// ─── Toleranslı eşleşme (katmanlı) ───────────────────────────────────────────
+// ─── Toleranslı eşleşme ───────────────────────────────────────────────────────
+// hikayeMod=true ise daha sıkı eşik uygulanır
 function kelimeEslesir(konusulan, hedef) {
-  if (!konusulan || !hedef) return false;
+  if (konusulan === hedef) return true;
+  const dist   = levenshtein(konusulan, hedef);
+  const maxLen = Math.max(hedef.length, konusulan.length);
+  const dogruluk = (1 - dist / maxLen) * 100;  // yüzde olarak
 
-  // Önce TR normalizasyonu uygula (ç→c, ş→s vb.)
-  const k = normalizeTR(konusulan);
-  const h = normalizeTR(hedef);
-
-  // Katman 0 — Tam eşleşme (normalize edilmiş)
-  if (k === h || konusulan === hedef) return true;
-
-  const hedefLen = hedef.length;
-
-  if (hedefLen <= 4) {
-    // ── KISA KELİME ÖZEL MODU (≤4 harf) ──────────────────────────────
-
-    // Katman A — İçerme kontrolü
-    if (k.includes(h) || h.includes(k)) return true;
-
-    // Katman B — İlk harf + uzunluk toleransı (fark ≤1, 2 değil)
-    if (k[0] === h[0] && Math.abs(k.length - h.length) <= 1) return true;
-
-    // Katman C — Sessiz harf dizisi karşılaştırması
-    const kSessiz = sessizHarfler(k);
-    const hSessiz = sessizHarfler(h);
-    if (kSessiz.length > 0 && kSessiz === hSessiz) return true;
-
-    // Katman D — Levenshtein benzerlik (%65 ve üzeri — 60 değil, daha güvenli)
-    if (benzerlikYuzdesi(k, h) >= 65) return true;
-
-  } else {
-    // ── NORMAL KELİMELER (5 harf ve üzeri) ────────────────────────────
-
-    // Katman 1 — İçerme kontrolü (sadece belirgin uzunluk farkı yoksa)
-    if (Math.abs(k.length - h.length) <= 2 && (k.includes(h) || h.includes(k))) return true;
-
-    // Katman 2 — İlk harf aynı + uzunluk farkı ≤2
-    if (k[0] === h[0] && Math.abs(k.length - h.length) <= 2) {
-      // Ek güvence: en az %70 benzerlik gerekli
-      if (benzerlikYuzdesi(k, h) >= 70) return true;
-    }
-
-    // Katman 3 — Dinamik Levenshtein eşiği
+  if (hikayeModu) {
+    // ── Hikaye modu: daha sıkı eşikler ──────────────────────────────
     let esik;
-    if (hedefLen <= 6)      esik = 70;
-    else if (hedefLen <= 8) esik = 75;
-    else                    esik = 80;
-
-    if (benzerlikYuzdesi(k, h) >= esik) return true;
+    if (hedef.length <= 5)       esik = 75;
+    else if (hedef.length <= 8)  esik = 80;
+    else                         esik = 85;
+    return dogruluk >= esik;
   }
 
-  return false;
+  // ── Normal mod: toleranslı, R/L gelişmemiş dil için esnek ────────
+  // Levenshtein mesafe toleransı
+  let tolerans;
+  if (hedef.length <= 3)      tolerans = 1;
+  else if (hedef.length <= 5) tolerans = 2;
+  else if (hedef.length <= 8) tolerans = 3;
+  else                        tolerans = 4;
+
+  // Doğruluk eşiği — düşürüldü (R/L telaffuz zorluğu için)
+  // Eski: %70 sabit → Yeni: uzunluğa göre %55-65
+  let minDogruluk;
+  if (hedef.length <= 4)      minDogruluk = 55;
+  else if (hedef.length <= 6) minDogruluk = 62;
+  else                        minDogruluk = 68;
+
+  if (dogruluk < minDogruluk) return false;
+  return dist <= Math.min(tolerans, Math.floor(maxLen * 0.45));
 }
 
 // ─── Tüm alternatifleri kontrol et ───────────────────────────────────────────
 function checkAlternatives(result) {
   for (let a = 0; a < result.length; a++) {
-    const conf       = result[a].confidence || 0;
-    const transcript = result[a].transcript || '';
-    // Confidence filtresi
-    if (conf < 0.3 && conf !== 0) continue;
-    // Gürültü filtresi
-    const trimmed = transcript.trim();
-    if (trimmed.length < 2) continue;
-    if (/^(.)\1+$/.test(trimmed)) continue;
-    const tokenler = normalizeText(trimmed);
+    const tokenler = normalizeText(result[a].transcript);
     if (tokenler.length === 0) continue;
     if (kelimeEslesir(tokenler[0], targetWords[currentWordIndex])) return tokenler[0];
   }
@@ -1180,16 +1266,36 @@ function endGame() {
   if (endGameTimer) clearTimeout(endGameTimer);
   endGameTimer = setTimeout(() => {
     endGameTimer = null;
-    cumleIndex++;
-    // Mevcut grubun tüm cümleleri bitti → sonraki gruba geç
-    if (cumleIndex >= CUMLE_GRUPLARI[grupIndex].length) {
-      cumleIndex = 0;
-      if (grupIndex < CUMLE_GRUPLARI.length - 1) {
-        grupIndex++;
-        micStatus.textContent = '🌟 Yeni harf grubu başlıyor!';
-        syncLevelButtons();
+
+    if (hikayeModu) {
+      // ── Hikaye modu ilerleme ──────────────────────────────────────
+      hikayeCumle++;
+      const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
+      if (hikayeCumle >= hikaye.length) {
+        // Hikaye bitti → sonraki hikayeye geç veya başa dön
+        hikayeCumle = 0;
+        if (hikayeIndex < HIKAYE_GRUPLARI.length - 1) {
+          hikayeIndex++;
+          micStatus.textContent = '📖 Yeni hikaye başlıyor!';
+        } else {
+          hikayeIndex = 0;
+          micStatus.textContent = '🌟 Tüm hikayeler bitti! Baştan başlıyor.';
+        }
+      }
+      updateStoryProgress();
+    } else {
+      // ── Normal mod ilerleme ───────────────────────────────────────
+      cumleIndex++;
+      if (cumleIndex >= CUMLE_GRUPLARI[grupIndex].length) {
+        cumleIndex = 0;
+        if (grupIndex < CUMLE_GRUPLARI.length - 1) {
+          grupIndex++;
+          micStatus.textContent = '🌟 Yeni harf grubu başlıyor!';
+          syncLevelButtons();
+        }
       }
     }
+
     currentWordIndex   = 0;
     score              = 0;
     processedWordCount = 0;
@@ -1240,12 +1346,23 @@ btnStop.addEventListener('click', () => {
 btnSkip.addEventListener('click', () => {
   if (endGameTimer) { clearTimeout(endGameTimer); endGameTimer = null; }
   SpeechController.stopAll();
-  cumleIndex++;
-  if (cumleIndex >= CUMLE_GRUPLARI[grupIndex].length) {
-    cumleIndex = 0;
-    if (grupIndex < CUMLE_GRUPLARI.length - 1) {
-      grupIndex++;
-      syncLevelButtons();
+  if (hikayeModu) {
+    hikayeCumle++;
+    const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
+    if (hikayeCumle >= hikaye.length) {
+      hikayeCumle = 0;
+      if (hikayeIndex < HIKAYE_GRUPLARI.length - 1) hikayeIndex++;
+      else hikayeIndex = 0;
+    }
+    updateStoryProgress();
+  } else {
+    cumleIndex++;
+    if (cumleIndex >= CUMLE_GRUPLARI[grupIndex].length) {
+      cumleIndex = 0;
+      if (grupIndex < CUMLE_GRUPLARI.length - 1) {
+        grupIndex++;
+        syncLevelButtons();
+      }
     }
   }
   currentWordIndex   = 0;
@@ -1285,6 +1402,51 @@ document.querySelectorAll('.lvl-btn').forEach(btn => {
     oyunuKur();
     setTimeout(() => { btnStart.click(); }, 250);
   });
+});
+
+// ─── Hikaye ilerleme UI ──────────────────────────────────────────────────────
+function updateStoryProgress() {
+  if (!hikayeModu) return;
+  const hikaye = HIKAYE_GRUPLARI[hikayeIndex];
+  const toplam = hikaye.length;
+  const mevcut = hikayeCumle + 1;
+  const yuzde  = Math.round((hikayeCumle / toplam) * 100);
+  const isimler = ['📖 Henna ve Kediler', '📖 Mustafa ve Ayakkabısı'];
+  storyTitle.textContent       = isimler[hikayeIndex] || '📖 Hikaye';
+  storyBar.style.width         = yuzde + '%';
+  storyProgressText.textContent = mevcut + ' / ' + toplam;
+}
+
+// ─── Hikaye butonu ────────────────────────────────────────────────────────────
+btnHikaye.addEventListener('click', () => {
+  if (endGameTimer) { clearTimeout(endGameTimer); endGameTimer = null; }
+  SpeechController.stopAll();
+
+  hikayeModu = !hikayeModu;
+  btnHikaye.classList.toggle('active', hikayeModu);
+
+  if (hikayeModu) {
+    hikayeIndex = 0;
+    hikayeCumle = 0;
+    storyProgress.classList.add('visible');
+    updateStoryProgress();
+    // Seviye butonlarını pasif göster (hikaye modunda kullanılmıyor)
+    document.querySelectorAll('.lvl-btn').forEach(b => b.style.opacity = '0.25');
+  } else {
+    storyProgress.classList.remove('visible');
+    document.querySelectorAll('.lvl-btn').forEach(b => b.style.opacity = '');
+    syncLevelButtons();
+  }
+
+  currentWordIndex   = 0;
+  score              = 0;
+  processedWordCount = 0;
+  yanlisSayac        = 0;
+  interimText.textContent  = '';
+  congratsBanner.classList.remove('visible');
+  errorMsg.classList.remove('visible');
+  oyunuKur();
+  setTimeout(() => { btnStart.click(); }, 250);
 });
 
 // ─── Ses seviyesi → mic daire efekti ─────────────────────────────────────────
