@@ -210,6 +210,15 @@
     color: var(--text);
     background: transparent;
   }
+  /* Kelime sayısına göre font küçültme */
+  .word-card[data-wordcount="medium"] .word {
+    font-size: clamp(1.4rem, 5vw, 2.4rem);
+    padding: 6px 12px;
+  }
+  .word-card[data-wordcount="large"] .word {
+    font-size: clamp(1.1rem, 3.5vw, 1.8rem);
+    padding: 5px 10px;
+  }
   .word.active {
     background: rgba(255, 209, 102, 0.15);
     border-color: var(--yellow);
@@ -903,14 +912,14 @@ const HIKAYE_GRUPLARI = [
     "Arabasını dikkatli sürmesi gerektiğini anladı.",
     "Soru: Mina arabasını sürerken neyi fark etti?"
   ],
-  // Hikaye 2: Bora ve Yapboz
+  // Hikaye 2: Baran ve Yapboz
   [
-    "Bora yapboz parçalarını masaya yaydı.",
+    "Baran yapboz parçalarını masaya yaydı.",
     "Önce köşe parçalarını buldu.",
     "Parçaları birleştirirken sabırlı davrandı.",
     "Sonunda güzel bir hayvan resmi ortaya çıktı.",
-    "Bora başardığı için gurur duydu.",
-    "Soru: Bora yapbozu tamamlarken nasıl davrandı?"
+    "Baran başardığı için gurur duydu.",
+    "Soru: Baran yapbozu tamamlarken nasıl davrandı?"
   ],
   // Hikaye 3: Henna ve Kediler
   [
@@ -999,14 +1008,14 @@ const HIKAYE_GRUPLARI = [
     "Emir eşyalarını düzenli koyması gerektiğini anladı.",
     "Soru: Emir kalemini nerede buldu?"
   ],
-  // Hikaye 13: Selin ve Paylaşmak
+  // Hikaye 13: Beyaz ve Paylaşmak
   [
-    "Selin parkta bisküviyle oturuyordu.",
+    "Beyaz parkta bisküviyle oturuyordu.",
     "Yanındaki çocuk üzgün görünüyordu çünkü yiyeceği yoktu.",
-    "Selin bisküvisini ikiye böldü ve yarısını verdi.",
+    "Beyaz bisküvisini ikiye böldü ve yarısını verdi.",
     "Çocuk gülümsedi.",
-    "Selin paylaşmanın insanı mutlu ettiğini fark etti.",
-    "Soru: Selin neden mutlu oldu?"
+    "Beyaz paylaşmanın insanı mutlu ettiğini fark etti.",
+    "Soru: Beyaz neden mutlu oldu?"
   ],
   // Hikaye 14: Kaan ve Zamanında Uyanmak
   [
@@ -1094,7 +1103,7 @@ const HIKAYE_GRUPLARI = [
 
 const HIKAYE_ISIMLERI = [
   'Mina ve Oyuncak Arabası',
-  'Bora ve Yapboz',
+  'Baran ve Yapboz',
   'Henna ve Kediler',
   'Mustafa ve Yeni Ayakkabıları',
   'Asya ve Yağmur',
@@ -1105,7 +1114,7 @@ const HIKAYE_ISIMLERI = [
   'Yağmur ve Kütüphane',
   'Çiçek ve Dostluk',
   'Emir ve Kayıp Kalem',
-  'Selin ve Paylaşmak',
+  'Beyaz ve Paylaşmak',
   'Kaan ve Zamanında Uyanmak',
   'Elvan ve Bitki',
   'Berk ve Kırılan Bardak',
@@ -1600,6 +1609,9 @@ function oyunuKur() {
 
   wordCard.innerHTML = '';
   wordCard.appendChild(fragment);
+  // Kelime sayısına göre font boyutunu ayarla
+  const adet = targetWords.length;
+  wordCard.dataset.wordcount = adet <= 3 ? 'small' : adet <= 5 ? 'medium' : 'large';
 }
 
 // ─── Kelime doğrulama ─────────────────────────────────────────────────────────
@@ -1837,7 +1849,6 @@ function endGame() {
         errorMsg.classList.remove('visible');
         btnStop.disabled  = false;
         btnStart.disabled = false;
-        sifirlaIstatistik();
         sonrakiCumleyeGec();
         resetCumle();
       }, 2000);
@@ -1877,14 +1888,13 @@ function endGame() {
       }, 1200);
 
     } else {
-      // Normal cümle geçişi
+      // Normal cümle geçişi — istatistikler bölüm sonuna kadar birikir
       endGameTimer = setTimeout(() => {
         endGameTimer = null;
         congratsBanner.classList.remove('visible');
         errorMsg.classList.remove('visible');
         btnStop.disabled  = false;
         btnStart.disabled = false;
-        sifirlaIstatistik();
         sonrakiCumleyeGec();
         resetCumle();
       }, 2000);
@@ -1934,8 +1944,28 @@ btnStart.addEventListener('click', () => {
 });
 
 btnStop.addEventListener('click', () => {
+  if (endGameTimer) { clearTimeout(endGameTimer); endGameTimer = null; }
   SpeechController.stopAll();
-  setTimeout(() => { btnStart.click(); }, 250);
+  kapatRapor();
+  // currentWordIndex korunur — kaldığı kelimeden devam
+  score = 0;
+  yanlisSayac = 0; yanlisSayacIndex = -1;
+  interimText.textContent = '';
+  congratsBanner.classList.remove('visible');
+  errorMsg.classList.remove('visible');
+  // Span durumlarını güncelle — geçmiş doğrular korunsun, aktif kelime vurgulansın
+  wordSpans.forEach((span, i) => {
+    if (i < currentWordIndex) {
+      span.className = 'word correct';
+    } else if (i === currentWordIndex) {
+      span.className = 'word active';
+    } else {
+      span.className = 'word';
+    }
+  });
+  btnStart.disabled = false;
+  btnStop.disabled  = false;
+  SpeechController.startListening();
 });
 
 btnSkip.addEventListener('click', () => {
