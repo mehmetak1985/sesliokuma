@@ -1793,9 +1793,5 @@ const _koyunResultObserver = new MutationObserver(() => {
 });
 _koyunResultObserver.observe(koyunResult, { attributes: true, attributeFilter: ['class'] });
 
-// Kelime oyununa girilince kediyi sıfırla
-const _eskiKelimeOyunuGoster = kelimeOyunuGoster;
-function kelimeOyunuGoster() {
-  _eskiKelimeOyunuGoster();
-  kediDurum('normal');
-}
+// Kelime oyununa girilince kediyi sıfırla — doğrudan kediDurum çağrılıyor
+// kelimeOyunuGoster sonunda zaten koyunGoster() çağırıyor, oraya observer yeter
