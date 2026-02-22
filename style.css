@@ -860,3 +860,325 @@ body::after {
   .report-card { padding: 24px 20px; }
   .score-card { padding: 8px 20px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ANA MENÜ EKRANI
+   ═══════════════════════════════════════════════════════════════ */
+
+.menu-screen {
+  position: relative;
+  z-index: 1;
+  width: min(94vw, 700px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0 28px;
+}
+
+/* ── Üst bar ────────────────────────────────────────────────── */
+.menu-topbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.menu-topbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-level-badge {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: #fff;
+  background: rgba(30,136,229,0.85);
+  padding: 3px 14px;
+  border-radius: 50px;
+  box-shadow: 0 2px 8px rgba(30,136,229,0.35);
+}
+
+.menu-level-badge strong { font-weight: 900; }
+
+.menu-level-bar-wrap {
+  width: 110px;
+  height: 7px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+.menu-level-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--orange));
+  border-radius: 50px;
+  transition: width 0.5s ease;
+}
+
+.menu-score-badge {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--orange);
+  background: linear-gradient(135deg, #fff9e6, #fff3cd);
+  padding: 6px 18px;
+  border-radius: 50px;
+  border: 2px solid var(--gold);
+  box-shadow: var(--shadow-gold);
+}
+
+.menu-score-badge strong { font-weight: 900; }
+
+/* ── Logo ───────────────────────────────────────────────────── */
+.menu-logo { text-align: center; }
+
+.menu-title {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.2rem, 7vw, 3.4rem);
+  color: #fff;
+  text-shadow:
+    0 3px 0 var(--gold-dark),
+    0 6px 0 rgba(0,0,0,0.15),
+    0 0 40px rgba(255,255,255,0.3);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.menu-title-book {
+  font-size: clamp(2rem, 6vw, 3rem);
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25));
+  animation: bookFloat 3s ease-in-out infinite;
+}
+
+@keyframes bookFloat {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-8px) rotate(3deg); }
+}
+
+.menu-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  background: rgba(255,255,255,0.8);
+  display: inline-block;
+  padding: 5px 20px;
+  border-radius: 50px;
+  margin-top: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* ── Mod kartları ───────────────────────────────────────────── */
+.menu-cards {
+  display: flex;
+  gap: 18px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.menu-card {
+  flex: 1;
+  min-width: 140px;
+  max-width: 240px;
+  border-radius: var(--radius-lg);
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-card), 0 4px 0 rgba(0,0,0,0.12);
+}
+
+.menu-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.22) 0%, transparent 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.menu-card:hover  { transform: translateY(-5px); box-shadow: var(--shadow-card), 0 10px 0 rgba(0,0,0,0.10); }
+.menu-card:active { transform: translateY(0px);  box-shadow: var(--shadow-card), 0 2px 0 rgba(0,0,0,0.12); }
+
+.menu-card--alistirma {
+  background: linear-gradient(160deg, #ffb74d, #ff8f00, #e65100);
+  border: 3px solid rgba(255,255,255,0.4);
+}
+
+.menu-card--hikaye {
+  background: linear-gradient(160deg, #64b5f6, #1e88e5, #1565c0);
+  border: 3px solid rgba(255,255,255,0.4);
+}
+
+.menu-card-label-top {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  letter-spacing: 0.5px;
+  z-index: 1;
+}
+
+.menu-card-art {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+  min-height: 90px;
+  justify-content: center;
+}
+
+.menu-card-emoji {
+  font-size: 3.2rem;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2));
+  animation: cardEmojiBounce 2.5s ease-in-out infinite;
+}
+
+.menu-card:nth-child(2) .menu-card-emoji {
+  animation-delay: 0.4s;
+}
+
+@keyframes cardEmojiBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+.menu-card-deco {
+  display: flex;
+  gap: 6px;
+  font-size: 1rem;
+}
+
+.menu-card-btn {
+  width: 100%;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 1rem;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1;
+  position: relative;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  letter-spacing: 0.3px;
+}
+
+.menu-card-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.menu-card-btn--orange {
+  background: linear-gradient(135deg, #fff3cd, #ffe082);
+  color: #e65100;
+  border-bottom: 3px solid rgba(0,0,0,0.15);
+}
+
+.menu-card-btn--blue {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #1565c0;
+  border-bottom: 3px solid rgba(0,0,0,0.15);
+}
+
+.menu-card-btn:hover { transform: scale(1.04); }
+.menu-card-btn:active { transform: scale(0.97) translateY(2px); }
+
+/* ── Alt puan şeridi ────────────────────────────────────────── */
+.menu-footer {
+  background: rgba(210,180,140,0.55);
+  border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 50px;
+  padding: 10px 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  backdrop-filter: blur(6px);
+}
+
+.menu-footer-score {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  margin-left: 6px;
+}
+
+.menu-footer-score strong {
+  font-weight: 900;
+  color: var(--orange);
+}
+
+/* ── Geri butonu (oyun ekranında) ───────────────────────────── */
+.btn-back {
+  align-self: flex-start;
+  background: rgba(255,255,255,0.75);
+  border: 2px solid rgba(255,255,255,0.9);
+  border-radius: 50px;
+  color: var(--text-dark);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 7px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.btn-back:hover {
+  background: rgba(255,255,255,0.95);
+  transform: translateX(-3px);
+}
+
+/* ── Menü geçiş animasyonları ───────────────────────────────── */
+.menu-screen.fade-out {
+  animation: fadeOut 0.25s ease forwards;
+}
+
+.game-container.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.96); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Mobil menü ─────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .menu-cards { gap: 12px; }
+  .menu-card  { min-width: 130px; padding: 14px 12px 12px; }
+  .menu-title { font-size: 2rem; }
+  .menu-footer { padding: 8px 18px; gap: 8px; }
+}
