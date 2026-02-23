@@ -483,7 +483,7 @@ const SpeechController = (function () {
         // Ayakta görünüyor ama emin olmak için watchdog'u yenile
         resetWatchdog();
       }
-    }, 2000);
+    }, 3000);
   }
 
   function scheduleRestart(ms) {
@@ -501,7 +501,7 @@ const SpeechController = (function () {
       if (recState === 'listening' && !isSpeaking && currentWordIndex < targetWords.length) {
         _stop(true); // sessizlik → restart
       }
-    }, 2800);
+    }, 3500);
   }
 
   // ── Recognition iç inşa ───────────────────────────────────────────────
@@ -1408,17 +1408,12 @@ function menuGoster() {
   // Menü skorunu güncelle
   menuScoreText.textContent  = totalScore;
   menuTotalScore.textContent = totalScore;
-  menuLevelText.textContent  = grupIndex + 1;
-  menuLevelBar.style.width   = ((cumleIndex / 15) * 100) + '%';
+  if (menuLevelText) menuLevelText.textContent = grupIndex + 1;
+  if (menuLevelBar)  menuLevelBar.style.width  = ((cumleIndex / 15) * 100) + '%';
 
-  // Oyun ekranlarını gizle, menüyü göster
+  // Oyun ekranını gizle, menüyü göster
   gameContainer.style.display = 'none';
-  const ks = document.getElementById('koyunScreen');
-  if (ks) ks.style.display = 'none';
   menuScreen.style.display    = 'flex';
-  menuScreen.classList.remove('fade-out');
-  menuScreen.classList.add('fade-in');
-  setTimeout(() => menuScreen.classList.remove('fade-in'), 300);
   SpeechController.stopAll();
 }
 
@@ -1441,9 +1436,6 @@ function oyunEkraniGoster(hikayeModuSecim) {
   // Menüyü gizle, oyun ekranını göster
   menuScreen.style.display    = 'none';
   gameContainer.style.display = 'flex';
-  gameContainer.classList.remove('fade-in');
-  gameContainer.classList.add('fade-in');
-  setTimeout(() => gameContainer.classList.remove('fade-in'), 300);
 
   // Otomatik başlat
   setTimeout(() => { btnStart.click(); }, 200);
@@ -1514,7 +1506,8 @@ const KELIME_EMOJI = {
   'top':     '⚽',
   'balon':   '🎈',
   'pasta':   '🎂',
-  'armut':     '🍐',
+  'elma':    '🍎',
+  'armut':   '🍐',
   'muz':     '🍌',
   'çilek':   '🍓',
   'portakal':'🍊',
@@ -1640,14 +1633,12 @@ function koyunRecBuild() {
 
 function koyunRecBaslat() {
   if (!SpeechRecognition || !koyunAktif) return;
-  if (koyunRecState === 'listening' || koyunRecState === 'starting') return;
-  koyunRecState = 'starting';
+  if (koyunRecState === 'listening') return;
   koyunRecBuild();
   try {
     koyunRec.start();
-  } catch(e) {
-    koyunRecState = 'idle';
-  }
+    koyunRecState = 'listening';
+  } catch(e) {}
 }
 
 function koyunRecDurdur() {
@@ -1660,6 +1651,40 @@ function koyunRecDurdur() {
   koyunInterimText.textContent = '';
 }
 
+// ─── Cevap kontrolü ───────────────────────────────────────────
+function koyunCevapKontrol(soylenen) {
+  const hedef    = koyunSiralamis[koyunIndex];
+  const tokenler = normalizeText(soylenen);
+  const dogru    = tokenler.some(t => kelimeEslesir(t, hedef));
+
+  if (dogru) {
+    // ✅ Doğru
+    koyunSkor += 15;
+    koyunScoreEl.textContent  = koyunSkor;
+    koyunHint.textContent     = hedef;
+    koyunHint.className       = 'koyun-hint revealed';
+    koyunResult.textContent   = '✅ Harika! +15 puan';
+    koyunResult.className     = 'koyun-result dogru';
+    koyunCard.className       = 'koyun-card correct-flash';
+
+    // totalScore'a da ekle
+    totalScore += 15;
+
+    setTimeout(() => {
+      koyunSonraki();
+    }, 1400);
+
+  } else {
+    // ❌ Yanlış
+    koyunYanlis++;
+    koyunResult.textContent = '❌ Tekrar dene!';
+    koyunResult.className   = 'koyun-result yanlis';
+    koyunCard.className     = 'koyun-card wrong-flash';
+    setTimeout(() => {
+      koyunCard.className = 'koyun-card';
+    }, 400);
+  }
+}
 
 function koyunSonraki() {
   koyunIndex++;
@@ -1698,9 +1723,6 @@ function kelimeOyunuGoster() {
   menuScreen.style.display    = 'none';
   gameContainer.style.display = 'none';
   koyunScreen.style.display   = 'flex';
-  koyunScreen.classList.remove('fade-in');
-  koyunScreen.classList.add('fade-in');
-  setTimeout(() => koyunScreen.classList.remove('fade-in'), 300);
 
   // Sıfırla ve başlat
   koyunSiralamis = koyunKarıstir(KOYUN_KELIMELER);
@@ -1821,34 +1843,3 @@ function _koyunSesliKontrol(soylenen) {
 };
 
 // koyunRecBuild içinde _koyunSesliKontrol direkt çağrılıyor — override gerekmez
-
-// ═══════════════════════════════════════════════════════════════
-// HAMBURGER MENÜ
-// ═══════════════════════════════════════════════════════════════
-(function () {
-  const overlay   = document.getElementById('hmenuOverlay');
-  const btnOpen   = document.getElementById('hamburgerBtn');
-  const btnClose  = document.getElementById('hmenuClose');
-  const panel     = document.getElementById('hmenuPanel');
-  const hmSes     = document.getElementById('hmSes');
-  const sesToggle = document.getElementById('hmSesToggle');
-  const sesLabel  = document.getElementById('hmSesLabel');
-
-  if (!overlay || !btnOpen) return;
-
-  let sesAcik = true;
-
-  function ac()   { overlay.classList.add('open'); }
-  function kapat(){ overlay.classList.remove('open'); }
-
-  btnOpen.addEventListener('click', ac);
-  btnClose.addEventListener('click', kapat);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) kapat(); });
-
-  hmSes.addEventListener('click', () => {
-    sesAcik = !sesAcik;
-    sesToggle.classList.toggle('off', !sesAcik);
-    sesLabel.textContent = sesAcik ? 'Ses Açık' : 'Ses Kapalı';
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
-  });
-})();
