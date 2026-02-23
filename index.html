@@ -16,16 +16,46 @@
      ═══════════════════════════════════════════════════════════ -->
 <div class="menu-screen" id="menuScreen">
 
-  <!-- Üst bar: Seviye + Puan -->
+  <!-- Üst bar: Hamburger + Puan -->
   <div class="menu-topbar">
     <div class="menu-topbar-left">
-      <span class="menu-level-badge">Seviye <strong id="menuLevelText">1</strong></span>
-      <div class="menu-level-bar-wrap">
-        <div class="menu-level-bar" id="menuLevelBar" style="width:30%"></div>
-      </div>
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menü">
+        <span></span><span></span><span></span>
+      </button>
     </div>
     <div class="menu-topbar-right">
       <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
+    </div>
+  </div>
+
+  <!-- Hamburger Modal -->
+  <div class="hmenu-overlay" id="hmenuOverlay">
+    <div class="hmenu-panel">
+      <button class="hmenu-close" id="hmenuClose">&#10005;</button>
+      <div class="hmenu-logo">&#127891; Minik Okur</div>
+      <div class="hmenu-items">
+        <button class="hmenu-item" id="hmSes">
+          <span class="hmenu-icon">&#128266;</span>
+          <span class="hmenu-label" id="hmSesLabel">Ses A&#351;&#305;k</span>
+          <span class="hmenu-toggle" id="hmSesToggle"></span>
+        </button>
+        <button class="hmenu-item">
+          <span class="hmenu-icon">&#11088;</span>
+          <span class="hmenu-label">Bize Puan Ver</span>
+        </button>
+        <button class="hmenu-item">
+          <span class="hmenu-icon">&#128226;</span>
+          <span class="hmenu-label">Tavsiye Et</span>
+        </button>
+        <button class="hmenu-item">
+          <span class="hmenu-icon">&#9993;&#65039;</span>
+          <span class="hmenu-label">Bize Ula&#351;</span>
+        </button>
+        <button class="hmenu-item hmenu-item--bagis">
+          <span class="hmenu-icon">&#128149;</span>
+          <span class="hmenu-label">Ba&#287;&#305;&#351; Yap</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -56,7 +86,7 @@
       <div class="menu-card-art">
         <span class="menu-card-emoji">🎯</span>
         <div class="menu-card-deco">
-          <span>🔤</span><span>⭐</span><span>🔤</span>
+          <span>🐱</span><span>⭐</span><span>🍎</span>
         </div>
       </div>
       <button class="menu-card-btn menu-card-btn--green" data-mod="kelime">Kelime Oyunu</button>
@@ -66,7 +96,10 @@
     <div class="menu-card menu-card--hikaye" id="menuCardHikaye">
       <div class="menu-card-label-top">Hikaye</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">🐑</span>
+        <span class="menu-card-emoji">📖</span>
+        <div class="menu-card-deco">
+          <span>🌟</span><span>🐑</span><span>🌙</span>
+        </div>
       </div>
       <button class="menu-card-btn menu-card-btn--blue" data-mod="hikaye">Hikaye</button>
     </div>
@@ -231,6 +264,28 @@
   </div>
 </div>
 
+<script>
+// Hamburger menü aç/kapat
+(function(){
+  var overlay  = document.getElementById('hmenuOverlay');
+  var btnOpen  = document.getElementById('hamburgerBtn');
+  var btnClose = document.getElementById('hmenuClose');
+  var toggle   = document.getElementById('hmSesToggle');
+  var label    = document.getElementById('hmSesLabel');
+  var sesAcik  = true;
+
+  btnOpen.addEventListener('click', function(){ overlay.classList.add('open'); });
+  btnClose.addEventListener('click', function(){ overlay.classList.remove('open'); });
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
+
+  document.getElementById('hmSes').addEventListener('click', function(){
+    sesAcik = !sesAcik;
+    toggle.classList.toggle('off', !sesAcik);
+    label.textContent = sesAcik ? 'Ses Açık' : 'Ses Kapalı';
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+  });
+})();
+</script>
 <script src="app.js"></script>
 </body>
 </html>
