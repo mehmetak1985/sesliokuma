@@ -1718,7 +1718,7 @@ function koyunRecBuild() {
   }
   koyunRec = new SpeechRecognition();
   koyunRec.lang           = 'tr-TR';
-  koyunRec.continuous     = false;
+  koyunRec.continuous     = true;
   koyunRec.interimResults = true;
   koyunRec.maxAlternatives = 3;
 
