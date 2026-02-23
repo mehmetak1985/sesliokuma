@@ -373,7 +373,6 @@ const HIKAYE_ISIMLERI = [
 
 // ─── localStorage yardımcıları ────────────────────────────────────────────────
 const LS_KEY = 'sesliOkumaOyunu_v1';
-let koyunSkor = 0; // Kelime oyunu puanı — yukle()'den önce tanımlanmalı
 function kaydet() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify({
@@ -1531,6 +1530,7 @@ const KOYUN_KELIMELER = [
 
 // ─── Kelime Oyunu Durumu ───────────────────────────────────────
 let koyunIndex     = 0;
+let koyunSkor      = 0;
 let koyunYanlis    = 0;
 let koyunAktif     = false;
 let koyunRec       = null;
@@ -1734,6 +1734,7 @@ function kelimeOyunuGoster() {
   koyunMicStatus.textContent = 'Başlamak için düğmeye bas';
 }
 
+
 // ═══════════════════════════════════════════════════════════════
 // WEB AUDIO SES EFEKTLERİ
 // ═══════════════════════════════════════════════════════════════
@@ -1756,7 +1757,9 @@ function sesCal(tip) {
   const ctx = _getAudioCtx();
   if (!ctx) return;
   try {
+
     if (tip === 'dogru') {
+      // Neşeli iki nota: do → mi
       [[523, 0, 0.12], [659, 0.13, 0.22], [784, 0.26, 0.38]].forEach(([frekans, baslangic, bitis]) => {
         const osc  = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -1769,7 +1772,9 @@ function sesCal(tip) {
         osc.start(ctx.currentTime + baslangic);
         osc.stop(ctx.currentTime + bitis);
       });
+
     } else if (tip === 'yanlis') {
+      // Alçalan iki nota: la → fa
       [[330, 0, 0.15], [247, 0.16, 0.35]].forEach(([frekans, baslangic, bitis]) => {
         const osc  = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -1783,16 +1788,18 @@ function sesCal(tip) {
         osc.stop(ctx.currentTime + bitis);
       });
     }
+
   } catch(e) {}
 }
 
 // ─── Ses entegreli cevap kontrolü ────────────────────────────
 function _koyunSesliKontrol(soylenen) {
-  const hedef    = koyunSiralamis[koyunIndex];
+  const hedef  = koyunSiralamis[koyunIndex];
   const tokenler = normalizeText(soylenen);
-  const dogru    = tokenler.some(t => kelimeEslesir(t, hedef));
+  const dogru  = tokenler.some(t => kelimeEslesir(t, hedef));
 
   if (dogru) {
+    // Mikrofonu durdur → ses çal → sonraki kelimeye geç
     koyunAktif = false;
     if (koyunRec) { try { koyunRec.abort(); } catch(e) {} }
     koyunRecState = 'idle';
@@ -1802,7 +1809,7 @@ function _koyunSesliKontrol(soylenen) {
     koyunScoreEl.textContent = koyunSkor;
     koyunHint.textContent    = hedef;
     koyunHint.className      = 'koyun-hint revealed';
-    koyunResult.textContent  = '\u2705 Harika! +15 puan';
+    koyunResult.textContent  = '✅ Harika! +15 puan';
     koyunResult.className    = 'koyun-result dogru';
     koyunCard.className      = 'koyun-card correct-flash';
 
@@ -1815,12 +1822,13 @@ function _koyunSesliKontrol(soylenen) {
     }, 1000);
 
   } else {
+    // Mikrofonu kısa dur → ses çal → tekrar dinle
     koyunAktif = false;
     if (koyunRec) { try { koyunRec.abort(); } catch(e) {} }
     koyunRecState = 'idle';
 
     koyunYanlis++;
-    koyunResult.textContent = '\u274c Tekrar dene!';
+    koyunResult.textContent = '❌ Tekrar dene!';
     koyunResult.className   = 'koyun-result yanlis';
     koyunCard.className     = 'koyun-card wrong-flash';
 
@@ -1832,4 +1840,6 @@ function _koyunSesliKontrol(soylenen) {
       koyunRecBaslat();
     }, 700);
   }
-}
+};
+
+// koyunRecBuild içinde _koyunSesliKontrol direkt çağrılıyor — override gerekmez
