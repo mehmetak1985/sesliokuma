@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minik Okur</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ANA MENÜ EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="menu-screen" id="menuScreen">
+
+  <!-- Üst bar: Hamburger + Puan -->
+  <div class="menu-topbar">
+    <div class="menu-topbar-left">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menü">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="menu-topbar-right">
+      <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
+    </div>
+  </div>
+
+  <!-- Hamburger Modal -->
+  <div class="hmenu-overlay" id="hmenuOverlay">
+    <div class="hmenu-panel">
+      <button class="hmenu-close" id="hmenuClose">&#10005;</button>
+      <div class="hmenu-logo">&#127891; Minik Okur</div>
+      <div class="hmenu-items">
+        <button class="hmenu-item" id="hmAchievements">
+          <span class="hmenu-icon">&#127942;</span>
+          <span class="hmenu-label">Ba&#351;ar&#305;lar&#305;m</span>
+        </button>
+        <button class="hmenu-item" id="hmSes">
+          <span class="hmenu-icon">&#128266;</span>
+          <span class="hmenu-label" id="hmSesLabel">Ses A&#351;&#305;k</span>
+          <span class="hmenu-toggle" id="hmSesToggle"></span>
+        </button>
+        <button class="hmenu-item">
+          <span class="hmenu-icon">&#11088;</span>
+          <span class="hmenu-label">Bize Puan Ver</span>
+        </button>
+        <button class="hmenu-item">
+          <span class="hmenu-icon">&#128226;</span>
+          <span class="hmenu-label">Tavsiye Et</span>
+        </button>
+        <button class="hmenu-item">
+          <span class="hmenu-icon">&#9993;&#65039;</span>
+          <span class="hmenu-label">Bize Ula&#351;</span>
+        </button>
+        <button class="hmenu-item hmenu-item--bagis">
+          <span class="hmenu-icon">&#128149;</span>
+          <span class="hmenu-label">Ba&#287;&#305;&#351; Yap</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logo -->
+  <div class="menu-logo">
+    <h1 class="menu-title">Minik <span class="menu-title-book">📖</span> Okur</h1>
+  </div>
+
+  <!-- Mod kartları -->
+  <div class="menu-cards">
+
+    <!-- Alıştırma -->
+    <div class="menu-card menu-card--alistirma" id="menuCardAlistirma">
+      <div class="menu-card-label-top">Alıştırma</div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">✏️</span>
+        <div class="menu-card-deco">
+          <span>✔️</span><span>❓</span><span>✔️</span>
+        </div>
+      </div>
+      <button class="menu-card-btn menu-card-btn--orange" data-mod="alistirma">Alıştırma</button>
+    </div>
+
+    <!-- Kelime Oyunu -->
+    <div class="menu-card menu-card--kelime" id="menuCardKelime">
+      <div class="menu-card-label-top">Kelime Oyunu</div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">🎯</span>
+        <div class="menu-card-deco">
+          <span>🐱</span><span>⭐</span><span>🍎</span>
+        </div>
+      </div>
+      <button class="menu-card-btn menu-card-btn--green" data-mod="kelime">Kelime Oyunu</button>
+    </div>
+
+    <!-- Hikaye -->
+    <div class="menu-card menu-card--hikaye" id="menuCardHikaye">
+      <div class="menu-card-label-top">Hikaye</div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">📖</span>
+        <div class="menu-card-deco">
+          <span>🌟</span><span>🐑</span><span>🌙</span>
+        </div>
+      </div>
+      <button class="menu-card-btn menu-card-btn--blue" data-mod="hikaye">Hikaye</button>
+    </div>
+
+  </div>
+
+  <!-- Alt yıldız şeridi -->
+  <div class="menu-footer">
+    <span class="menu-footer-score">Toplam Yıldız: <strong id="menuTotalScore">0</strong> ⭐</span>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OYUN EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="game-container" id="gameContainer" style="display:none">
+
+  <!-- Geri butonu -->
+  <button class="btn-back" id="btnBack">← Menü</button>
+
+  <div class="title-area">
+    <h1 id="modeTitle">Minik <span class="menu-title-book">📖</span> Okur</h1>
+    <p class="subtitle" id="modeSubtitle">Alıştırma</p>
+    <div class="level-selector">
+      <span class="level-label">SEVİYE</span>
+      <div class="level-buttons">
+        <button class="lvl-btn active" data-level="0" style="--lvl-color:#ef476f">1</button>
+        <button class="lvl-btn" data-level="1" style="--lvl-color:#f4a261">2</button>
+        <button class="lvl-btn" data-level="2" style="--lvl-color:#ffd166">3</button>
+        <button class="lvl-btn" data-level="3" style="--lvl-color:#06d6a0">4</button>
+        <button class="lvl-btn" data-level="4" style="--lvl-color:#118ab2">5</button>
+      </div>
+    </div>
+    <div class="tab-strip">
+      <button class="tab-btn active" id="tabAlistirma">📝 Alıştırma</button>
+      <button class="tab-btn" id="tabHikaye">📖 Hikaye</button>
+    </div>
+  </div>
+
+  <div class="story-progress" id="storyProgress">
+    <div class="story-progress-header">
+      <button class="story-nav-btn" id="btnHikayeGeri">&#9664;</button>
+      <div class="story-progress-title" id="storyTitle">📖 Hikaye</div>
+      <button class="story-nav-btn" id="btnHikayeIleri">&#9654;</button>
+    </div>
+    <div class="story-progress-bar-wrap">
+      <div class="story-progress-bar" id="storyBar"></div>
+    </div>
+    <div class="story-progress-text" id="storyProgressText">1 / 16</div>
+  </div>
+
+  <div class="score-card">
+    <span class="score-icon">⭐</span>
+    <div>
+      <div class="score-label">Puan</div>
+      <div class="score-value" id="scoreDisplay">0</div>
+    </div>
+  </div>
+
+  <div class="word-card" id="wordCard"></div>
+  <button class="btn-skip" id="btnSkip">Geç</button>
+
+  <div class="mic-area">
+    <div class="mic-indicator" id="micIndicator">🎤</div>
+    <div class="mic-status" id="micStatus">Başlamak için düğmeye bas</div>
+  </div>
+
+  <div class="interim-text" id="interimText"></div>
+
+  <div class="button-row">
+    <button class="btn btn-start" id="btnStart">▶ Başla</button>
+    <button class="btn btn-stop" id="btnStop" disabled>🔄 Tekrar</button>
+  </div>
+
+  <div class="congrats-banner" id="congratsBanner">
+    🎉 Tebrikler! Harika okudun! 🎉
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="no-support" id="noSupport">
+    😔 Üzgünüm, tarayıcın sesli tanıma özelliğini desteklemiyor. Lütfen Google Chrome kullan.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     KELİME OYUNU EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="koyun-screen" id="koyunScreen" style="display:none">
+
+  <button class="btn-back" id="btnKoyunBack">← Menü</button>
+
+  <div class="koyun-header">
+    <div>
+      <h2 class="koyun-title">Minik <span class="menu-title-book">📖</span> Okur</h2>
+      <p class="subtitle">Kelime Oyunu</p>
+    </div>
+    <div class="koyun-score-badge">⭐ <span id="koyunScore">0</span></div>
+  </div>
+
+  <!-- Resim kartı -->
+  <div class="koyun-card" id="koyunCard">
+    <div class="koyun-emoji" id="koyunEmoji">🐱</div>
+    <div class="koyun-hint" id="koyunHint">_ _ _ _</div>
+  </div>
+
+  <!-- Sonuç banner -->
+  <div class="koyun-result" id="koyunResult"></div>
+
+  <!-- Mikrofon -->
+  <div class="mic-area">
+    <div class="mic-indicator" id="koyunMicIndicator">🎤</div>
+    <div class="mic-status" id="koyunMicStatus">Başlamak için düğmeye bas</div>
+  </div>
+
+  <div class="interim-text" id="koyunInterimText"></div>
+
+  <div class="button-row">
+    <button class="btn btn-start" id="koyunBtnStart">▶ Başla</button>
+    <button class="btn btn-skip" id="koyunBtnSkip" style="padding:14px 28px">⏭ Geç</button>
+  </div>
+
+  <div class="error-msg" id="koyunErrorMsg"></div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     RAPOR OVERLAY
+     ═══════════════════════════════════════════════════════════ -->
+<div class="report-overlay" id="reportOverlay">
+  <div class="report-card">
+    <div class="report-emoji" id="reportEmoji">🌟</div>
+    <div class="report-title" id="reportTitle">Bölüm Tamamlandı!</div>
+    <div class="report-subtitle" id="reportSubtitle"></div>
+    <div class="report-stats">
+      <div class="report-stat">
+        <div class="report-stat-val green" id="reportDogru">0</div>
+        <div class="report-stat-lbl">Doğru</div>
+      </div>
+      <div class="report-stat">
+        <div class="report-stat-val red" id="reportYanlis">0</div>
+        <div class="report-stat-lbl">Yanlış</div>
+      </div>
+      <div class="report-stat">
+        <div class="report-stat-val yellow" id="reportPuan">0</div>
+        <div class="report-stat-lbl">Puan</div>
+      </div>
+    </div>
+    <div class="report-hard-words" id="reportHardWords" style="display:none">
+      <span class="hw-title">En çok takılan kelimeler</span>
+      <span id="reportHardList"></span>
+    </div>
+    <div class="report-timer-bar-wrap" id="reportTimerWrap" style="display:none">
+      <div class="report-timer-bar" id="reportTimerBar" style="width:100%"></div>
+    </div>
+    <div class="report-btn-row" id="reportBtnRow">
+      <button class="report-btn primary" id="reportBtnNext">▶ Devam</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ROZET KUTLAMA / TOAST
+     ═══════════════════════════════════════════════════════════ -->
+<div class="ach-toast" id="achToast">
+  <div class="ach-toast-card">
+    <div class="ach-toast-title" id="achToastTitle">Yeni Rozet!</div>
+    <div class="ach-toast-desc" id="achToastDesc"></div>
+  </div>
+</div>
+
+<script>
+// Hamburger menü aç/kapat
+(function(){
+  var overlay  = document.getElementById('hmenuOverlay');
+  var btnOpen  = document.getElementById('hamburgerBtn');
+  var btnClose = document.getElementById('hmenuClose');
+  var toggle   = document.getElementById('hmSesToggle');
+  var label    = document.getElementById('hmSesLabel');
+  var sesAcik  = true;
+
+  btnOpen.addEventListener('click', function(){ overlay.classList.add('open'); });
+  btnClose.addEventListener('click', function(){ overlay.classList.remove('open'); });
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
+
+  document.getElementById('hmSes').addEventListener('click', function(){
+    sesAcik = !sesAcik;
+    toggle.classList.toggle('off', !sesAcik);
+    label.textContent = sesAcik ? 'Ses Açık' : 'Ses Kapalı';
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+  });
+})();
+</script>
+<script src="app.js"></script>
+</body>
+</html>
