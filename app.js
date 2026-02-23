@@ -47,13 +47,6 @@ if (!SpeechRecognition) {
 }
 
 // ─── Cümle listesi (MEB Harf Grupları) ───────────────────────────────────────
-// Grup 1: E L A K İ N
-// Grup 2: + O M U T Ü Y
-// Grup 3: + Ö R I(=ı) D S B
-// Grup 4: + Z Ç G Ş C P
-// Grup 5: + H V Ğ F J
-// Her cümle doğrulanmıştır: yalnızca ilgili ve önceki grupların harflerini içerir.
-
 const CUMLE_GRUPLARI = [
   // ── Grup 1: E L A K İ N ──────────────────────────────────────────────────
   [
@@ -149,7 +142,6 @@ const CUMLE_GRUPLARI = [
 
 // ─── Hikaye Verileri ─────────────────────────────────────────────────────────
 const HIKAYE_GRUPLARI = [
-  // Hikaye 1: Mina ve Oyuncak Arabası
   [
     "Mina kırmızı oyuncak arabasını aldı.",
     "Arabayı yere koydu ve hafifçe itti.",
@@ -158,7 +150,6 @@ const HIKAYE_GRUPLARI = [
     "Arabasını dikkatli sürmesi gerektiğini anladı.",
     "Soru: Mina arabasını sürerken neyi fark etti?"
   ],
-  // Hikaye 2: Baran ve Yapboz
   [
     "Baran yapboz parçalarını masaya yaydı.",
     "Önce köşe parçalarını buldu.",
@@ -167,7 +158,6 @@ const HIKAYE_GRUPLARI = [
     "Baran başardığı için gurur duydu.",
     "Soru: Baran yapbozu tamamlarken nasıl davrandı?"
   ],
-  // Hikaye 3: Henna ve Kediler
   [
     "Henna bahçeye çıktığında iki küçük kedi çimenlerde oynuyordu.",
     "Kediler bir kelebeği kovalamaya başladı.",
@@ -176,7 +166,6 @@ const HIKAYE_GRUPLARI = [
     "Henna onları severken mutlu hissetti.",
     "Soru: Kediler yorulunca ne yaptılar?"
   ],
-  // Hikaye 4: Mustafa ve Yeni Ayakkabıları
   [
     "Mustafa yeni ayakkabılarını giydi.",
     "Çimlerde top oynamaya başladı.",
@@ -185,7 +174,6 @@ const HIKAYE_GRUPLARI = [
     "Mustafa dikkatli olması gerektiğini öğrendi.",
     "Soru: Mustafa neden dikkatli olması gerektiğini anladı?"
   ],
-  // Hikaye 5: Asya ve Yağmur
   [
     "Asya camdan dışarı baktı.",
     "Yağmur yağıyordu.",
@@ -195,7 +183,6 @@ const HIKAYE_GRUPLARI = [
     "Asya eve dönünce kuru çorap giydi.",
     "Soru: Asya'nın ayakkabıları neden ıslandı?"
   ],
-  // Hikaye 6: Yusuf ve Kitap
   [
     "Yusuf kitaplığından bir hikaye kitabı seçti.",
     "Kitabı sessizce okumaya başladı.",
@@ -203,7 +190,6 @@ const HIKAYE_GRUPLARI = [
     "Yeni kelimenin anlamını öğrenince hikayeyi daha iyi anladı.",
     "Soru: Yusuf anlamadığı kelimeyi öğrenince ne oldu?"
   ],
-  // Hikaye 7: Zeynep ve Çiçekler
   [
     "Zeynep bahçedeki çiçekleri suladı.",
     "Bazı çiçeklerin yaprakları solmuştu.",
@@ -212,7 +198,6 @@ const HIKAYE_GRUPLARI = [
     "Zeynep sabırlı olmanın önemini öğrendi.",
     "Soru: Çiçekler nasıl yeniden canlandı?"
   ],
-  // Hikaye 8: Maysa ve Resim
   [
     "Maysa resim defterini açtı.",
     "Önce güneş çizdi, sonra bir ev yaptı.",
@@ -220,7 +205,6 @@ const HIKAYE_GRUPLARI = [
     "Resmini tamamladığında çok güzel görünüyordu.",
     "Soru: Maysa resim yaparken vazgeçti mi?"
   ],
-  // Hikaye 9: Mehmet ve Uçurtma
   [
     "Mehmet uçurtmasını gökyüzüne bıraktı.",
     "Rüzgar hafif esiyordu.",
@@ -228,7 +212,6 @@ const HIKAYE_GRUPLARI = [
     "Bir süre sonra uçurtma daha yükseğe çıktı.",
     "Soru: Uçurtma neden düşmedi?"
   ],
-  // Hikaye 10: Yağmur ve Kütüphane
   [
     "Yağmur kütüphaneye gitti.",
     "Sessiz olması gerektiğini biliyordu.",
@@ -236,7 +219,6 @@ const HIKAYE_GRUPLARI = [
     "Çevresindekileri rahatsız etmeden okudu.",
     "Soru: Yağmur kütüphanede neden sessiz davrandı?"
   ],
-  // Hikaye 11: Çiçek ve Dostluk
   [
     "Çiçek parkta tek başına oturan bir çocuk gördü.",
     "Yanına gidip selam verdi.",
@@ -244,7 +226,6 @@ const HIKAYE_GRUPLARI = [
     "O gün yeni bir arkadaş edindi.",
     "Soru: Çiçek yeni arkadaşını nasıl kazandı?"
   ],
-  // Hikaye 12: Emir ve Kayıp Kalem
   [
     "Emir ödev yapmak için masaya oturdu.",
     "Kalemini bulamadı.",
@@ -254,7 +235,6 @@ const HIKAYE_GRUPLARI = [
     "Emir eşyalarını düzenli koyması gerektiğini anladı.",
     "Soru: Emir kalemini nerede buldu?"
   ],
-  // Hikaye 13: Beyaz ve Paylaşmak
   [
     "Beyaz parkta bisküviyle oturuyordu.",
     "Yanındaki çocuk üzgün görünüyordu çünkü yiyeceği yoktu.",
@@ -263,7 +243,6 @@ const HIKAYE_GRUPLARI = [
     "Beyaz paylaşmanın insanı mutlu ettiğini fark etti.",
     "Soru: Beyaz neden mutlu oldu?"
   ],
-  // Hikaye 14: Kaan ve Zamanında Uyanmak
   [
     "Kaan sabah alarmı duydu ama kapattı.",
     "Biraz daha uyumak istedi.",
@@ -272,7 +251,6 @@ const HIKAYE_GRUPLARI = [
     "Ertesi gün alarm çalınca hemen kalktı.",
     "Soru: Kaan servisi neden kaçırdı?"
   ],
-  // Hikaye 15: Elvan ve Bitki
   [
     "Elvan küçük bir saksıya tohum ekti.",
     "Her gün düzenli olarak suladı.",
@@ -282,7 +260,6 @@ const HIKAYE_GRUPLARI = [
     "Sabırlı olmanın önemli olduğunu öğrendi.",
     "Soru: Bitki neden büyüdü?"
   ],
-  // Hikaye 16: Berk ve Kırılan Bardak
   [
     "Berk mutfakta su almak istedi.",
     "Bardağı hızlıca aldı ve elinden düşürdü.",
@@ -292,7 +269,6 @@ const HIKAYE_GRUPLARI = [
     "Berk bir dahaki sefere yavaş davranmaya karar verdi.",
     "Soru: Berk neden annesine gerçeği söyledi?"
   ],
-  // Hikaye 17: Defne ve Grup Çalışması
   [
     "Defne okulda grup çalışması yaptı.",
     "Herkes bir görev aldı.",
@@ -302,7 +278,6 @@ const HIKAYE_GRUPLARI = [
     "Öğretmenleri onları tebrik etti.",
     "Soru: Ödev neden güzel oldu?"
   ],
-  // Hikaye 18: Aras ve Cesaret
   [
     "Aras sınıfta şiir okumaktan çekiniyordu.",
     "Sırası geldiğinde kalbi hızlı attı.",
@@ -312,7 +287,6 @@ const HIKAYE_GRUPLARI = [
     "Aras cesur davrandığı için gurur duydu.",
     "Soru: Aras neden gurur duydu?"
   ],
-  // Hikaye 19: İlayda ve Doğru Karar
   [
     "İlayda parkta oynarken yerde bir cüzdan buldu.",
     "İçinde para ve kimlik vardı.",
@@ -322,7 +296,6 @@ const HIKAYE_GRUPLARI = [
     "İlayda doğru olanı yaptığı için mutlu oldu.",
     "Soru: İlayda cüzdanı neden görevliye verdi?"
   ],
-  // Hikaye 20: Onur ve Sabır
   [
     "Onur yeni bir model uçak yapmak istedi.",
     "Parçaları birleştirirken zorlandı.",
@@ -333,7 +306,6 @@ const HIKAYE_GRUPLARI = [
     "Onur sabırlı olunca başarabildiğini anladı.",
     "Soru: Onur modeli nasıl tamamladı?"
   ],
-  // Hikaye 21: Henna ve Asya
   [
     "Henna ve Asya sabah uyandı.",
     "Birlikte dışarı çıktılar.",
@@ -390,7 +362,7 @@ function yukle() {
     hikayeIndex = d.hikayeIndex || 0;
     hikayeCumle = d.hikayeCumle || 0;
     totalScore  = d.totalScore  || 0;
-    koyunSkor   = d.koyunSkor   || 0;
+    koyunSkor   = d.koyunSkor   || 0;  // ← EKLENDİ
   } catch(e) {}
 }
 
@@ -406,7 +378,7 @@ let hikayeCumle   = 0;
 // ─── Bölüm istatistikleri (rapor için) ───────────────────────────────────────
 let bolumDogru    = 0;
 let bolumYanlis   = 0;
-let kelimeHatalar = {};  // { kelime: hataAdedi }
+let kelimeHatalar = {};
 
 // CUMLELER kaldırıldı — HEDEF_METIN() fonksiyonu kullanılıyor
 const HEDEF_METIN = () => {
@@ -423,33 +395,26 @@ let targetWords        = [];
 let wordSpans          = [];
 let currentWordIndex   = 0;
 let score              = 0;
-let totalScore         = 0;   // oyun boyunca toplam puan
-let yanlisSayac        = 0;   // yanlış telaffuz sayacı (TTS tetikleme için)
-let yanlisSayacIndex   = -1;  // hangi kelime için sayılıyor (çapraz kelime birikimini önler)
-let endGameTimer       = null; // race condition koruması
-let navTimer           = null; // hikaye no gösterme timer'ı
+let totalScore         = 0;
+let yanlisSayac        = 0;
+let yanlisSayacIndex   = -1;
+let endGameTimer       = null;
+let navTimer           = null;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SpeechController
-// Tek sorumluluk: TTS ve Recognition lifecycle'ını çakışmasız yönetmek.
-//
-// KURAL: TTS aktifken Recognition kapalı.
-//        Recognition aktifken TTS başlatılamaz.
-//        TTS yalnızca yanlış telaffuzda dışarıdan tetiklenir.
 // ══════════════════════════════════════════════════════════════════════════════
 const SpeechController = (function () {
 
-  // ── İç durum ────────────────────────────────────────────────────────────
   let recognition   = null;
-  let recState      = 'idle';   // 'idle' | 'starting' | 'listening' | 'stopping'
+  let recState      = 'idle';
   let isSpeaking    = false;
   let lastError     = null;
   let silenceTimer  = null;
   let restartTimer  = null;
-  let watchdogTimer = null;   // recognition sessizce düştüyse yakalar
+  let watchdogTimer = null;
   let trVoiceCache  = null;
 
-  // ── Türkçe ses seç ────────────────────────────────────────────────────
   function getTrVoice() {
     if (trVoiceCache) return trVoiceCache;
     const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
@@ -462,14 +427,12 @@ const SpeechController = (function () {
     window.speechSynthesis.onvoiceschanged = () => { trVoiceCache = null; getTrVoice(); };
   }
 
-  // ── Timer yardımcıları ────────────────────────────────────────────────
   function clearTimers() {
     if (silenceTimer)  { clearTimeout(silenceTimer);  silenceTimer  = null; }
     if (restartTimer)  { clearTimeout(restartTimer);  restartTimer  = null; }
     if (watchdogTimer) { clearTimeout(watchdogTimer); watchdogTimer = null; }
   }
 
-  // Watchdog: recognition sessizce düştüyse 3sn içinde yakalar ve restart yapar
   function resetWatchdog() {
     if (watchdogTimer) clearTimeout(watchdogTimer);
     watchdogTimer = setTimeout(() => {
@@ -477,10 +440,8 @@ const SpeechController = (function () {
       if (isSpeaking) return;
       if (currentWordIndex >= targetWords.length) return;
       if (recState !== 'listening') {
-        // Recognition ayakta değil, yeniden başlat
         scheduleRestart(100);
       } else {
-        // Ayakta görünüyor ama emin olmak için watchdog'u yenile
         resetWatchdog();
       }
     }, 3000);
@@ -499,12 +460,11 @@ const SpeechController = (function () {
     if (recState !== 'listening') return;
     silenceTimer = setTimeout(() => {
       if (recState === 'listening' && !isSpeaking && currentWordIndex < targetWords.length) {
-        _stop(true); // sessizlik → restart
+        _stop(true);
       }
     }, 3500);
   }
 
-  // ── Recognition iç inşa ───────────────────────────────────────────────
   function _build() {
     if (!SpeechRecognition) return;
     if (recognition) {
@@ -525,28 +485,25 @@ const SpeechController = (function () {
     recognition.onend    = _onEnd;
   }
 
-  // ── Recognition event handler'ları ───────────────────────────────────
   function _onStart() {
-    // Recognition gerçekten başladı — state'i güvenle otur
     recState = 'listening';
     resetWatchdog();
     micIndicator.className = 'mic-indicator active';
     micStatus.className    = 'mic-status listening';
     micStatus.textContent  = '🎤 Dinliyorum...';
   }
+
   function _onResult(event) {
     if (!event || !event.results) return;
-    if (isSpeaking) return;   // TTS aktifken echo koruması
+    if (isSpeaking) return;
 
-    resetWatchdog();   // ses geldi → recognition ayakta, watchdog'u yenile
+    resetWatchdog();
     interimText.textContent = event.results[event.results.length - 1][0].transcript;
     resetSilenceTimer();
 
-    // ── Interim: sadece tam eşleşme kabul et ─────────────────────────────
     for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) continue;           // final'ler aşağıda işlenir
+      if (event.results[i].isFinal) continue;
       if (currentWordIndex >= targetWords.length) break;
-      const hedef   = targetWords[currentWordIndex];
       const tokenler = normalizeText(event.results[i][0].transcript);
       for (let t = 0; t < tokenler.length; t++) {
         if (currentWordIndex >= targetWords.length) break;
@@ -560,28 +517,23 @@ const SpeechController = (function () {
       if (!event.results[i].isFinal) continue;
       const sonuc = event.results[i];
 
-      // Alternatifleri confidence'a göre azalan sıraya diz
       const altDizisi = [];
       for (let a = 0; a < sonuc.length; a++) {
         altDizisi.push({ transcript: sonuc[a].transcript, confidence: sonuc[a].confidence || 0 });
       }
       altDizisi.sort((x, y) => y.confidence - x.confidence);
 
-      // Her alternatifin tokenlerini hazırla (confidence sırasında)
       const altTokenler = altDizisi.map(alt => normalizeText(alt.transcript));
-
-      // Ana transcript token sayısını baz al (en yüksek confidence)
       const anaTokenler = altTokenler[0] || [];
+
       for (let t = 0; t < anaTokenler.length; t++) {
         if (currentWordIndex >= targetWords.length) break;
         const hedef = targetWords[currentWordIndex];
-        // Bu pozisyon için tüm alternatiflerde eşleşen var mı?
         let bulunan = null;
         for (let a = 0; a < altTokenler.length; a++) {
           const tok = altTokenler[a][t];
           if (tok && kelimeEslesir(tok, hedef)) { bulunan = tok; break; }
         }
-        // Pozisyon eşleşmedi — tüm alternatiflerde herhangi bir pozisyonda ara
         if (!bulunan) {
           for (let a = 0; a < altTokenler.length; a++) {
             for (let p = 0; p < altTokenler[a].length; p++) {
@@ -591,7 +543,6 @@ const SpeechController = (function () {
             if (bulunan) break;
           }
         }
-        // Eşleşme yoksa ana token'ı kullan (yanlış olarak işlenir)
         validateWord(bulunan || anaTokenler[t]);
       }
     }
@@ -607,19 +558,16 @@ const SpeechController = (function () {
     } else if (event.error === 'network') {
       gosterHata('Ağ hatası. İnternet bağlantını kontrol et.');
     }
-    // 'no-speech', 'aborted' → _onEnd yönetir
   }
 
   function _onEnd() {
     recState = 'idle';
     if (lastError === 'not-allowed' || lastError === 'service-not-allowed') return;
     if (currentWordIndex >= targetWords.length) return;
-    // TTS aktifse restart yapma — speakCorrection.ut.onend içinde yapacak
     if (isSpeaking) return;
     scheduleRestart(300);
   }
 
-  // ── İç start/stop ────────────────────────────────────────────────────
   function _start() {
     if (!SpeechRecognition) return;
     if (recState === 'starting' || recState === 'listening') return;
@@ -634,7 +582,6 @@ const SpeechController = (function () {
     try {
       recognition.start();
       recState = 'starting';
-      // micIndicator ve micStatus → _onStart'ta güncellenir
       interimText.textContent = '';
     } catch (e) {
       recState = 'idle';
@@ -657,36 +604,23 @@ const SpeechController = (function () {
     interimText.textContent = '';
   }
 
-  // ── Public API ────────────────────────────────────────────────────────
   return {
-
-    /**
-     * Başlat — oyun başlangıcı veya Tekrar butonunda çağrılır.
-     */
     startListening() {
       lastError = null;
       resetWatchdog();
       scheduleRestart(100);
     },
 
-    /**
-     * TTS ile yanlış kelimeyi söyle.
-     * Çağrılmadan önce Recognition otomatik durdurulur.
-     * TTS bitince Recognition otomatik yeniden başlar.
-     * SADECE yanlış telaffuzda dışarıdan çağrılmalı.
-     */
     speakCorrection(metin, opts) {
       if (!window.speechSynthesis) return;
       opts = opts || {};
       const rate  = opts.rate  || 0.80;
       const pitch = opts.pitch || 1.05;
 
-      // TTS başlamadan önce isSpeaking = true — _onEnd'in restart yapmasını engeller
       isSpeaking = true;
       window.speechSynthesis.cancel();
       clearTimers();
 
-      // Recognition'ı sessizce iptal et (abort → _onEnd tetiklenir ama isSpeaking=true olduğu için restart yapmaz)
       if (recognition && recState !== 'idle') {
         recState = 'stopping';
         try { recognition.abort(); } catch (e) {}
@@ -726,13 +660,9 @@ const SpeechController = (function () {
         }
       };
 
-      // Kısa gecikme: abort'un onEnd'i tetiklemesi için zaman tanı
       setTimeout(() => { window.speechSynthesis.speak(ut); }, 150);
     },
 
-    /**
-     * Her şeyi durdur — sıfırlama veya oyun sonu.
-     */
     stopAll() {
       isSpeaking = false;
       if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -778,7 +708,7 @@ function levenshtein(a, b) {
   return dp[m][n];
 }
 
-// ─── Toleranslı eşleşme (katmanlı, mod farkındalıklı) ────────────────────────
+// ─── Toleranslı eşleşme ───────────────────────────────────────────────────────
 function kelimeEslesir(konusulan, hedef) {
   if (konusulan === hedef) return true;
   const dist     = levenshtein(konusulan, hedef);
@@ -786,7 +716,6 @@ function kelimeEslesir(konusulan, hedef) {
   const dogruluk = (1 - dist / maxLen) * 100;
 
   if (hikayeModu) {
-    // ── Hikaye modu: daha sıkı ────────────────────────────────────────
     let esik;
     if (hedef.length <= 5)      esik = 75;
     else if (hedef.length <= 8) esik = 80;
@@ -794,7 +723,6 @@ function kelimeEslesir(konusulan, hedef) {
     return dogruluk >= esik;
   }
 
-  // ── Normal mod: R/L gelişmekte olan dil için toleranslı ───────────
   let tolerans;
   if (hedef.length <= 3)      tolerans = 1;
   else if (hedef.length <= 5) tolerans = 2;
@@ -856,7 +784,6 @@ function oyunuKur() {
 
   wordCard.innerHTML = '';
   wordCard.appendChild(fragment);
-  // Kelime sayısına göre font boyutunu ayarla
   const adet = targetWords.length;
   wordCard.dataset.wordcount = adet <= 3 ? 'small' : adet <= 5 ? 'medium' : 'large';
 }
@@ -873,12 +800,11 @@ function validateWord(konusulanKelime) {
   const span  = wordSpans[currentWordIndex];
 
   if (kelimeEslesir(token, hedef)) {
-    // ✅ Doğru — TTS YOK
     span.className = 'word correct';
     score      += 10;
     totalScore += 10;
     bolumDogru++;
-    yanlisSayac = 0;   // doğru olunca yanlış sayacını sıfırla
+    yanlisSayac = 0;
     yanlisSayacIndex = -1;
     currentWordIndex++;
     requestAnimationFrame(updateUI);
@@ -888,22 +814,18 @@ function validateWord(konusulanKelime) {
     }
 
   } else {
-    // ❌ Yanlış
-    // yanlisSayac: kelimeye bağlı — farklı kelimelerde birikmez
     if (yanlisSayacIndex !== currentWordIndex) {
       yanlisSayac      = 0;
       yanlisSayacIndex = currentWordIndex;
     }
     yanlisSayac++;
 
-    // bolumYanlis: kelime başına bir kez say (ilk yanlışta)
     if (yanlisSayac === 1) {
       bolumYanlis++;
       kelimeHatalar[hedef] = (kelimeHatalar[hedef] || 0) + 1;
     }
 
     if (yanlisSayac === 1) {
-      // İlk yanlış: hafif sarı ipucu efekti
       span.style.transform   = 'scale(1.06)';
       span.style.background  = 'rgba(255,209,102,0.18)';
       span.style.borderColor = 'var(--yellow)';
@@ -918,7 +840,6 @@ function validateWord(konusulanKelime) {
         }
       }, 250);
     } else {
-      // 2. ve sonraki yanlış: shake animasyonu
       span.className = 'word wrong';
       setTimeout(() => {
         if (currentWordIndex < targetWords.length && wordSpans[currentWordIndex] === span) {
@@ -927,7 +848,6 @@ function validateWord(konusulanKelime) {
       }, 250);
     }
 
-    // 2. yanlışta telaffuzu seslendir
     if (yanlisSayac >= 2) {
       yanlisSayac = 0;
       SpeechController.speakCorrection(hedef, { rate: 0.72, pitch: 1.05 });
@@ -937,7 +857,6 @@ function validateWord(konusulanKelime) {
 
 // ─── Rapor göster ────────────────────────────────────────────────────────────
 function gosterRapor(opts) {
-  // opts: { emoji, title, subtitle, autoMs (0=manuel), onDevam, onTekrar }
   reportEmoji.textContent    = opts.emoji   || '🌟';
   reportTitle.textContent    = opts.title   || 'Tamamlandı!';
   reportSubtitle.textContent = opts.subtitle || '';
@@ -945,7 +864,6 @@ function gosterRapor(opts) {
   reportYanlis.textContent   = bolumYanlis;
   reportPuan.textContent     = totalScore;
 
-  // En çok hata yapılan kelimeler (max 3)
   const hatalar = Object.entries(kelimeHatalar)
     .sort((a,b) => b[1] - a[1])
     .slice(0, 3)
@@ -957,7 +875,6 @@ function gosterRapor(opts) {
     reportHardWords.style.display = 'none';
   }
 
-  // Butonları ayarla
   reportBtnRow.innerHTML = '';
   if (opts.onTekrar) {
     const btn = document.createElement('button');
@@ -972,7 +889,6 @@ function gosterRapor(opts) {
   btnNext.onclick = () => { kapatRapor(); opts.onDevam(); };
   reportBtnRow.appendChild(btnNext);
 
-  // Otomatik geçiş timer bar
   if (opts.autoMs && opts.autoMs > 0) {
     reportTimerWrap.style.display = 'block';
     reportTimerBar.style.transition = 'none';
@@ -1005,7 +921,7 @@ function sifirlaIstatistik() {
   kelimeHatalar = {};
 }
 
-// ─── Sonraki cümleye geç (ortak) ─────────────────────────────────────────────
+// ─── Sonraki cümleye geç ─────────────────────────────────────────────────────
 function sonrakiCumleyeGec() {
   if (hikayeModu) {
     hikayeCumle++;
@@ -1050,13 +966,10 @@ function endGame() {
   if (endGameTimer) clearTimeout(endGameTimer);
 
   if (hikayeModu) {
-    // ── Hikaye modunda: cümle bitti, bir sonraki cümleye geç (2sn otomatik)
-    // Hikayenin son cümlesi miydi? Kontrol et
-    const hikaye      = HIKAYE_GRUPLARI[hikayeIndex];
-    const sonCumle    = (hikayeCumle === hikaye.length - 1);
+    const hikaye   = HIKAYE_GRUPLARI[hikayeIndex];
+    const sonCumle = (hikayeCumle === hikaye.length - 1);
 
     if (sonCumle) {
-      // Hikaye tamamen bitti → tam rapor, manuel geçiş
       endGameTimer = setTimeout(() => {
         endGameTimer = null;
         congratsBanner.classList.remove('visible');
@@ -1075,7 +988,6 @@ function endGame() {
           autoMs: 0,
           nextLabel: '▶ Sonraki Hikaye',
           onTekrar: () => {
-            // Aynı hikayeyi başa sar
             hikayeCumle = 0;
             sifirlaIstatistik();
             resetCumle();
@@ -1089,7 +1001,6 @@ function endGame() {
       }, 1200);
 
     } else {
-      // Hikaye devam ediyor → 2sn sonra otomatik geç
       endGameTimer = setTimeout(() => {
         endGameTimer = null;
         congratsBanner.classList.remove('visible');
@@ -1102,12 +1013,9 @@ function endGame() {
     }
 
   } else {
-    // ── Normal mod: cümle bitti
-    // Bölümün son cümlesi miydi?
     const sonCumle = (cumleIndex === CUMLE_GRUPLARI[grupIndex].length - 1);
 
     if (sonCumle) {
-      // Bölüm bitti → rapor göster, 4sn otomatik geçiş
       endGameTimer = setTimeout(() => {
         endGameTimer = null;
         congratsBanner.classList.remove('visible');
@@ -1135,7 +1043,6 @@ function endGame() {
       }, 1200);
 
     } else {
-      // Normal cümle geçişi — istatistikler bölüm sonuna kadar birikir
       endGameTimer = setTimeout(() => {
         endGameTimer = null;
         congratsBanner.classList.remove('visible');
@@ -1149,7 +1056,7 @@ function endGame() {
   }
 }
 
-// ─── Cümle sıfırla ve başlat (ortak) ─────────────────────────────────────────
+// ─── Cümle sıfırla ve başlat ──────────────────────────────────────────────────
 function resetCumle() {
   currentWordIndex   = 0;
   score              = 0;
@@ -1194,13 +1101,11 @@ btnStop.addEventListener('click', () => {
   if (endGameTimer) { clearTimeout(endGameTimer); endGameTimer = null; }
   SpeechController.stopAll();
   kapatRapor();
-  // currentWordIndex korunur — kaldığı kelimeden devam
   score = 0;
   yanlisSayac = 0; yanlisSayacIndex = -1;
   interimText.textContent = '';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
-  // Span durumlarını güncelle — geçmiş doğrular korunsun, aktif kelime vurgulansın
   wordSpans.forEach((span, i) => {
     if (i < currentWordIndex) {
       span.className = 'word correct';
@@ -1281,7 +1186,7 @@ function hikayeSecGit(hedefIndex) {
   interimText.textContent = '';
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
-  updateStoryProgress(true);  // ◀ ▶ butonunda hikaye no göster
+  updateStoryProgress(true);
   kaydet();
   oyunuKur();
   setTimeout(() => { btnStart.click(); }, 250);
@@ -1300,7 +1205,6 @@ function updateStoryProgress(showNav) {
   storyBar.style.width   = yuzde + '%';
 
   if (showNav) {
-    // Hikaye no göster
     storyProgressText.textContent = (hikayeIndex + 1) + ' / ' + HIKAYE_GRUPLARI.length;
     storyProgressText.style.color = '#a78bfa';
     if (navTimer) clearTimeout(navTimer);
@@ -1310,7 +1214,6 @@ function updateStoryProgress(showNav) {
       storyProgressText.style.color = '';
     }, 1500);
   } else {
-    // Cümle ilerlemesi göster
     if (navTimer) { clearTimeout(navTimer); navTimer = null; }
     storyProgressText.textContent = (hikayeCumle + 1) + ' / ' + toplam;
     storyProgressText.style.color = '';
@@ -1366,9 +1269,9 @@ tabHikaye.addEventListener('click',    () => setMod(true));
     rafId = requestAnimationFrame(tick);
     analyser.getByteFrequencyData(dataArr);
     const avg   = dataArr.reduce((s, v) => s + v, 0) / dataArr.length;
-    const level = Math.min(avg / 60, 1);           // 0–1 arası normalize
-    const scale = 1 + level * 0.45;                // max 1.45x büyür
-    const glow  = Math.round(level * 32);           // max 32px glow
+    const level = Math.min(avg / 60, 1);
+    const scale = 1 + level * 0.45;
+    const glow  = Math.round(level * 32);
     micIndicator.style.transform  = `scale(${scale.toFixed(2)})`;
     micIndicator.style.boxShadow  = `0 0 ${glow}px rgba(6,214,160,${(level * 0.8).toFixed(2)})`;
   }
@@ -1380,18 +1283,16 @@ tabHikaye.addEventListener('click',    () => setMod(true));
     if (audioCtx) { audioCtx.close(); audioCtx = null; analyser = null; }
   }
 
-  // Mikrofon izni alınınca başlat
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(stream => { startAnalyser(stream); })
-      .catch(() => {});  // izin reddedilirse sessizce geç
+      .catch(() => {});
   }
 })();
 
 // ─── İlk yükleme ─────────────────────────────────────────────────────────────
-yukle();   // localStorage'dan kaldığı yeri yükle
+yukle();
 syncLevelButtons();
-// storyProgress sadece hikaye modundaysa görünür
 storyProgress.classList.toggle('visible', hikayeModu);
 if (hikayeModu) updateStoryProgress();
 oyunuKur();
@@ -1405,20 +1306,16 @@ const menuLevelText  = document.getElementById('menuLevelText');
 const menuLevelBar   = document.getElementById('menuLevelBar');
 
 function menuGoster() {
-  // Menü skorunu güncelle
   menuScoreText.textContent  = totalScore;
   menuTotalScore.textContent = totalScore;
   menuLevelText.textContent  = grupIndex + 1;
   menuLevelBar.style.width   = ((cumleIndex / 15) * 100) + '%';
-
-  // Oyun ekranını gizle, menüyü göster
   gameContainer.style.display = 'none';
   menuScreen.style.display    = 'flex';
   SpeechController.stopAll();
 }
 
 function oyunEkraniGoster(hikayeModuSecim) {
-  // Mod ayarla
   if (hikayeModuSecim !== undefined && hikayeModuSecim !== hikayeModu) {
     hikayeModu = hikayeModuSecim;
     if (hikayeModu) {
@@ -1432,16 +1329,11 @@ function oyunEkraniGoster(hikayeModuSecim) {
     oyunuKur();
     kaydet();
   }
-
-  // Menüyü gizle, oyun ekranını göster
   menuScreen.style.display    = 'none';
   gameContainer.style.display = 'flex';
-
-  // Otomatik başlat
   setTimeout(() => { btnStart.click(); }, 200);
 }
 
-// Menü kart butonları
 document.querySelectorAll('.menu-card-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const mod = btn.dataset.mod;
@@ -1453,7 +1345,6 @@ document.querySelectorAll('.menu-card-btn').forEach(btn => {
   });
 });
 
-// Kart alanına tıklama da çalışsın
 document.querySelectorAll('.menu-card').forEach(kart => {
   kart.addEventListener('click', (e) => {
     if (e.target.classList.contains('menu-card-btn')) return;
@@ -1462,21 +1353,17 @@ document.querySelectorAll('.menu-card').forEach(kart => {
   });
 });
 
-// Geri butonu
 btnBack.addEventListener('click', () => {
   menuGoster();
 });
 
-// İlk açılışta: menüyü göster, oyun ekranını gizle
 menuGoster();
 
 // ═══════════════════════════════════════════════════════════════
 // KELİME OYUNU
 // ═══════════════════════════════════════════════════════════════
 
-// ─── Kelime → Emoji tablosu ───────────────────────────────────
 const KELIME_EMOJI = {
-  // Hayvanlar
   'kedi':    '🐱',
   'köpek':   '🐶',
   'kuş':     '🐦',
@@ -1487,7 +1374,6 @@ const KELIME_EMOJI = {
   'tavuk':   '🐔',
   'kelebek': '🦋',
   'karınca': '🐜',
-  // Doğa
   'çiçek':   '🌸',
   'ağaç':    '🌳',
   'elma':    '🍎',
@@ -1497,7 +1383,6 @@ const KELIME_EMOJI = {
   'bulut':   '☁️',
   'kar':     '❄️',
   'yağmur':  '🌧️',
-  // Nesneler
   'kitap':   '📚',
   'kalem':   '✏️',
   'okul':    '🏫',
@@ -1506,29 +1391,19 @@ const KELIME_EMOJI = {
   'top':     '⚽',
   'balon':   '🎈',
   'pasta':   '🎂',
-  'elma':    '🍎',
   'armut':   '🍐',
   'muz':     '🍌',
   'çilek':   '🍓',
   'portakal':'🍊',
-  // Renkler / Kavramlar
-  'kırmızı': '🔴',
-  'mavi':    '🔵',
-  'yeşil':   '🟢',
-  'sarı':    '🟡',
-  'mor':     '🟣',
 };
 
-// ─── Oyun kelime listesi (görsel olan anlamlı kelimeler) ───────
 const KOYUN_KELIMELER = [
   'kedi','köpek','kuş','balık','arı','inek','at','tavuk','kelebek',
   'çiçek','ağaç','elma','güneş','ay','yıldız','bulut',
   'kitap','kalem','okul','ev','araba','top','balon','pasta',
   'armut','muz','çilek','portakal',
-  // renkler çıkarıldı — emoji gösterimi uygun değil
 ];
 
-// ─── Kelime Oyunu Durumu ───────────────────────────────────────
 let koyunIndex     = 0;
 let koyunSkor      = 0;
 let koyunYanlis    = 0;
@@ -1537,7 +1412,6 @@ let koyunRec       = null;
 let koyunRecState  = 'idle';
 let koyunSiralamis = [];
 
-// ─── DOM ──────────────────────────────────────────────────────
 const koyunScreen       = document.getElementById('koyunScreen');
 const koyunBtnStart     = document.getElementById('koyunBtnStart');
 const koyunBtnSkip      = document.getElementById('koyunBtnSkip');
@@ -1552,7 +1426,6 @@ const koyunScoreEl      = document.getElementById('koyunScore');
 const koyunErrorMsg     = document.getElementById('koyunErrorMsg');
 const koyunCard         = document.getElementById('koyunCard');
 
-// ─── Yardımcılar ──────────────────────────────────────────────
 function koyunKarıstir(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -1563,7 +1436,6 @@ function koyunKarıstir(arr) {
 }
 
 function koyunHintYap(kelime) {
-  // İlk harf göster, geri kalanı nokta
   return kelime[0] + ' ' + Array(kelime.length - 1).fill('_').join(' ');
 }
 
@@ -1579,7 +1451,6 @@ function koyunGoster() {
   koyunCard.className      = 'koyun-card';
 }
 
-// ─── Ses tanıma ───────────────────────────────────────────────
 function koyunRecBuild() {
   if (!SpeechRecognition) return;
   if (koyunRec) {
@@ -1604,7 +1475,6 @@ function koyunRecBuild() {
   koyunRec.onresult = (event) => {
     const transcript = event.results[event.results.length - 1][0].transcript;
     koyunInterimText.textContent = transcript;
-
     if (event.results[event.results.length - 1].isFinal) {
       koyunInterimText.textContent = '';
       _koyunSesliKontrol(transcript);
@@ -1624,7 +1494,6 @@ function koyunRecBuild() {
     koyunMicIndicator.className = 'mic-indicator';
     koyunMicStatus.className    = 'mic-status';
     koyunMicStatus.textContent  = 'Tekrar dinlemek için Başla\'ya bas';
-    // Aktifse otomatik yeniden başlat
     if (koyunAktif) {
       setTimeout(() => koyunRecBaslat(), 400);
     }
@@ -1651,14 +1520,12 @@ function koyunRecDurdur() {
   koyunInterimText.textContent = '';
 }
 
-// ─── Cevap kontrolü ───────────────────────────────────────────
 function koyunCevapKontrol(soylenen) {
   const hedef    = koyunSiralamis[koyunIndex];
   const tokenler = normalizeText(soylenen);
   const dogru    = tokenler.some(t => kelimeEslesir(t, hedef));
 
   if (dogru) {
-    // ✅ Doğru
     koyunSkor += 15;
     koyunScoreEl.textContent  = koyunSkor;
     koyunHint.textContent     = hedef;
@@ -1666,37 +1533,26 @@ function koyunCevapKontrol(soylenen) {
     koyunResult.textContent   = '✅ Harika! +15 puan';
     koyunResult.className     = 'koyun-result dogru';
     koyunCard.className       = 'koyun-card correct-flash';
-
-    // totalScore'a da ekle
     totalScore += 15;
-
-    setTimeout(() => {
-      koyunSonraki();
-    }, 1400);
-
+    setTimeout(() => { koyunSonraki(); }, 1400);
   } else {
-    // ❌ Yanlış
     koyunYanlis++;
     koyunResult.textContent = '❌ Tekrar dene!';
     koyunResult.className   = 'koyun-result yanlis';
     koyunCard.className     = 'koyun-card wrong-flash';
-    setTimeout(() => {
-      koyunCard.className = 'koyun-card';
-    }, 400);
+    setTimeout(() => { koyunCard.className = 'koyun-card'; }, 400);
   }
 }
 
 function koyunSonraki() {
   koyunIndex++;
   if (koyunIndex >= koyunSiralamis.length) {
-    // Tüm kelimeler bitti — yeniden karıştır
     koyunSiralamis = koyunKarıstir(KOYUN_KELIMELER);
     koyunIndex = 0;
   }
   koyunGoster();
 }
 
-// ─── Buton işleyicileri ───────────────────────────────────────
 koyunBtnStart.addEventListener('click', () => {
   koyunAktif = true;
   koyunErrorMsg.classList.remove('visible');
@@ -1718,13 +1574,10 @@ btnKoyunBack.addEventListener('click', () => {
   menuGoster();
 });
 
-// ─── Menüden Kelime Oyunu'na geçiş ───────────────────────────
 function kelimeOyunuGoster() {
   menuScreen.style.display    = 'none';
   gameContainer.style.display = 'none';
   koyunScreen.style.display   = 'flex';
-
-  // Sıfırla ve başlat
   koyunSiralamis = koyunKarıstir(KOYUN_KELIMELER);
   koyunIndex  = 0;
   koyunSkor   = 0;
@@ -1733,7 +1586,6 @@ function kelimeOyunuGoster() {
   koyunGoster();
   koyunMicStatus.textContent = 'Başlamak için düğmeye bas';
 }
-
 
 // ═══════════════════════════════════════════════════════════════
 // WEB AUDIO SES EFEKTLERİ
@@ -1757,9 +1609,7 @@ function sesCal(tip) {
   const ctx = _getAudioCtx();
   if (!ctx) return;
   try {
-
     if (tip === 'dogru') {
-      // Neşeli iki nota: do → mi
       [[523, 0, 0.12], [659, 0.13, 0.22], [784, 0.26, 0.38]].forEach(([frekans, baslangic, bitis]) => {
         const osc  = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -1772,9 +1622,7 @@ function sesCal(tip) {
         osc.start(ctx.currentTime + baslangic);
         osc.stop(ctx.currentTime + bitis);
       });
-
     } else if (tip === 'yanlis') {
-      // Alçalan iki nota: la → fa
       [[330, 0, 0.15], [247, 0.16, 0.35]].forEach(([frekans, baslangic, bitis]) => {
         const osc  = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -1788,18 +1636,15 @@ function sesCal(tip) {
         osc.stop(ctx.currentTime + bitis);
       });
     }
-
   } catch(e) {}
 }
 
-// ─── Ses entegreli cevap kontrolü ────────────────────────────
 function _koyunSesliKontrol(soylenen) {
-  const hedef  = koyunSiralamis[koyunIndex];
+  const hedef    = koyunSiralamis[koyunIndex];
   const tokenler = normalizeText(soylenen);
-  const dogru  = tokenler.some(t => kelimeEslesir(t, hedef));
+  const dogru    = tokenler.some(t => kelimeEslesir(t, hedef));
 
   if (dogru) {
-    // Mikrofonu durdur → ses çal → sonraki kelimeye geç
     koyunAktif = false;
     if (koyunRec) { try { koyunRec.abort(); } catch(e) {} }
     koyunRecState = 'idle';
@@ -1822,7 +1667,6 @@ function _koyunSesliKontrol(soylenen) {
     }, 1000);
 
   } else {
-    // Mikrofonu kısa dur → ses çal → tekrar dinle
     koyunAktif = false;
     if (koyunRec) { try { koyunRec.abort(); } catch(e) {} }
     koyunRecState = 'idle';
@@ -1840,6 +1684,4 @@ function _koyunSesliKontrol(soylenen) {
       koyunRecBaslat();
     }, 700);
   }
-};
-
-// koyunRecBuild içinde _koyunSesliKontrol direkt çağrılıyor — override gerekmez
+}
