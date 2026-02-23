@@ -16,46 +16,16 @@
      ═══════════════════════════════════════════════════════════ -->
 <div class="menu-screen" id="menuScreen">
 
-  <!-- Üst bar: Hamburger + Puan -->
+  <!-- Üst bar: Seviye + Puan -->
   <div class="menu-topbar">
     <div class="menu-topbar-left">
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menü">
-        <span></span><span></span><span></span>
-      </button>
+      <span class="menu-level-badge">Seviye <strong id="menuLevelText">1</strong></span>
+      <div class="menu-level-bar-wrap">
+        <div class="menu-level-bar" id="menuLevelBar" style="width:30%"></div>
+      </div>
     </div>
     <div class="menu-topbar-right">
       <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
-    </div>
-  </div>
-
-  <!-- Hamburger Modal -->
-  <div class="hmenu-overlay" id="hmenuOverlay">
-    <div class="hmenu-panel" id="hmenuPanel">
-      <button class="hmenu-close" id="hmenuClose">&#x2715;</button>
-      <div class="hmenu-logo">&#x1F393; Minik Okur</div>
-      <div class="hmenu-items">
-        <button class="hmenu-item" id="hmSes">
-          <span class="hmenu-icon">&#x1F50A;</span>
-          <span class="hmenu-label" id="hmSesLabel">Ses A&#x15F;&#x131;k</span>
-          <span class="hmenu-toggle" id="hmSesToggle"></span>
-        </button>
-        <button class="hmenu-item">
-          <span class="hmenu-icon">&#x2B50;</span>
-          <span class="hmenu-label">Bize Puan Ver</span>
-        </button>
-        <button class="hmenu-item">
-          <span class="hmenu-icon">&#x1F4E2;</span>
-          <span class="hmenu-label">Tavsiye Et</span>
-        </button>
-        <button class="hmenu-item">
-          <span class="hmenu-icon">&#x2709;&#xFE0F;</span>
-          <span class="hmenu-label">Bize Ula&#x15F;</span>
-        </button>
-        <button class="hmenu-item hmenu-item--bagis">
-          <span class="hmenu-icon">&#x1F495;</span>
-          <span class="hmenu-label">Ba&#x11F;&#x131;&#x15F; Yap</span>
-        </button>
-      </div>
     </div>
   </div>
 
@@ -86,7 +56,7 @@
       <div class="menu-card-art">
         <span class="menu-card-emoji">🎯</span>
         <div class="menu-card-deco">
-          <span>🐱</span><span>⭐</span><span>🍎</span>
+          <span>🔤</span><span>⭐</span><span>🔤</span>
         </div>
       </div>
       <button class="menu-card-btn menu-card-btn--green" data-mod="kelime">Kelime Oyunu</button>
@@ -96,10 +66,7 @@
     <div class="menu-card menu-card--hikaye" id="menuCardHikaye">
       <div class="menu-card-label-top">Hikaye</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">📖</span>
-        <div class="menu-card-deco">
-          <span>🌟</span><span>🐑</span><span>🌙</span>
-        </div>
+        <span class="menu-card-emoji">🐑</span>
       </div>
       <button class="menu-card-btn menu-card-btn--blue" data-mod="hikaye">Hikaye</button>
     </div>
