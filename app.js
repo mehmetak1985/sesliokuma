@@ -483,7 +483,7 @@ const SpeechController = (function () {
         // Ayakta görünüyor ama emin olmak için watchdog'u yenile
         resetWatchdog();
       }
-    }, 3000);
+    }, 2000);
   }
 
   function scheduleRestart(ms) {
@@ -501,7 +501,7 @@ const SpeechController = (function () {
       if (recState === 'listening' && !isSpeaking && currentWordIndex < targetWords.length) {
         _stop(true); // sessizlik → restart
       }
-    }, 3500);
+    }, 2800);
   }
 
   // ── Recognition iç inşa ───────────────────────────────────────────────
@@ -1413,7 +1413,11 @@ function menuGoster() {
 
   // Oyun ekranını gizle, menüyü göster
   gameContainer.style.display = 'none';
+  koyunScreen.style.display   = 'none';
   menuScreen.style.display    = 'flex';
+  menuScreen.classList.remove('fade-out');
+  menuScreen.classList.add('fade-in');
+  setTimeout(() => menuScreen.classList.remove('fade-in'), 300);
   SpeechController.stopAll();
 }
 
@@ -1436,6 +1440,9 @@ function oyunEkraniGoster(hikayeModuSecim) {
   // Menüyü gizle, oyun ekranını göster
   menuScreen.style.display    = 'none';
   gameContainer.style.display = 'flex';
+  gameContainer.classList.remove('fade-in');
+  gameContainer.classList.add('fade-in');
+  setTimeout(() => gameContainer.classList.remove('fade-in'), 300);
 
   // Otomatik başlat
   setTimeout(() => { btnStart.click(); }, 200);
@@ -1506,8 +1513,7 @@ const KELIME_EMOJI = {
   'top':     '⚽',
   'balon':   '🎈',
   'pasta':   '🎂',
-  'elma':    '🍎',
-  'armut':   '🍐',
+  'armut':     '🍐',
   'muz':     '🍌',
   'çilek':   '🍓',
   'portakal':'🍊',
@@ -1633,12 +1639,14 @@ function koyunRecBuild() {
 
 function koyunRecBaslat() {
   if (!SpeechRecognition || !koyunAktif) return;
-  if (koyunRecState === 'listening') return;
+  if (koyunRecState === 'listening' || koyunRecState === 'starting') return;
+  koyunRecState = 'starting';
   koyunRecBuild();
   try {
     koyunRec.start();
-    koyunRecState = 'listening';
-  } catch(e) {}
+  } catch(e) {
+    koyunRecState = 'idle';
+  }
 }
 
 function koyunRecDurdur() {
@@ -1651,40 +1659,6 @@ function koyunRecDurdur() {
   koyunInterimText.textContent = '';
 }
 
-// ─── Cevap kontrolü ───────────────────────────────────────────
-function koyunCevapKontrol(soylenen) {
-  const hedef    = koyunSiralamis[koyunIndex];
-  const tokenler = normalizeText(soylenen);
-  const dogru    = tokenler.some(t => kelimeEslesir(t, hedef));
-
-  if (dogru) {
-    // ✅ Doğru
-    koyunSkor += 15;
-    koyunScoreEl.textContent  = koyunSkor;
-    koyunHint.textContent     = hedef;
-    koyunHint.className       = 'koyun-hint revealed';
-    koyunResult.textContent   = '✅ Harika! +15 puan';
-    koyunResult.className     = 'koyun-result dogru';
-    koyunCard.className       = 'koyun-card correct-flash';
-
-    // totalScore'a da ekle
-    totalScore += 15;
-
-    setTimeout(() => {
-      koyunSonraki();
-    }, 1400);
-
-  } else {
-    // ❌ Yanlış
-    koyunYanlis++;
-    koyunResult.textContent = '❌ Tekrar dene!';
-    koyunResult.className   = 'koyun-result yanlis';
-    koyunCard.className     = 'koyun-card wrong-flash';
-    setTimeout(() => {
-      koyunCard.className = 'koyun-card';
-    }, 400);
-  }
-}
 
 function koyunSonraki() {
   koyunIndex++;
@@ -1723,6 +1697,9 @@ function kelimeOyunuGoster() {
   menuScreen.style.display    = 'none';
   gameContainer.style.display = 'none';
   koyunScreen.style.display   = 'flex';
+  koyunScreen.classList.remove('fade-in');
+  koyunScreen.classList.add('fade-in');
+  setTimeout(() => koyunScreen.classList.remove('fade-in'), 300);
 
   // Sıfırla ve başlat
   koyunSiralamis = koyunKarıstir(KOYUN_KELIMELER);
