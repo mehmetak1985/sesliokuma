@@ -1821,3 +1821,34 @@ function _koyunSesliKontrol(soylenen) {
 };
 
 // koyunRecBuild içinde _koyunSesliKontrol direkt çağrılıyor — override gerekmez
+
+// ═══════════════════════════════════════════════════════════════
+// HAMBURGER MENÜ
+// ═══════════════════════════════════════════════════════════════
+(function () {
+  const overlay   = document.getElementById('hmenuOverlay');
+  const btnOpen   = document.getElementById('hamburgerBtn');
+  const btnClose  = document.getElementById('hmenuClose');
+  const panel     = document.getElementById('hmenuPanel');
+  const hmSes     = document.getElementById('hmSes');
+  const sesToggle = document.getElementById('hmSesToggle');
+  const sesLabel  = document.getElementById('hmSesLabel');
+
+  if (!overlay || !btnOpen) return;
+
+  let sesAcik = true;
+
+  function ac()   { overlay.classList.add('open'); }
+  function kapat(){ overlay.classList.remove('open'); }
+
+  btnOpen.addEventListener('click', ac);
+  btnClose.addEventListener('click', kapat);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) kapat(); });
+
+  hmSes.addEventListener('click', () => {
+    sesAcik = !sesAcik;
+    sesToggle.classList.toggle('off', !sesAcik);
+    sesLabel.textContent = sesAcik ? 'Ses Açık' : 'Ses Kapalı';
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+  });
+})();
