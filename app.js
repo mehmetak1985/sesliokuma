@@ -1411,9 +1411,10 @@ function menuGoster() {
   menuLevelText.textContent  = grupIndex + 1;
   menuLevelBar.style.width   = ((cumleIndex / 15) * 100) + '%';
 
-  // Oyun ekranını gizle, menüyü göster
+  // Oyun ekranlarını gizle, menüyü göster
   gameContainer.style.display = 'none';
-  koyunScreen.style.display   = 'none';
+  const ks = document.getElementById('koyunScreen');
+  if (ks) ks.style.display = 'none';
   menuScreen.style.display    = 'flex';
   menuScreen.classList.remove('fade-out');
   menuScreen.classList.add('fade-in');
