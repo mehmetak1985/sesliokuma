@@ -59,6 +59,14 @@
           <span class="hmenu-icon">&#128149;</span>
           <span class="hmenu-label">Ba&#287;&#305;&#351; Yap</span>
         </button>
+        <button class="hmenu-item" id="hmHakkimizda">
+          <span class="hmenu-icon">&#128218;</span>
+          <span class="hmenu-label">Hakk&#305;m&#305;zda</span>
+        </button>
+        <button class="hmenu-item" id="hmGizlilik">
+          <span class="hmenu-icon">&#128274;</span>
+          <span class="hmenu-label">Gizlilik Politikas&#305;</span>
+        </button>
       </div>
     </div>
   </div>
@@ -305,6 +313,86 @@
   });
 })();
 </script>
+<!-- ═══════════════════════════════════════════════════════════
+     HAKKIMIZDA MODAL
+     ═══════════════════════════════════════════════════════════ -->
+<div class="info-modal-overlay" id="hakkimizdaOverlay" style="display:none">
+  <div class="info-modal-card">
+    <button class="info-modal-close" id="hakkimizdaClose">&#10005;</button>
+    <div class="info-modal-icon">&#127891;</div>
+    <h2 class="info-modal-title">Hakkımızda &amp; Vizyonumuz</h2>
+    <div class="info-modal-body">
+      <p>Bu uygulama, <strong>yeni MEB alfabetik öğrenim sırasına</strong> (ELAKİN, OMUTÜY…) tam uyumlu olarak hazırlanmıştır.</p>
+      <p>İçerikler, pedagojik açıdan olumlu ve destekleyici bir dil kullanılarak <strong>çocukların başarısını kutlar.</strong></p>
+      <p>Minik Okur; uzak köylerden şehirlere, imkânı kısıtlı her çocuğun <strong>nitelikli eğitime ücretsiz ulaşmasını</strong> hedefler.</p>
+      <p>Reklam barındırmayan, çocukların hata yapmaktan korkmadığı ve <strong>özgüven kazandığı güvenli bir öğrenme ortamı</strong> sunar.</p>
+      <p>Uygulama, çocukların telaffuzda en çok zorlandığı (r, l, s gibi) seslerde <strong>yüksek bir hata toleransı</strong> ile çalışır.</p>
+      <p>Dil gelişimi devam eden çocukların, fiziksel zorluklar nedeniyle özgüvenlerinin kırılmasını önler; onları düzeltmek yerine <strong>"en yakın doğru"</strong> ile motive ederek ilerlemelerini sağlar.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     GİZLİLİK POLİTİKASI MODAL
+     ═══════════════════════════════════════════════════════════ -->
+<div class="info-modal-overlay" id="gizlilikOverlay" style="display:none">
+  <div class="info-modal-card">
+    <button class="info-modal-close" id="gizlilikClose">&#10005;</button>
+    <div class="info-modal-icon">&#128274;</div>
+    <h2 class="info-modal-title">Gizlilik Politikası</h2>
+    <div class="info-modal-body">
+      <p><strong>Son güncelleme:</strong> 2025</p>
+      <p>Minik Okur uygulamasını kullandığınız için teşekkür ederiz. Gizliliğiniz bizim için son derece önemlidir.</p>
+      <h3>Topladığımız Veriler</h3>
+      <p>Minik Okur, kullanıcılarından <strong>herhangi bir kişisel veri toplamamaktadır.</strong> Uygulama; ad, soyad, e-posta adresi, telefon numarası veya konum bilgisi gibi kişisel bilgiler talep etmez ve kaydetmez.</p>
+      <h3>Ses Tanıma</h3>
+      <p>Uygulama, okuma alıştırmaları sırasında cihazınızın yerleşik ses tanıma özelliğini kullanır. Ses kayıtları yalnızca anlık olarak işlenir; sunucularımıza gönderilmez ve depolanmaz.</p>
+      <h3>Üçüncü Taraf Hizmetler</h3>
+      <p>Uygulama herhangi bir reklam ağı, analitik servisi veya üçüncü taraf izleme aracı içermez.</p>
+      <h3>Çocukların Gizliliği</h3>
+      <p>Minik Okur, çocuklara yönelik tasarlanmıştır. 13 yaşın altındaki bireylerden bilerek kişisel veri toplamıyoruz. Ebeveynlerin veya yasal vasilerin herhangi bir endişesi varsa bizimle iletişime geçebilirler.</p>
+      <h3>Veri Güvenliği</h3>
+      <p>Herhangi bir kullanıcı verisi toplanmadığından, veri ihlali riski de bulunmamaktadır.</p>
+      <h3>Politika Değişiklikleri</h3>
+      <p>Bu gizlilik politikasını zaman zaman güncelleyebiliriz. Değişiklikler bu sayfada yayımlanacaktır.</p>
+      <h3>İletişim</h3>
+      <p>Gizlilik politikamıza ilişkin sorularınız için uygulama içi "Bize Ulaş" seçeneğini kullanabilirsiniz.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+.info-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+.info-modal-card{background:#fff;border-radius:20px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:28px 24px 24px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.25)}
+.info-modal-close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;color:#888;line-height:1}
+.info-modal-icon{font-size:40px;text-align:center;margin-bottom:8px}
+.info-modal-title{text-align:center;font-family:'Baloo 2',sans-serif;font-size:1.3rem;color:#333;margin:0 0 16px}
+.info-modal-body{font-family:'Nunito',sans-serif;font-size:.93rem;color:#444;line-height:1.65}
+.info-modal-body p{margin:0 0 10px}
+.info-modal-body h3{font-size:.95rem;color:#118ab2;margin:14px 0 4px}
+</style>
+
+<script>
+(function(){
+  function openModal(id){ document.getElementById(id).style.display='flex'; }
+  function closeModal(id){ document.getElementById(id).style.display='none'; }
+
+  document.getElementById('hmHakkimizda').addEventListener('click', function(){
+    document.getElementById('hmenuOverlay').classList.remove('open');
+    openModal('hakkimizdaOverlay');
+  });
+  document.getElementById('hakkimizdaClose').addEventListener('click', function(){ closeModal('hakkimizdaOverlay'); });
+  document.getElementById('hakkimizdaOverlay').addEventListener('click', function(e){ if(e.target===this) closeModal('hakkimizdaOverlay'); });
+
+  document.getElementById('hmGizlilik').addEventListener('click', function(){
+    document.getElementById('hmenuOverlay').classList.remove('open');
+    openModal('gizlilikOverlay');
+  });
+  document.getElementById('gizlilikClose').addEventListener('click', function(){ closeModal('gizlilikOverlay'); });
+  document.getElementById('gizlilikOverlay').addEventListener('click', function(e){ if(e.target===this) closeModal('gizlilikOverlay'); });
+})();
+</script>
+
 <script src="app.js"></script>
 </body>
 </html>
