@@ -34,6 +34,10 @@
       <button class="hmenu-close" id="hmenuClose">&#10005;</button>
       <div class="hmenu-logo">&#127891; Minik Okur</div>
       <div class="hmenu-items">
+        <button class="hmenu-item" id="hmAchievements">
+          <span class="hmenu-icon">&#127942;</span>
+          <span class="hmenu-label">Ba&#351;ar&#305;lar&#305;m</span>
+        </button>
         <button class="hmenu-item" id="hmSes">
           <span class="hmenu-icon">&#128266;</span>
           <span class="hmenu-label" id="hmSesLabel">Ses A&#351;&#305;k</span>
@@ -62,7 +66,6 @@
   <!-- Logo -->
   <div class="menu-logo">
     <h1 class="menu-title">Minik <span class="menu-title-book">📖</span> Okur</h1>
-    <p class="menu-subtitle">· Ekrandaki kelimeyi oku ve puan kazan! ·</p>
   </div>
 
   <!-- Mod kartları -->
@@ -106,13 +109,9 @@
 
   </div>
 
-  <!-- Alt puan şeridi -->
+  <!-- Alt yıldız şeridi -->
   <div class="menu-footer">
-    <span>⭐</span>
-    <span>🏅</span>
-    <span>🛡️</span>
-    <span>😊</span>
-    <span class="menu-footer-score">Toplam Puan: <strong id="menuTotalScore">0</strong></span>
+    <span class="menu-footer-score">Toplam Yıldız: <strong id="menuTotalScore">0</strong> ⭐</span>
   </div>
 
 </div>
@@ -126,8 +125,8 @@
   <button class="btn-back" id="btnBack">← Menü</button>
 
   <div class="title-area">
-    <h1>🌟 Sesli Okuma Oyunu</h1>
-    <p class="subtitle">Kelimeyi sesli oku ve puan kazan!</p>
+    <h1 id="modeTitle">Minik <span class="menu-title-book">📖</span> Okur</h1>
+    <p class="subtitle" id="modeSubtitle">Alıştırma</p>
     <div class="level-selector">
       <span class="level-label">SEVİYE</span>
       <div class="level-buttons">
@@ -199,7 +198,10 @@
   <button class="btn-back" id="btnKoyunBack">← Menü</button>
 
   <div class="koyun-header">
-    <h2 class="koyun-title">🎯 Kelime Oyunu</h2>
+    <div>
+      <h2 class="koyun-title">Minik <span class="menu-title-book">📖</span> Okur</h2>
+      <p class="subtitle">Kelime Oyunu</p>
+    </div>
     <div class="koyun-score-badge">⭐ <span id="koyunScore">0</span></div>
   </div>
 
@@ -261,6 +263,16 @@
     <div class="report-btn-row" id="reportBtnRow">
       <button class="report-btn primary" id="reportBtnNext">▶ Devam</button>
     </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ROZET KUTLAMA / TOAST
+     ═══════════════════════════════════════════════════════════ -->
+<div class="ach-toast" id="achToast">
+  <div class="ach-toast-card">
+    <div class="ach-toast-title" id="achToastTitle">Yeni Rozet!</div>
+    <div class="ach-toast-desc" id="achToastDesc"></div>
   </div>
 </div>
 
