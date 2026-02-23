@@ -16,16 +16,26 @@
      ═══════════════════════════════════════════════════════════ -->
 <div class="menu-screen" id="menuScreen">
 
-  <!-- Üst bar: Seviye + Puan -->
+  <!-- Üst bar: Ayarlar + Puan -->
   <div class="menu-topbar">
     <div class="menu-topbar-left">
-      <span class="menu-level-badge">Seviye <strong id="menuLevelText">1</strong></span>
-      <div class="menu-level-bar-wrap">
-        <div class="menu-level-bar" id="menuLevelBar" style="width:30%"></div>
-      </div>
+      <button class="ayarlar-btn" id="btnAyarlar" title="Ayarlar">⚙️</button>
     </div>
     <div class="menu-topbar-right">
       <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
+    </div>
+  </div>
+
+  <!-- Ayarlar Modal -->
+  <div class="ayarlar-modal" id="ayarlarModal" style="display:none">
+    <div class="ayarlar-modal-arka" id="ayarlarArka"></div>
+    <div class="ayarlar-modal-kart">
+      <button class="ayarlar-kapat-btn" id="btnAyarlarKapat">✕</button>
+      <div class="ayarlar-baslik">⚙️ Menü</div>
+      <button class="ayarlar-satir-btn">⭐ Bize Puan Ver</button>
+      <button class="ayarlar-satir-btn">📢 Tavsiye Et</button>
+      <button class="ayarlar-satir-btn">✉️ Bize Ulaş</button>
+      <button class="ayarlar-satir-btn">💝 Bağış Yap</button>
     </div>
   </div>
 
@@ -42,7 +52,7 @@
     <div class="menu-card menu-card--alistirma" id="menuCardAlistirma">
       <div class="menu-card-label-top">Alıştırma</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">✏️</span>
+        <span class="menu-card-emoji">📝</span>
         <div class="menu-card-deco">
           <span>✔️</span><span>❓</span><span>✔️</span>
         </div>
@@ -66,7 +76,10 @@
     <div class="menu-card menu-card--hikaye" id="menuCardHikaye">
       <div class="menu-card-label-top">Hikaye</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">🐑</span>
+        <span class="menu-card-emoji">📖</span>
+        <div class="menu-card-deco">
+          <span>🌟</span><span>🐑</span><span>🌟</span>
+        </div>
       </div>
       <button class="menu-card-btn menu-card-btn--blue" data-mod="hikaye">Hikaye</button>
     </div>
@@ -170,16 +183,13 @@
     <div class="koyun-score-badge">⭐ <span id="koyunScore">0</span></div>
   </div>
 
-  <!-- Resim kartı -->
   <div class="koyun-card" id="koyunCard">
     <div class="koyun-emoji" id="koyunEmoji">🐱</div>
     <div class="koyun-hint" id="koyunHint">_ _ _ _</div>
   </div>
 
-  <!-- Sonuç banner -->
   <div class="koyun-result" id="koyunResult"></div>
 
-  <!-- Mikrofon -->
   <div class="mic-area">
     <div class="mic-indicator" id="koyunMicIndicator">🎤</div>
     <div class="mic-status" id="koyunMicStatus">Başlamak için düğmeye bas</div>
