@@ -373,7 +373,6 @@ const HIKAYE_ISIMLERI = [
 
 // ─── localStorage yardımcıları ────────────────────────────────────────────────
 const LS_KEY = 'sesliOkumaOyunu_v1';
-let koyunSkor = 0; // Kelime oyunu puanı — yukle()'den önce tanımlanmalı
 function kaydet() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify({
@@ -391,7 +390,7 @@ function yukle() {
     hikayeIndex = d.hikayeIndex || 0;
     hikayeCumle = d.hikayeCumle || 0;
     totalScore  = d.totalScore  || 0;
-    try { koyunSkor = d.koyunSkor || 0; } catch(e) {}
+    koyunSkor   = d.koyunSkor   || 0;
   } catch(e) {}
 }
 
@@ -1531,6 +1530,7 @@ const KOYUN_KELIMELER = [
 
 // ─── Kelime Oyunu Durumu ───────────────────────────────────────
 let koyunIndex     = 0;
+let koyunSkor      = 0;
 let koyunYanlis    = 0;
 let koyunAktif     = false;
 let koyunRec       = null;
@@ -1739,7 +1739,6 @@ function kelimeOyunuGoster() {
 // WEB AUDIO SES EFEKTLERİ
 // ═══════════════════════════════════════════════════════════════
 
-let sesAcik = true; // Ses ayarı — sesCal'dan önce tanımlanmalı
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let _audioCtx = null;
 
@@ -1755,7 +1754,6 @@ function _getAudioCtx() {
 }
 
 function sesCal(tip) {
-  if (typeof sesAcik !== 'undefined' && !sesAcik) return;
   const ctx = _getAudioCtx();
   if (!ctx) return;
   try {
@@ -1845,4 +1843,3 @@ function _koyunSesliKontrol(soylenen) {
 };
 
 // koyunRecBuild içinde _koyunSesliKontrol direkt çağrılıyor — override gerekmez
-
