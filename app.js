@@ -586,7 +586,7 @@ const SpeechController = (function () {
       const tokenler = normalizeText(event.results[i][0].transcript);
       for (let t = 0; t < tokenler.length; t++) {
         if (currentWordIndex >= targetWords.length) break;
-        if (tokenler[t] === targetWords[currentWordIndex]) {
+        if (kelimeEslesir(tokenler[t], targetWords[currentWordIndex])) {
           validateWord(tokenler[t]);
         }
       }
