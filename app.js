@@ -1821,17 +1821,14 @@ function tip1Goster(kelime, eksikIdxler, secenekSayisi) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// TİP 2: SÜRÜKLE BIRAK
+// TİP 2: DOKUNARAK YERLEŞTİR (sürükle bırak yerine)
 // ═══════════════════════════════════════════════════════════════
 function tip2Goster(kelime, eksikIdxler) {
   harfKutuSatir.innerHTML = '';
   harfButonSatir.innerHTML = '';
 
-  // Sürüklenen harf
-  let suruklenen = null;
-
-  // Boşluk durumu
-  const doldu = new Array(eksikIdxler.length).fill(false);
+  const doldu   = new Array(eksikIdxler.length).fill(false);
+  let secilen   = null; // seçili harf butonu
 
   function kutuCiz() {
     harfKutuSatir.innerHTML = '';
@@ -1848,20 +1845,16 @@ function tip2Goster(kelime, eksikIdxler) {
           kutu.classList.add('harf-kutu--bos', 'harf-kutu--drop');
           kutu.dataset.eksikSira = eksikSira;
           kutu.dataset.hedef = normalTR(kelime[i]);
-
-          // Drop hedefi
-          kutu.addEventListener('dragover', e => { e.preventDefault(); kutu.classList.add('harf-kutu--dragover'); });
-          kutu.addEventListener('dragleave', () => kutu.classList.remove('harf-kutu--dragover'));
-          kutu.addEventListener('drop', e => {
-            e.preventDefault();
-            kutu.classList.remove('harf-kutu--dragover');
-            if (!suruklenen) return;
-            const gelen = normalTR(suruklenen.dataset.harf);
+          // Boşluğa tıklama → seçili harfi yerleştir
+          kutu.addEventListener('click', () => {
+            if (!secilen || koyunKilitli) return;
+            const gelen    = normalTR(secilen.dataset.harf);
             const beklenen = kutu.dataset.hedef;
             if (gelen === beklenen) {
-              const sira = parseInt(kutu.dataset.eksikSira);
-              doldu[sira] = true;
-              suruklenen.style.visibility = 'hidden';
+              doldu[parseInt(kutu.dataset.eksikSira)] = true;
+              secilen.style.visibility = 'hidden';
+              secilen.classList.remove('harf-btn--secili');
+              secilen = null;
               kutuCiz();
               if (doldu.every(Boolean)) {
                 sureyiDurdur();
@@ -1870,42 +1863,17 @@ function tip2Goster(kelime, eksikIdxler) {
                 koyunDogruYap(kelime);
               }
             } else {
-              // Yanlış — geri zıpla animasyonu
-              suruklenen.classList.add('harf-btn--geri');
+              // Yanlış
+              secilen.classList.add('harf-btn--yanlis');
+              secilen.classList.remove('harf-btn--secili');
               koyunCard.className = 'koyun-card wrong-flash';
+              const eski = secilen;
+              secilen = null;
               setTimeout(() => {
-                if (suruklenen) suruklenen.classList.remove('harf-btn--geri');
+                eski.classList.remove('harf-btn--yanlis');
                 koyunCard.className = 'koyun-card';
-              }, 500);
+              }, 600);
             }
-            suruklenen = null;
-          });
-
-          // Touch drop (mobil)
-          kutu.addEventListener('touchend', e => {
-            if (!suruklenen) return;
-            const gelen = normalTR(suruklenen.dataset.harf);
-            const beklenen = kutu.dataset.hedef;
-            if (gelen === beklenen) {
-              const sira = parseInt(kutu.dataset.eksikSira);
-              doldu[sira] = true;
-              suruklenen.style.visibility = 'hidden';
-              kutuCiz();
-              if (doldu.every(Boolean)) {
-                sureyiDurdur();
-                koyunKilitli = true;
-                harfButonSatir.innerHTML = '';
-                koyunDogruYap(kelime);
-              }
-            } else {
-              suruklenen.classList.add('harf-btn--geri');
-              koyunCard.className = 'koyun-card wrong-flash';
-              setTimeout(() => {
-                if(suruklenen) suruklenen.classList.remove('harf-btn--geri');
-                koyunCard.className = 'koyun-card';
-              }, 500);
-            }
-            suruklenen = null;
           });
         }
       } else {
@@ -1917,54 +1885,22 @@ function tip2Goster(kelime, eksikIdxler) {
 
   kutuCiz();
 
-  // Sürüklenecek harf butonları
-  const eksikHarfler = eksikIdxler.map(i => kelime[i]);
-  const karisik = koyunKaristir(eksikHarfler);
+  // Harf butonları — tıklayınca seçilir, sonra boşluğa tıkla
+  const karisik = koyunKaristir(eksikIdxler.map(i => kelime[i]));
   karisik.forEach(harf => {
-    const btn = document.createElement('div');
-    btn.className   = 'harf-btn harf-btn--surukle';
-    btn.textContent = harf.toLocaleUpperCase('tr-TR');
-    btn.draggable   = true;
+    const btn = document.createElement('button');
+    btn.className    = 'harf-btn';
+    btn.textContent  = harf.toLocaleUpperCase('tr-TR');
     btn.dataset.harf = normalTR(harf);
-
-    // Desktop drag
-    btn.addEventListener('dragstart', e => {
-      suruklenen = btn;
-      btn.classList.add('harf-btn--surukluyor');
-      e.dataTransfer.setData('text/plain', normalTR(harf));
+    btn.addEventListener('click', () => {
+      if (koyunKilitli || btn.style.visibility === 'hidden') return;
+      // Önceki seçimi kaldır
+      harfButonSatir.querySelectorAll('.harf-btn--secili')
+        .forEach(b => b.classList.remove('harf-btn--secili'));
+      if (secilen === btn) { secilen = null; return; } // toggle off
+      secilen = btn;
+      btn.classList.add('harf-btn--secili');
     });
-    btn.addEventListener('dragend', () => btn.classList.remove('harf-btn--surukluyor'));
-
-    // Touch drag (mobil)
-    let touchOffsetX=0, touchOffsetY=0, klon=null;
-    btn.addEventListener('touchstart', e => {
-      suruklenen = btn;
-      const t = e.touches[0];
-      const r = btn.getBoundingClientRect();
-      touchOffsetX = t.clientX - r.left;
-      touchOffsetY = t.clientY - r.top;
-      klon = btn.cloneNode(true);
-      klon.style.cssText = `position:fixed;z-index:9999;opacity:0.85;pointer-events:none;width:${r.width}px;height:${r.height}px;`;
-      klon.style.left = (t.clientX - touchOffsetX) + 'px';
-      klon.style.top  = (t.clientY - touchOffsetY) + 'px';
-      document.body.appendChild(klon);
-    }, {passive:true});
-    btn.addEventListener('touchmove', e => {
-      if (!klon) return;
-      const t = e.touches[0];
-      klon.style.left = (t.clientX - touchOffsetX) + 'px';
-      klon.style.top  = (t.clientY - touchOffsetY) + 'px';
-    }, {passive:true});
-    btn.addEventListener('touchend', e => {
-      if (klon) { document.body.removeChild(klon); klon = null; }
-      const t = e.changedTouches[0];
-      // Hangi kutunun üzerine bırakıldı?
-      const hedefEl = document.elementFromPoint(t.clientX, t.clientY);
-      if (hedefEl && hedefEl.classList.contains('harf-kutu--drop')) {
-        hedefEl.dispatchEvent(new Event('touchend'));
-      }
-    });
-
     harfButonSatir.appendChild(btn);
   });
 }
@@ -2071,7 +2007,46 @@ function koyunGoster() {
   }
 }
 
-// ─── Doğru yapıldı ────────────────────────────────────────────
+// ─── Ses efektleri (offline, Web Audio API) ───────────────────
+const _kAudioCtx = window.AudioContext || window.webkitAudioContext;
+let _kACtx = null;
+function _getKACtx() {
+  if (!_kAudioCtx) return null;
+  if (!_kACtx || _kACtx.state === 'closed') {
+    try { _kACtx = new _kAudioCtx(); } catch(e) { return null; }
+  }
+  if (_kACtx.state === 'suspended') _kACtx.resume().catch(()=>{});
+  return _kACtx;
+}
+function sesCal(tip) {
+  const ctx = _getKACtx();
+  if (!ctx) return;
+  try {
+    if (tip === 'dogru') {
+      [[523,0,0.12],[659,0.13,0.22],[784,0.26,0.38]].forEach(([f,s,e]) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = 'sine';
+        o.frequency.setValueAtTime(f, ctx.currentTime+s);
+        g.gain.setValueAtTime(0.25, ctx.currentTime+s);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+e);
+        o.start(ctx.currentTime+s); o.stop(ctx.currentTime+e);
+      });
+    } else if (tip === 'yanlis') {
+      [[330,0,0.15],[247,0.16,0.35]].forEach(([f,s,e]) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = 'sine';
+        o.frequency.setValueAtTime(f, ctx.currentTime+s);
+        g.gain.setValueAtTime(0.18, ctx.currentTime+s);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+e);
+        o.start(ctx.currentTime+s); o.stop(ctx.currentTime+e);
+      });
+    }
+  } catch(e) {}
+}
+
+// ─── Doğru yapıldı → otomatik geçiş ──────────────────────────
 function koyunDogruYap(kelime) {
   koyunSkor++;
   totalScore++;
@@ -2079,19 +2054,18 @@ function koyunDogruYap(kelime) {
   koyunTurYildiz++;
   koyunScoreEl.textContent = koyunSkor;
 
-  // Yıldız animasyonu
-  koyunCard.className = 'koyun-card correct-flash';
+  koyunCard.className   = 'koyun-card correct-flash';
   koyunResult.innerHTML = '<span class="yildiz-anim">⭐</span> Harika!';
   koyunResult.className = 'koyun-result dogru';
 
   sesCal('dogru');
   kontrolRozetlerYildiz();
 
-  // 5 kelimede bir tur sonu ekranı
+  // OTOMATİK GEÇİŞ — 1 sn sonra (tur sonu veya sonraki kelime)
   if (koyunTurYildiz >= 5) {
     setTimeout(() => koyunTurSonuGoster(), 1000);
   } else {
-    setTimeout(() => koyunSonraki(), 1200);
+    setTimeout(() => koyunSonraki(), 1000);
   }
 }
 

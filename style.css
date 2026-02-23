@@ -1557,8 +1557,11 @@ body::after  { display: none; }
 /* Harf buton satırı */
 .harf-buton-satir {
   display: flex;
-  gap: 16px;
+  gap: 10px;
   justify-content: center;
+  flex-wrap: wrap;
+  max-width: 340px;
+  margin: 0 auto;
 }
 
 .harf-btn {
@@ -1698,4 +1701,12 @@ body::after  { display: none; }
   min-width: 24px;
   text-align: center;
   text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+/* Seçili harf butonu (tip2) */
+.harf-btn--secili {
+  background: linear-gradient(135deg, #b3e5fc, #81d4fa) !important;
+  border: 3px solid #1e88e5 !important;
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: 0 8px 20px rgba(30,136,229,0.35);
 }
