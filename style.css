@@ -1128,11 +1128,9 @@ body::after  { display: none; }
 }
 
 /* ── Menü geçiş animasyonları ───────────────────────────────── */
-.menu-screen.fade-out {
-  animation: fadeOut 0.25s ease forwards;
-}
-
-.game-container.fade-in {
+.menu-screen.fade-in,
+.game-container.fade-in,
+.koyun-screen.fade-in {
   animation: fadeIn 0.3s ease forwards;
 }
 
@@ -1306,27 +1304,6 @@ body::after  { display: none; }
   box-shadow: 0 4px 16px rgba(229,57,53,0.4);
 }
 
-/* İlerleme noktaları */
-.koyun-progress {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 300px;
-}
-
-.koyun-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.4);
-  border: 2px solid rgba(255,255,255,0.6);
-  transition: all 0.3s ease;
-}
-
-.koyun-dot.done    { background: var(--green); border-color: var(--green); }
-.koyun-dot.current { background: var(--gold);  border-color: var(--gold); transform: scale(1.3); }
-.koyun-dot.wrong   { background: var(--red);   border-color: var(--red); }
 
 @media (max-width: 480px) {
   .koyun-card { padding: 24px 16px 20px; }
