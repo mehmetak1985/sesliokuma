@@ -253,57 +253,6 @@ body::after  { display: none; }
   font-weight: 700;
 }
 
-/* ── Oyun üst bar (puan + seviye yan yana) ─────────────────── */
-.game-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 12px;
-}
-
-/* ── Oyun ekranı seviye rozeti ──────────────────────────────── */
-.level-badge-game {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  background: rgba(255,255,255,0.88);
-  border: 2px solid var(--blue);
-  border-radius: var(--radius-md);
-  padding: 8px 16px;
-  box-shadow: 0 3px 12px rgba(30,136,229,0.2);
-  min-width: 80px;
-}
-.level-badge-label {
-  font-family: 'Nunito', sans-serif;
-  font-weight: 900;
-  font-size: 0.6rem;
-  color: var(--blue);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-.level-badge-num {
-  font-family: 'Nunito', sans-serif;
-  font-weight: 900;
-  font-size: 1.6rem;
-  color: var(--blue);
-  line-height: 1;
-}
-.level-badge-bar-wrap {
-  width: 60px;
-  height: 5px;
-  background: rgba(30,136,229,0.15);
-  border-radius: 4px;
-  overflow: hidden;
-}
-.level-badge-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--blue), #42a5f5);
-  border-radius: 4px;
-  transition: width 0.4s ease;
-}
-
 /* ── Puan kartı ─────────────────────────────────────────────── */
 .score-card {
   background: linear-gradient(135deg, #fff9e6, #fff3cd);
