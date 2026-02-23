@@ -1,0 +1,56 @@
+/* ═══════════════════════════════════════════════════════════════
+   MİNİK OKUR — Oyun Ekranı Teması
+   Tüm ID ve class isimleri orijinal koddan korundu
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --sky-top:      #4fc3f7;
+  --sky-bot:      #81d4fa;
+  --grass:        #66bb6a;
+  --grass-dark:   #388e3c;
+  --gold:         #ffd600;
+  --gold-dark:    #f9a825;
+  --orange:       #ff8f00;
+  --card-bg:      rgba(255,255,255,0.92);
+
+  --green:   #43a047;
+  --red:     #e53935;
+  --yellow:  #fdd835;
+  --blue:    #1e88e5;
+  --purple:  #8e24aa;
+
+  --text-dark:  #1a2744;
+  --text-mid:   #3a5068;
+
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
+  --shadow-card: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+  --shadow-btn:  0 4px 16px rgba(0,0,0,0.22);
+  --shadow-gold: 0 4px 24px rgba(255,214,0,0.45);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Body — gökyüzü + çimen ────────────────────────────────── */
+body {
+  font-family: 'Baloo 2', cursive;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  position: relative;
+  background-image: url('bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body::before { display: none; }
+body::after  { display: none; }
+
+/* Yıldızlar — artık kullanılmıyor, gizliyoruz */
+.stars { display: none; }
+

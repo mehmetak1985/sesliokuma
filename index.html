@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Minik Okur</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/game.css">
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/koyun.css">
 </head>
 <body>
 
@@ -208,26 +211,33 @@
   <!-- Resim kartı -->
   <div class="koyun-card" id="koyunCard">
     <div class="koyun-emoji" id="koyunEmoji">🐱</div>
-    <div class="koyun-hint" id="koyunHint">_ _ _ _</div>
+    <div class="koyun-hint" id="koyunHint" style="display:none">_ _ _ _</div>
   </div>
 
   <!-- Sonuç banner -->
   <div class="koyun-result" id="koyunResult"></div>
 
-  <!-- Mikrofon -->
-  <div class="mic-area">
-    <div class="mic-indicator" id="koyunMicIndicator">🎤</div>
-    <div class="mic-status" id="koyunMicStatus">Başlamak için düğmeye bas</div>
+  <!-- ── v2: Harf Seçme Sistemi ───────────────────────────── -->
+  <div class="harf-secme-alani" id="harfSecmeAlani">
+    <!-- Kelime gösterimi: harf kutuları -->
+    <div class="harf-kutu-satir" id="harfKutuSatir"></div>
+    <!-- 3 harf butonu -->
+    <div class="harf-buton-satir" id="harfButonSatir"></div>
   </div>
 
-  <div class="interim-text" id="koyunInterimText"></div>
-
-  <div class="button-row">
-    <button class="btn btn-start" id="koyunBtnStart">▶ Başla</button>
+  <!-- Geç butonu -->
+  <div class="button-row" style="margin-top:8px">
     <button class="btn btn-skip" id="koyunBtnSkip" style="padding:14px 28px">⏭ Geç</button>
   </div>
 
-  <div class="error-msg" id="koyunErrorMsg"></div>
+  <!-- Gizli kalan eski mic elementleri (app.js referans için) -->
+  <div style="display:none">
+    <div id="koyunMicIndicator"></div>
+    <div id="koyunMicStatus"></div>
+    <div id="koyunInterimText"></div>
+    <button id="koyunBtnStart"></button>
+    <div id="koyunErrorMsg"></div>
+  </div>
 
 </div>
 
@@ -298,6 +308,10 @@
   });
 })();
 </script>
-<script src="app.js"></script>
+<script src="js/data.js"></script>
+<script src="js/core.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/kelimeoyunu.js"></script>
+<script src="js/kelimeoyunu_v2.js"></script>
 </body>
 </html>
