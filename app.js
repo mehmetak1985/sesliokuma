@@ -1340,6 +1340,8 @@ function setMod(hikaye) {
   congratsBanner.classList.remove('visible');
   errorMsg.classList.remove('visible');
   syncLevelButtons();
+  const ls2 = document.querySelector('.level-selector');
+  if (ls2) ls2.style.display = hikaye ? 'none' : '';
   oyunuKur();
   kaydet();
   setTimeout(() => { btnStart.click(); }, 250);
@@ -1408,8 +1410,8 @@ function menuGoster() {
   // Menü skorunu güncelle
   menuScoreText.textContent  = totalScore;
   menuTotalScore.textContent = totalScore;
-  if (menuLevelText) menuLevelText.textContent = grupIndex + 1;
-  if (menuLevelBar)  menuLevelBar.style.width  = ((cumleIndex / 15) * 100) + '%';
+  menuLevelText.textContent  = grupIndex + 1;
+  menuLevelBar.style.width   = ((cumleIndex / 15) * 100) + '%';
 
   // Oyun ekranını gizle, menüyü göster
   gameContainer.style.display = 'none';
@@ -1436,6 +1438,10 @@ function oyunEkraniGoster(hikayeModuSecim) {
   // Menüyü gizle, oyun ekranını göster
   menuScreen.style.display    = 'none';
   gameContainer.style.display = 'flex';
+
+  // Mod'a göre seviye toplarını göster/gizle
+  const ls = document.querySelector('.level-selector');
+  if (ls) ls.style.display = hikayeModu ? 'none' : '';
 
   // Otomatik başlat
   setTimeout(() => { btnStart.click(); }, 200);
