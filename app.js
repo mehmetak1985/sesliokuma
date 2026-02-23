@@ -1298,6 +1298,7 @@ if (hikayeModu) updateStoryProgress();
 oyunuKur();
 
 // ─── Ana Menü Geçiş Sistemi ───────────────────────────────────────────────────
+const gameContainer  = document.getElementById('gameContainer');
 const menuScreen   = document.getElementById('menuScreen');
 const btnBack      = document.getElementById('btnBack');
 const menuScoreText  = document.getElementById('menuScoreText');
@@ -1685,3 +1686,21 @@ function _koyunSesliKontrol(soylenen) {
     }, 700);
   }
 }
+
+// ─── Ayarlar Modal ────────────────────────────────────────────
+const btnAyarlar      = document.getElementById('btnAyarlar');
+const ayarlarModal    = document.getElementById('ayarlarModal');
+const btnAyarlarKapat = document.getElementById('btnAyarlarKapat');
+const ayarlarArka     = document.getElementById('ayarlarArka');
+btnAyarlar.addEventListener('click',      () => { ayarlarModal.style.display = 'block'; });
+btnAyarlarKapat.addEventListener('click', () => { ayarlarModal.style.display = 'none';  });
+ayarlarArka.addEventListener('click',     () => { ayarlarModal.style.display = 'none';  });
+
+// ─── Ayarlar Modal ────────────────────────────────────────────
+const btnAyarlar      = document.getElementById('btnAyarlar');
+const ayarlarModal    = document.getElementById('ayarlarModal');
+const btnAyarlarKapat = document.getElementById('btnAyarlarKapat');
+const ayarlarArka     = document.getElementById('ayarlarArka');
+btnAyarlar.addEventListener('click',      () => { ayarlarModal.style.display = 'block'; });
+btnAyarlarKapat.addEventListener('click', () => { ayarlarModal.style.display = 'none';  });
+ayarlarArka.addEventListener('click',     () => { ayarlarModal.style.display = 'none';  });
