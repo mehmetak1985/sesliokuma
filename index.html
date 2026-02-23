@@ -16,23 +16,19 @@
      ═══════════════════════════════════════════════════════════ -->
 <div class="menu-screen" id="menuScreen">
 
-  <!-- Üst bar: Seviye + Puan -->
+  <!-- Üst bar: Puan -->
   <div class="menu-topbar">
     <div class="menu-topbar-left">
-      <span class="menu-level-badge">Seviye <strong id="menuLevelText">1</strong></span>
-      <div class="menu-level-bar-wrap">
-        <div class="menu-level-bar" id="menuLevelBar" style="width:30%"></div>
-      </div>
+      <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
     </div>
     <div class="menu-topbar-right">
-      <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
     </div>
   </div>
 
   <!-- Logo -->
   <div class="menu-logo">
     <h1 class="menu-title">Minik <span class="menu-title-book">📖</span> Okur</h1>
-    <p class="menu-subtitle">· Ekrandaki kelimeyi oku ve puan kazan! ·</p>
+    <p class="menu-subtitle">🎤 Ekrandaki kelimeyi oku ve puan kazan! 🌟</p>
   </div>
 
   <!-- Mod kartları -->
@@ -42,9 +38,11 @@
     <div class="menu-card menu-card--alistirma" id="menuCardAlistirma">
       <div class="menu-card-label-top">Alıştırma</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">✏️</span>
+        <span class="menu-card-emoji">📝</span>
         <div class="menu-card-deco">
-          <span>✔️</span><span>❓</span><span>✔️</span>
+          <span class="deco-harf">A</span>
+          <span class="deco-harf">B</span>
+          <span class="deco-harf">C</span>
         </div>
       </div>
       <button class="menu-card-btn menu-card-btn--orange" data-mod="alistirma">Alıştırma</button>
@@ -54,9 +52,11 @@
     <div class="menu-card menu-card--kelime" id="menuCardKelime">
       <div class="menu-card-label-top">Kelime Oyunu</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">🎯</span>
+        <span class="menu-card-emoji">🔍</span>
         <div class="menu-card-deco">
-          <span>🔤</span><span>⭐</span><span>🔤</span>
+          <span class="deco-kelime">kedi</span>
+          <span class="deco-kelime">top</span>
+          <span class="deco-kelime">ev</span>
         </div>
       </div>
       <button class="menu-card-btn menu-card-btn--green" data-mod="kelime">Kelime Oyunu</button>
@@ -66,7 +66,10 @@
     <div class="menu-card menu-card--hikaye" id="menuCardHikaye">
       <div class="menu-card-label-top">Hikaye</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">🐑</span>
+        <span class="menu-card-emoji">📖</span>
+        <div class="menu-card-deco">
+          <span>🌟</span><span>🐑</span><span>🌟</span>
+        </div>
       </div>
       <button class="menu-card-btn menu-card-btn--blue" data-mod="hikaye">Hikaye</button>
     </div>
