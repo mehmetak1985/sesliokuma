@@ -40,6 +40,12 @@ const reportTimerWrap   = document.getElementById('reportTimerWrap');
 const reportTimerBar    = document.getElementById('reportTimerBar');
 const reportBtnRow      = document.getElementById('reportBtnRow');
 const reportBtnNext     = document.getElementById('reportBtnNext');
+// Başlık alanı
+const modeTitleEl       = document.getElementById('modeTitle');
+const modeSubtitleEl    = document.getElementById('modeSubtitle');
+// Seviye ve sekme şeritleri
+const levelSelector     = document.querySelector('.level-selector');
+const tabStrip          = document.querySelector('.tab-strip');
 
 if (!SpeechRecognition) {
   noSupport.classList.add('visible');
@@ -376,7 +382,15 @@ const LS_KEY = 'sesliOkumaOyunu_v1';
 function kaydet() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify({
-      grupIndex, cumleIndex, hikayeModu, hikayeIndex, hikayeCumle, totalScore, koyunSkor
+      grupIndex,
+      cumleIndex,
+      hikayeModu,
+      hikayeIndex,
+      hikayeCumle,
+      totalScore,
+      koyunSkor,
+      achievements,
+      tamamlananHikayeler
     }));
   } catch(e) {}
 }
@@ -391,6 +405,12 @@ function yukle() {
     hikayeCumle = d.hikayeCumle || 0;
     totalScore  = d.totalScore  || 0;
     koyunSkor   = d.koyunSkor   || 0;
+    if (d.achievements) {
+      achievements = Object.assign({}, achievements, d.achievements);
+    }
+    if (Array.isArray(d.tamamlananHikayeler) && d.tamamlananHikayeler.length === HIKAYE_GRUPLARI.length) {
+      tamamlananHikayeler = d.tamamlananHikayeler.slice();
+    }
   } catch(e) {}
 }
 
@@ -423,11 +443,24 @@ let targetWords        = [];
 let wordSpans          = [];
 let currentWordIndex   = 0;
 let score              = 0;
-let totalScore         = 0;   // oyun boyunca toplam puan
+// totalScore: oyun boyunca toplanan toplam ⭐ (tüm modlardan)
+let totalScore         = 0;
 let yanlisSayac        = 0;   // yanlış telaffuz sayacı (TTS tetikleme için)
 let yanlisSayacIndex   = -1;  // hangi kelime için sayılıyor (çapraz kelime birikimini önler)
 let endGameTimer       = null; // race condition koruması
 let navTimer           = null; // hikaye no gösterme timer'ı
+
+// ─── Başarılar / Rozetler ─────────────────────────────────────────────────────
+// achievements: her rozet için tek seferlik true/false
+// tamamlananHikayeler: her hikaye en az bir kez bitmiş mi
+let achievements = {
+  minikOkur:        false, // İlk hikayeyi bitir
+  hicPesEtmeyen:    false, // Çok zorlanıp yine de tamamla
+  cesurOkuyucu:     false, // Zor hikayeden en az birini bitir
+  parlayanYildiz:   false, // 100+ ⭐
+  okumaSampiyonu:   false  // Tüm hikayeleri bitir
+};
+let tamamlananHikayeler = new Array(HIKAYE_GRUPLARI.length).fill(false);
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SpeechController
@@ -875,8 +908,9 @@ function validateWord(konusulanKelime) {
   if (kelimeEslesir(token, hedef)) {
     // ✅ Doğru — TTS YOK
     span.className = 'word correct';
-    score      += 10;
-    totalScore += 10;
+    // Her doğru kelime 1 ⭐
+    score      += 1;
+    totalScore += 1;
     bolumDogru++;
     yanlisSayac = 0;   // doğru olunca yanlış sayacını sıfırla
     yanlisSayacIndex = -1;
@@ -884,6 +918,9 @@ function validateWord(konusulanKelime) {
     requestAnimationFrame(updateUI);
 
     if (currentWordIndex === targetWords.length) {
+      // Cümle / hikaye bittiğinde yıldız ve zorlanma rozetlerini kontrol et
+      kontrolRozetlerYildiz();
+      kontrolRozetlerZorluk();
       endGame();
     }
 
@@ -1057,6 +1094,9 @@ function endGame() {
 
     if (sonCumle) {
       // Hikaye tamamen bitti → tam rapor, manuel geçiş
+      // Hikaye tamamlama durumunu ve rozetleri güncelle
+      tamamlananHikayeler[hikayeIndex] = true;
+      kontrolRozetlerHikayeSonu();
       endGameTimer = setTimeout(() => {
         endGameTimer = null;
         congratsBanner.classList.remove('visible');
@@ -1167,6 +1207,67 @@ function gosterHata(mesaj) {
   errorMsg.classList.add('visible');
 }
 
+// ─── Rozet kontrol yardımcıları ───────────────────────────────────────────────
+function kontrolRozetlerYildiz() {
+  // ⭐ Parlayan Yıldız — 100+ ⭐
+  if (!achievements.parlayanYildiz && totalScore >= 100) {
+    achievements.parlayanYildiz = true;
+    kaydet();
+    gosterRozetKutlama('⭐ Parlayan Yıldız', '100 yıldız topladın! Okuma ışığın parlıyor!');
+  }
+}
+
+function kontrolRozetlerZorluk() {
+  // 💪 Hiç Pes Etmeyen — çok sayıda yanlışla birlikte yine de bitir
+  if (!achievements.hicPesEtmeyen && bolumYanlis >= 5 && bolumDogru > 0) {
+    achievements.hicPesEtmeyen = true;
+    kaydet();
+    gosterRozetKutlama('💪 Hiç Pes Etmeyen', 'Zorlandın ama vazgeçmedin. İşte gerçek başarı!');
+  }
+}
+
+function kontrolRozetlerHikayeSonu() {
+  // 🐣 Minik Okur — en az bir hikayeyi ilk kez bitir
+  if (!achievements.minikOkur) {
+    achievements.minikOkur = true;
+    kaydet();
+    gosterRozetKutlama('🐣 Minik Okur', 'İlk hikayeni tamamladın. Okuma yolculuğun başladı!');
+  }
+
+  // 🦁 Cesur Okuyucu — zor hikayelerden (index 14–20) birini bitir
+  if (!achievements.cesurOkuyucu) {
+    if (hikayeIndex >= 14 && hikayeIndex <= 20) {
+      achievements.cesurOkuyucu = true;
+      kaydet();
+      gosterRozetKutlama('🦁 Cesur Okuyucu', 'Zor bir hikayeyi bitirdin. Çok cesursun!');
+    }
+  }
+
+  // 👑 Okuma Şampiyonu — tüm hikayeler en az bir kez bitmiş
+  if (!achievements.okumaSampiyonu) {
+    const hepsiBitti = tamamlananHikayeler.every(Boolean);
+    if (hepsiBitti) {
+      achievements.okumaSampiyonu = true;
+      kaydet();
+      gosterRozetKutlama('👑 Okuma Şampiyonu', 'Tüm hikayeleri bitirdin. Sen bir okuma şampiyonusun!');
+    }
+  }
+}
+
+// Küçük rozet kutlama kartı
+function gosterRozetKutlama(baslik, aciklama) {
+  const el = document.getElementById('achToast');
+  if (!el) return;
+  const titleEl = document.getElementById('achToastTitle');
+  const descEl  = document.getElementById('achToastDesc');
+  if (titleEl) titleEl.textContent = baslik;
+  if (descEl)  descEl.textContent  = aciklama;
+  el.classList.add('visible');
+  setTimeout(() => {
+    el.classList.remove('visible');
+  }, 3500);
+}
+
 // ─── Buton işleyicileri ───────────────────────────────────────────────────────
 btnStart.addEventListener('click', () => {
   if (!SpeechRecognition) return;
@@ -1238,8 +1339,14 @@ function syncLevelButtons() {
     btn.classList.toggle('active', aktif);
     btn.style.opacity = hikayeModu ? '0.25' : '';
   });
-  tabAlistirma.classList.toggle('active', !hikayeModu);
-  tabHikaye.classList.toggle('active', hikayeModu);
+  // Hikaye modunda seviye balonlarını tamamen gizle
+  if (levelSelector) {
+    levelSelector.style.display = hikayeModu ? 'none' : '';
+  }
+  // Alt sekmeleri (Alıştırma / Hikaye) her zaman gizle
+  if (tabStrip) {
+    tabStrip.style.display = 'none';
+  }
 }
 
 document.querySelectorAll('.lvl-btn').forEach(btn => {
@@ -1403,6 +1510,7 @@ const menuScoreText  = document.getElementById('menuScoreText');
 const menuTotalScore = document.getElementById('menuTotalScore');
 const menuLevelText  = document.getElementById('menuLevelText');
 const menuLevelBar   = document.getElementById('menuLevelBar');
+const hmAchievements  = document.getElementById('hmAchievements');
 
 function menuGoster() {
   // Menü skorunu güncelle
@@ -1431,6 +1539,11 @@ function oyunEkraniGoster(hikayeModuSecim) {
     syncLevelButtons();
     oyunuKur();
     kaydet();
+  }
+
+  // Başlık alt yazısını moda göre ayarla
+  if (modeSubtitleEl) {
+    modeSubtitleEl.textContent = hikayeModu ? 'Hikaye' : 'Alıştırma';
   }
 
   // Menüyü gizle, oyun ekranını göster
@@ -1469,6 +1582,21 @@ btnBack.addEventListener('click', () => {
 
 // İlk açılışta: menüyü göster, oyun ekranını gizle
 menuGoster();
+
+// Başarılarım menü öğesi
+if (hmAchievements) {
+  hmAchievements.addEventListener('click', () => {
+    // Şimdilik sadece küçük bir bilgi tostu gösterelim
+    const aciklama = [
+      (achievements.minikOkur      ? '🐣 Minik Okur: Açık'        : '🐣 Minik Okur: Kilitli'),
+      (achievements.hicPesEtmeyen  ? '💪 Hiç Pes Etmeyen: Açık'   : '💪 Hiç Pes Etmeyen: Kilitli'),
+      (achievements.cesurOkuyucu   ? '🦁 Cesur Okuyucu: Açık'     : '🦁 Cesur Okuyucu: Kilitli'),
+      (achievements.parlayanYildiz ? '⭐ Parlayan Yıldız: Açık'   : '⭐ Parlayan Yıldız: Kilitli'),
+      (achievements.okumaSampiyonu ? '👑 Okuma Şampiyonu: Açık'   : '👑 Okuma Şampiyonu: Kilitli')
+    ].join(' · ');
+    gosterRozetKutlama('Başarılarım', aciklama);
+  });
+}
 
 // ═══════════════════════════════════════════════════════════════
 // KELİME OYUNU
@@ -1694,6 +1822,8 @@ function koyunSonraki() {
     koyunIndex = 0;
   }
   koyunGoster();
+  // Kelime oyunu turu ilerledikçe yıldız eşiği rozetini kontrol et
+  kontrolRozetlerYildiz();
 }
 
 // ─── Buton işleyicileri ───────────────────────────────────────
@@ -1804,8 +1934,9 @@ function _koyunSesliKontrol(soylenen) {
     if (koyunRec) { try { koyunRec.abort(); } catch(e) {} }
     koyunRecState = 'idle';
 
-    koyunSkor += 15;
-    totalScore += 15;
+    // Kelime oyununda her doğru tahmin 2 ⭐
+    koyunSkor += 2;
+    totalScore += 2;
     koyunScoreEl.textContent = koyunSkor;
     koyunHint.textContent    = hedef;
     koyunHint.className      = 'koyun-hint revealed';
