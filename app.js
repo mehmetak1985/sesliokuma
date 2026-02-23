@@ -532,9 +532,12 @@ const SpeechController = (function () {
     if (recState !== 'listening') return;
     silenceTimer = setTimeout(() => {
       if (recState === 'listening' && !isSpeaking && currentWordIndex < targetWords.length) {
-        _stop(true); // sessizlik → restart
+        stopAll(); // 25sn sessizlik → tamamen kapat
+        btnStart.disabled = false;
+        btnStop.disabled  = true;
+        micStatus.textContent = 'Başlamak için düğmeye bas';
       }
-    }, 3500);
+    }, 25000);
   }
 
   // ── Recognition iç inşa ───────────────────────────────────────────────
@@ -1722,16 +1725,28 @@ function koyunRecBuild() {
   koyunRec.interimResults = true;
   koyunRec.maxAlternatives = 3;
 
+  let koyunSilenceTimer = null;
+  function koyunSessizlikSifirla() {
+    if (koyunSilenceTimer) clearTimeout(koyunSilenceTimer);
+    koyunSilenceTimer = setTimeout(() => {
+      koyunSilenceTimer = null;
+      koyunRecDurdur();
+      koyunMicStatus.textContent = 'Başlamak için düğmeye bas';
+    }, 25000);
+  }
+
   koyunRec.onstart = () => {
     koyunRecState = 'listening';
     koyunMicIndicator.className = 'mic-indicator active';
     koyunMicStatus.className    = 'mic-status listening';
     koyunMicStatus.textContent  = '🎤 Dinliyorum...';
+    koyunSessizlikSifirla();
   };
 
   koyunRec.onresult = (event) => {
     const transcript = event.results[event.results.length - 1][0].transcript;
     koyunInterimText.textContent = transcript;
+    koyunSessizlikSifirla();
 
     if (event.results[event.results.length - 1].isFinal) {
       koyunInterimText.textContent = '';
