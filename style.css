@@ -961,11 +961,13 @@ body::after  { display: none; }
   flex: 1;
   min-width: 140px;
   max-width: 240px;
+  min-height: 260px;
   border-radius: var(--radius-lg);
   padding: 18px 16px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -1025,6 +1027,10 @@ body::after  { display: none; }
 
 .menu-card:nth-child(2) .menu-card-emoji {
   animation-delay: 0.4s;
+}
+
+.menu-card:nth-child(3) .menu-card-emoji {
+  animation-delay: 0.8s;
 }
 
 @keyframes cardEmojiBounce {
