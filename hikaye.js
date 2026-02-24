@@ -7,234 +7,318 @@
 // ═══════════════════════════════════════════════════════════════
 
 const HIKAYE_DATA = [
-
   {
-    baslik: 'Mina ve Oyuncak Arabası',
+    id: 1, baslik: 'Mina ve Oyuncak Arabası',
     cumleler: [
       { text: 'Mina kırmızı oyuncak arabasını aldı.', blankWord: null },
       { text: 'Arabayı yere koydu ve hafifçe itti.', blankWord: 'Arabayı', options: ['Arabayı','Kalemi','Defteri'], correctIndex: 0 },
       { text: 'Araba hızla ilerledi ve masanın ayağına çarptı.', blankWord: null },
       { text: 'Mina önce şaşırdı, sonra gülmeye başladı.', blankWord: 'gülmeye', options: ['gülmeye','ağlamaya','kaçmaya'], correctIndex: 0 },
-      { text: 'Arabasını dikkatli sürmesi gerektiğini anladı.', blankWord: null },
-    ]
+      { text: 'Arabasını dikkatli sürmesi gerektiğini anladı.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Mina ne ile oynuyordu?', secenekler: ['Bebek','Araba','Top'], cevapIndex: 1 },
+      { soru: 'Araba nereye çarptı?', secenekler: ['Kapıya','Sandalyeye','Masaya'], cevapIndex: 2 }
+    ],
+    bitisMesaji: 'Tebrikler! Dikkatli sürüş puanın: 100'
   },
-
   {
-    baslik: 'Baran ve Yapboz',
+    id: 2, baslik: 'Baran ve Yapboz',
     cumleler: [
       { text: 'Baran yapboz parçalarını masaya yaydı.', blankWord: null },
       { text: 'Önce köşe parçalarını buldu.', blankWord: 'köşe', options: ['köşe','renkli','küçük'], correctIndex: 0 },
       { text: 'Parçaları birleştirirken sabırlı davrandı.', blankWord: null },
       { text: 'Sonunda güzel bir hayvan resmi ortaya çıktı.', blankWord: 'hayvan', options: ['hayvan','orman','şehir'], correctIndex: 0 },
-      { text: 'Baran başardığı için gurur duydu.', blankWord: null },
-    ]
+      { text: 'Baran başardığı için gurur duydu.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Baran masaya ne yaydı?', secenekler: ['Kitaplar','Parçalar','Boyalar'], cevapIndex: 1 },
+      { soru: 'Yapbozdan ne resmi çıktı?', secenekler: ['Hayvan','Ev','Araba'], cevapIndex: 0 }
+    ],
+    bitisMesaji: 'Harikasın! Sabırlı olduğun için kazandın: 100 Puan'
   },
-
   {
-    baslik: 'Henna ve Kediler',
+    id: 3, baslik: 'Henna ve Kediler',
     cumleler: [
       { text: 'Henna bahçeye çıktığında iki küçük kedi çimenlerde oynuyordu.', blankWord: null },
       { text: 'Kediler bir kelebeği kovalamaya başladı.', blankWord: 'kelebeği', options: ['kelebeği','topu','yaprağı'], correctIndex: 0 },
       { text: 'Henna da onların peşinden koştu ama dikkatli yürüdü.', blankWord: null },
       { text: 'Kediler yorulunca gölgede dinlendiler.', blankWord: 'gölgede', options: ['gölgede','yolda','evde'], correctIndex: 0 },
-      { text: 'Henna onları severken mutlu hissetti.', blankWord: null },
-    ]
+      { text: 'Henna onları severken mutlu hissetti.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Kediler neyi kovaladı?', secenekler: ['Kuşu','Kelebeği','Fareyi'], cevapIndex: 1 },
+      { soru: 'Kediler nerede dinlendi?', secenekler: ['Gölgede','Çatıda','Ağaçta'], cevapIndex: 0 }
+    ],
+    bitisMesaji: 'Mükemmel! Hayvan sevgisi puanın: 100'
   },
-
   {
-    baslik: 'Mustafa ve Yeni Ayakkabıları',
+    id: 4, baslik: 'Mustafa ve Yeni Ayakkabıları',
     cumleler: [
       { text: 'Mustafa yeni ayakkabılarını giydi.', blankWord: null },
       { text: 'Çimlerde top oynamaya başladı.', blankWord: 'top', options: ['top','ip','kitap'], correctIndex: 0 },
       { text: 'Koşarken ayakkabılarının çok rahat olduğunu fark etti.', blankWord: null },
       { text: 'Ama çimenler ıslaktı ve biraz kaydı.', blankWord: 'ıslaktı', options: ['ıslaktı','kuruydu','temizdi'], correctIndex: 0 },
-      { text: 'Mustafa dikkatli olması gerektiğini öğrendi.', blankWord: null },
-    ]
+      { text: 'Mustafa dikkatli olması gerektiğini öğrendi.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Mustafa ne oynamaya başladı?', secenekler: ['Saklambaç','Top','Koşu'], cevapIndex: 1 },
+      { soru: 'Çimenler nasıldı?', secenekler: ['Kuru','Sarı','Islak'], cevapIndex: 2 }
+    ],
+    bitisMesaji: 'Süper! Dikkat puanın: 100'
   },
-
   {
-    baslik: 'Asya ve Yağmur',
+    id: 5, baslik: 'Asya ve Yağmur',
     cumleler: [
       { text: 'Asya camdan dışarı baktı.', blankWord: null },
       { text: 'Yağmur yağıyordu.', blankWord: 'Yağmur', options: ['Yağmur','Güneş','Rüzgar'], correctIndex: 0 },
       { text: 'Şemsiyesini alıp annesiyle dışarı çıktı.', blankWord: null },
       { text: 'Ayakkabıları ıslandı.', blankWord: 'ıslandı', options: ['ıslandı','kurudu','yandı'], correctIndex: 0 },
-      { text: 'Asya eve dönünce kuru çorap giydi.', blankWord: null },
-    ]
+      { text: 'Asya eve dönünce kuru çorap giydi.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Asya dışarı çıkarken yanına ne aldı?', secenekler: ['Mont','Şemsiye','Şapka'], cevapIndex: 1 },
+      { soru: 'Asya eve dönünce ne giydi?', secenekler: ['Çorap','Terlik','Ceket'], cevapIndex: 0 }
+    ],
+    bitisMesaji: 'Tebrikler! Yağmur macerası puanın: 100'
   },
-
   {
-    baslik: 'Yusuf ve Kitap',
+    id: 6, baslik: 'Yusuf ve Kitap',
     cumleler: [
       { text: 'Yusuf kitaplığından bir hikaye kitabı seçti.', blankWord: null },
       { text: 'Kitabı sessizce okumaya başladı.', blankWord: 'sessizce', options: ['sessizce','hızlıca','yüksek sesle'], correctIndex: 0 },
       { text: 'Anlamadığı bir kelimeyi annesine sordu.', blankWord: null },
-      { text: 'Yeni kelimenin anlamını öğrenince hikayeyi daha iyi anladı.', blankWord: 'anladı', options: ['anladı','unuttu','kapattı'], correctIndex: 0 },
-    ]
+      { text: 'Yeni kelimenin anlamını öğrenince hikayeyi daha iyi anladı.', blankWord: 'anladı', options: ['anladı','unuttu','kapattı'], correctIndex: 0 }
+    ],
+    sorular: [
+      { soru: 'Yusuf kitabı nasıl okudu?', secenekler: ['Bağırarak','Sessizce','Hızlıca'], cevapIndex: 1 },
+      { soru: 'Yusuf kelimeyi kime sordu?', secenekler: ['Babasına','Abisine','Annesine'], cevapIndex: 2 }
+    ],
+    bitisMesaji: 'Harika! Okuma puanın: 100'
   },
-
   {
-    baslik: 'Zeynep ve Çiçekler',
+    id: 7, baslik: 'Zeynep ve Çiçekler',
     cumleler: [
       { text: 'Zeynep bahçedeki çiçekleri suladı.', blankWord: null },
       { text: 'Bazı çiçeklerin yaprakları solmuştu.', blankWord: 'solmuştu', options: ['solmuştu','açmıştı','kopmuştu'], correctIndex: 0 },
       { text: 'Daha fazla su verdikten sonra birkaç gün bekledi.', blankWord: null },
       { text: 'Çiçekler yeniden canlandı.', blankWord: 'canlandı', options: ['canlandı','kurudu','düştü'], correctIndex: 0 },
-      { text: 'Zeynep sabırlı olmanın önemini öğrendi.', blankWord: null },
-    ]
+      { text: 'Zeynep sabırlı olmanın önemini öğrendi.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Zeynep neyi suladı?', secenekler: ['Ağaçları','Çiçekleri','Otları'], cevapIndex: 1 },
+      { soru: 'Çiçeklere ne verince canlandılar?', secenekler: ['Toprak','Güneş','Su'], cevapIndex: 2 }
+    ],
+    bitisMesaji: 'Tebrikler! Doğa dostu puanın: 100'
   },
-
   {
-    baslik: 'Maysa ve Resim',
+    id: 8, baslik: 'Maysa ve Resim',
     cumleler: [
       { text: 'Maysa resim defterini açtı.', blankWord: null },
       { text: 'Önce güneş çizdi, sonra bir ev yaptı.', blankWord: 'güneş', options: ['güneş','ağaç','balık'], correctIndex: 0 },
       { text: 'Boyarken çizgilerin dışına taştı ama pes etmedi.', blankWord: null },
-      { text: 'Resmini tamamladığında çok güzel görünüyordu.', blankWord: 'güzel', options: ['güzel','karanlık','küçük'], correctIndex: 0 },
-    ]
+      { text: 'Resmini tamamladığında çok güzel görünüyordu.', blankWord: 'güzel', options: ['güzel','karanlık','küçük'], correctIndex: 0 }
+    ],
+    sorular: [
+      { soru: 'Maysa ilk önce ne çizdi?', secenekler: ['Ev','Güneş','Bulut'], cevapIndex: 1 },
+      { soru: 'Maysa neyin dışına taştı?', secenekler: ['Çizgilerin','Kağıdın','Masanın'], cevapIndex: 0 }
+    ],
+    bitisMesaji: 'Harika! Sanatçı puanın: 100'
   },
-
   {
-    baslik: 'Mehmet ve Uçurtma',
+    id: 9, baslik: 'Mehmet ve Uçurtma',
     cumleler: [
       { text: 'Mehmet uçurtmasını gökyüzüne bıraktı.', blankWord: null },
       { text: 'Rüzgar hafif esiyordu.', blankWord: 'Rüzgar', options: ['Rüzgar','Yağmur','Kar'], correctIndex: 0 },
       { text: 'Uçurtma bazen düşer gibi oldu ama Mehmet ipi sıkı tuttu.', blankWord: null },
-      { text: 'Bir süre sonra uçurtma daha yükseğe çıktı.', blankWord: 'yükseğe', options: ['yükseğe','aşağıya','yana'], correctIndex: 0 },
-    ]
+      { text: 'Bir süre sonra uçurtma daha yükseğe çıktı.', blankWord: 'yükseğe', options: ['yükseğe','aşağıya','yana'], correctIndex: 0 }
+    ],
+    sorular: [
+      { soru: 'Uçurtmanın uçması için ne esiyordu?', secenekler: ['Kar','Rüzgar','Duman'], cevapIndex: 1 },
+      { soru: 'Mehmet neyi sıkı tuttu?', secenekler: ['İpi','Çubuğu','Kuyruğu'], cevapIndex: 0 }
+    ],
+    bitisMesaji: 'Süper! Rüzgar puanın: 100'
   },
-
   {
-    baslik: 'Yağmur ve Kütüphane',
+    id: 10, baslik: 'Yağmur ve Kütüphane',
     cumleler: [
       { text: 'Yağmur kütüphaneye gitti.', blankWord: null },
       { text: 'Sessiz olması gerektiğini biliyordu.', blankWord: 'Sessiz', options: ['Sessiz','Hızlı','Mutlu'], correctIndex: 0 },
       { text: 'Kitabını dikkatle seçti ve yerine oturdu.', blankWord: null },
-      { text: 'Çevresindekileri rahatsız etmeden okudu.', blankWord: 'okudu', options: ['okudu','koştu','uyudu'], correctIndex: 0 },
-    ]
+      { text: 'Çevresindekileri rahatsız etmeden okudu.', blankWord: 'okudu', options: ['okudu','koştu','uyudu'], correctIndex: 0 }
+    ],
+    sorular: [
+      { soru: 'Yağmur nereye gitti?', secenekler: ['Parka','Markete','Kütüphaneye'], cevapIndex: 2 },
+      { soru: 'Yağmur kütüphanede nasıl olmalıydı?', secenekler: ['Hızlı','Sessiz','Hareketli'], cevapIndex: 1 }
+    ],
+    bitisMesaji: 'Harikasın! Kültür puanın: 100'
   },
-
   {
-    baslik: 'Çiçek ve Dostluk',
+    id: 11, baslik: 'Çiçek ve Dostluk',
     cumleler: [
       { text: 'Çiçek parkta tek başına oturan bir çocuk gördü.', blankWord: null },
       { text: 'Yanına gidip selam verdi.', blankWord: 'selam', options: ['selam','taş','oyuncak'], correctIndex: 0 },
       { text: 'Birlikte salıncağa bindiler.', blankWord: null },
-      { text: 'O gün yeni bir arkadaş edindi.', blankWord: 'arkadaş', options: ['arkadaş','kalem','çiçek'], correctIndex: 0 },
-    ]
+      { text: 'O gün yeni bir arkadaş edindi.', blankWord: 'arkadaş', options: ['arkadaş','kalem','çiçek'], correctIndex: 0 }
+    ],
+    sorular: [
+      { soru: 'Çiçek çocukla birlikte neye bindi?', secenekler: ['Kaydırak','Araba','Salıncak'], cevapIndex: 2 },
+      { soru: 'Çiçek o gün ne edindi?', secenekler: ['Arkadaş','Kedi','Kitap'], cevapIndex: 0 }
+    ],
+    bitisMesaji: 'Tebrikler! Dostluk puanın: 100'
   },
-
   {
-    baslik: 'Emir ve Kayıp Kalem',
+    id: 12, baslik: 'Emir ve Kayıp Kalem',
     cumleler: [
       { text: 'Emir ödev yapmak için masaya oturdu.', blankWord: null },
       { text: 'Kalemini bulamadı.', blankWord: 'Kalemini', options: ['Kalemini','Defterini','Silgisini'], correctIndex: 0 },
       { text: 'Çantasını ve masasını aradı ama kalem yoktu.', blankWord: null },
       { text: 'Çantasının küçük cebine baktı ve kalemini buldu.', blankWord: 'buldu', options: ['buldu','attı','kaybetti'], correctIndex: 0 },
-      { text: 'Emir eşyalarını düzenli koyması gerektiğini anladı.', blankWord: null },
-    ]
+      { text: 'Emir eşyalarını düzenli koyması gerektiğini anladı.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Emir masaya ne için oturdu?', secenekler: ['Yemek','Ödev','Oyun'], cevapIndex: 1 },
+      { soru: 'Emir kalemini nerede buldu?', secenekler: ['Yerde','Cepte','Kitapta'], cevapIndex: 1 }
+    ],
+    bitisMesaji: 'Harika! Düzen puanın: 100'
   },
-
   {
-    baslik: 'Beyaz ve Paylaşmak',
+    id: 13, baslik: 'Beyaz ve Paylaşmak',
     cumleler: [
       { text: 'Beyaz parkta bisküviyle oturuyordu.', blankWord: null },
       { text: 'Yanındaki çocuk üzgün görünüyordu çünkü yiyeceği yoktu.', blankWord: 'üzgün', options: ['üzgün','mutlu','hızlı'], correctIndex: 0 },
       { text: 'Beyaz bisküvisini ikiye böldü ve yarısını verdi.', blankWord: null },
       { text: 'Çocuk gülümsedi.', blankWord: 'gülümsedi', options: ['gülümsedi','ağladı','kaçtı'], correctIndex: 0 },
-      { text: 'Beyaz paylaşmanın insanı mutlu ettiğini fark etti.', blankWord: null },
-    ]
+      { text: 'Beyaz paylaşmanın insanı mutlu ettiğini fark etti.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Beyaz ne yiyordu?', secenekler: ['Elma','Bisküvi','Ekmek'], cevapIndex: 1 },
+      { soru: 'Diğer çocuk bisküviyi alınca ne yaptı?', secenekler: ['Gülümsedi','Ağladı','Kızdı'], cevapIndex: 0 }
+    ],
+    bitisMesaji: 'Mükemmel! Paylaşım puanın: 100'
   },
-
   {
-    baslik: 'Kaan ve Zamanında Uyanmak',
+    id: 14, baslik: 'Kaan ve Zamanında Uyanmak',
     cumleler: [
       { text: 'Kaan sabah alarmı duydu ama kapattı.', blankWord: null },
       { text: 'Biraz daha uyumak istedi.', blankWord: 'uyumak', options: ['uyumak','koşmak','yazmak'], correctIndex: 0 },
       { text: 'Uyandığında okula geç kaldığını fark etti.', blankWord: null },
       { text: 'Aceleyle hazırlandı ama servisi kaçırdı.', blankWord: 'kaçırdı', options: ['kaçırdı','yakaladı','bekledi'], correctIndex: 0 },
-      { text: 'Ertesi gün alarm çalınca hemen kalktı.', blankWord: null },
-    ]
+      { text: 'Ertesi gün alarm çalınca hemen kalktı.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Kaan neyi kaçırdı?', secenekler: ['Topu','Servisi','Uçağı'], cevapIndex: 1 },
+      { soru: 'Kaan sabah neyi kapattı?', secenekler: ['Işığı','Kapıyı','Alarmı'], cevapIndex: 2 }
+    ],
+    bitisMesaji: 'Tebrikler! Zaman yönetimi puanın: 100'
   },
-
   {
-    baslik: 'Elvan ve Bitki',
+    id: 15, baslik: 'Elvan ve Bitki',
     cumleler: [
       { text: 'Elvan küçük bir saksıya tohum ekti.', blankWord: null },
       { text: 'Her gün düzenli olarak suladı.', blankWord: 'suladı', options: ['suladı','kesti','attı'], correctIndex: 0 },
       { text: 'İlk gün hiçbir şey çıkmadı.', blankWord: null },
       { text: 'Birkaç gün sonra küçük bir filiz gördü.', blankWord: 'filiz', options: ['filiz','taş','bulut'], correctIndex: 0 },
-      { text: 'Sabırlı olmanın önemli olduğunu öğrendi.', blankWord: null },
-    ]
+      { text: 'Sabırlı olmanın önemli olduğunu öğrendi.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Elvan saksıya ne ekti?', secenekler: ['Çiçek','Tohum','Taş'], cevapIndex: 1 },
+      { soru: 'Saksıdan ne çıktı?', secenekler: ['Dal','Böcek','Filiz'], cevapIndex: 2 }
+    ],
+    bitisMesaji: 'Harika! Sabır puanın: 100'
   },
-
   {
-    baslik: 'Berk ve Kırılan Bardak',
+    id: 16, baslik: 'Berk ve Kırılan Bardak',
     cumleler: [
       { text: 'Berk mutfakta su almak istedi.', blankWord: null },
       { text: 'Bardağı hızlıca aldı ve elinden düşürdü.', blankWord: 'düşürdü', options: ['düşürdü','tuttu','sakladı'], correctIndex: 0 },
       { text: 'Bardak kırıldı.', blankWord: null },
       { text: 'Berk korktu ama annesine gerçeği söyledi.', blankWord: 'gerçeği', options: ['gerçeği','yalanı','hikayeyi'], correctIndex: 0 },
-      { text: 'Berk bir dahaki sefere yavaş davranmaya karar verdi.', blankWord: null },
-    ]
+      { text: 'Berk bir dahaki sefere yavaş davranmaya karar verdi.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Mutfakta ne kırıldı?', secenekler: ['Tabak','Bardak','Kaşık'], cevapIndex: 1 },
+      { soru: 'Berk annesine neyi söyledi?', secenekler: ['Gerçeği','Yalanı','Şarkıyı'], cevapIndex: 0 }
+    ],
+    bitisMesaji: 'Mükemmel! Dürüstlük puanın: 100'
   },
-
   {
-    baslik: 'Defne ve Grup Çalışması',
+    id: 17, baslik: 'Defne ve Grup Çalışması',
     cumleler: [
       { text: 'Defne okulda grup çalışması yaptı.', blankWord: null },
       { text: 'Herkes bir görev aldı.', blankWord: 'görev', options: ['görev','oyuncak','renk'], correctIndex: 0 },
       { text: 'Defne afişi boyadı.', blankWord: null },
       { text: 'Birlikte çalışınca ödevleri daha güzel oldu.', blankWord: 'güzel', options: ['güzel','kötü','küçük'], correctIndex: 0 },
-      { text: 'Öğretmenleri onları tebrik etti.', blankWord: null },
-    ]
+      { text: 'Öğretmenleri onları tebrik etti.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Defne nerede grup çalışması yaptı?', secenekler: ['Parkta','Okulda','Evde'], cevapIndex: 1 },
+      { soru: 'Defne neyi boyadı?', secenekler: ['Masayı','Duvarı','Afişi'], cevapIndex: 2 }
+    ],
+    bitisMesaji: 'Süper! İş birliği puanın: 100'
   },
-
   {
-    baslik: 'Aras ve Cesaret',
+    id: 18, baslik: 'Aras ve Cesaret',
     cumleler: [
       { text: 'Aras sınıfta şiir okumaktan çekiniyordu.', blankWord: null },
       { text: 'Sırası geldiğinde kalbi hızlı attı.', blankWord: 'kalbi', options: ['kalbi','ayağı','eli'], correctIndex: 0 },
       { text: 'Derin bir nefes aldı ve okumaya başladı.', blankWord: null },
       { text: 'Şiiri bitirdiğinde alkış aldı.', blankWord: 'alkış', options: ['alkış','ceza','bağırış'], correctIndex: 0 },
-      { text: 'Aras cesur davrandığı için gurur duydu.', blankWord: null },
-    ]
+      { text: 'Aras cesur davrandığı için gurur duydu.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Aras ne okudu?', secenekler: ['Kitap','Şiir','Gazete'], cevapIndex: 1 },
+      { soru: 'Aras şiiri bitirince ne aldı?', secenekler: ['Alkış','Hediye','Puan'], cevapIndex: 0 }
+    ],
+    bitisMesaji: 'Harika! Cesaret puanın: 100'
   },
-
   {
-    baslik: 'İlayda ve Doğru Karar',
+    id: 19, baslik: 'İlayda ve Doğru Karar',
     cumleler: [
       { text: 'İlayda parkta oynarken yerde bir cüzdan buldu.', blankWord: null },
       { text: 'İçinde para ve kimlik vardı.', blankWord: 'kimlik', options: ['kimlik','taş','oyuncak'], correctIndex: 0 },
       { text: 'Parayı almak istemedi.', blankWord: null },
       { text: 'En yakın görevliye götürdü.', blankWord: 'götürdü', options: ['götürdü','sakladı','attı'], correctIndex: 0 },
-      { text: 'İlayda doğru olanı yaptığı için mutlu oldu.', blankWord: null },
-    ]
+      { text: 'İlayda doğru olanı yaptığı için mutlu oldu.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'İlayda yerde ne buldu?', secenekler: ['Anahtar','Cüzdan','Kalem'], cevapIndex: 1 },
+      { soru: 'İlayda cüzdanı kime götürdü?', secenekler: ['Arkadaşına','Annesine','Görevliye'], cevapIndex: 2 }
+    ],
+    bitisMesaji: 'Tebrikler! Dürüstlük puanın: 100'
   },
-
   {
-    baslik: 'Onur ve Sabır',
+    id: 20, baslik: 'Onur ve Sabır',
     cumleler: [
       { text: 'Onur yeni bir model uçak yapmak istedi.', blankWord: null },
       { text: 'Parçaları birleştirirken zorlandı.', blankWord: 'zorlandı', options: ['zorlandı','koştu','uyudu'], correctIndex: 0 },
       { text: 'Birkaç kez hata yaptı.', blankWord: null },
       { text: 'Sonunda uçağı tamamladı.', blankWord: 'tamamladı', options: ['tamamladı','kırdı','bıraktı'], correctIndex: 0 },
-      { text: 'Onur sabırlı olunca başarabildiğini anladı.', blankWord: null },
-    ]
+      { text: 'Onur sabırlı olunca başarabildiğini anladı.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Onur ne yapmak istedi?', secenekler: ['Gemi','Uçak','Araba'], cevapIndex: 1 },
+      { soru: 'Onur uçağı ne zaman bitirdi?', secenekler: ['Hemen','Sonunda','Ertesi gün'], cevapIndex: 1 }
+    ],
+    bitisMesaji: 'Süper! Sabır puanın: 100'
   },
-
   {
-    baslik: 'Henna ve Asya',
+    id: 21, baslik: 'Henna ve Asya',
     cumleler: [
       { text: 'Henna ve Asya sabah uyandı.', blankWord: null },
       { text: 'Birlikte dışarı çıktılar.', blankWord: 'dışarı', options: ['dışarı','içeri','okula'], correctIndex: 0 },
       { text: 'Kedilerini sevip bir süre izlediler.', blankWord: null },
       { text: 'Akşam yemek yediler ve dişlerini fırçaladılar.', blankWord: 'fırçaladılar', options: ['fırçaladılar','koştular','sakladılar'], correctIndex: 0 },
-      { text: 'Gece olunca mutlu bir günün ardından uyudular.', blankWord: null },
-    ]
-  },
-
+      { text: 'Gece olunca mutlu bir günün ardından uyudular.', blankWord: null }
+    ],
+    sorular: [
+      { soru: 'Henna ve Asya kimi sevdiler?', secenekler: ['Köpeği','Kediyi','Kuşu'], cevapIndex: 1 },
+      { soru: 'Uyumadan önce ne yaptılar?', secenekler: ['Oyun oynadılar','Süt içtiler','Diş fırçaladılar'], cevapIndex: 2 }
+    ],
+    bitisMesaji: 'Mükemmel! Sağlık puanın: 100'
+  }
 ];
+
 
 // ═══════════════════════════════════════════════════════════════
 // STATE
@@ -425,26 +509,94 @@ function hkIleri() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BİTİŞ
+// BİTİŞ — Önce sorular, sonra bitiş ekranı
 // ═══════════════════════════════════════════════════════════════
 function hkBitti() {
+  const hikaye = HIKAYE_DATA[hk.hikayeIdx];
+  // Sorular varsa önce soruları göster
+  if (hikaye.sorular && hikaye.sorular.length > 0) {
+    hk.soruIdx   = 0;
+    hk.soruSkor  = 0;
+    hkSoruGoster();
+  } else {
+    hkBitisEkrani();
+  }
+}
+
+function hkSoruGoster() {
+  const hikaye = HIKAYE_DATA[hk.hikayeIdx];
+  const soru   = hikaye.sorular[hk.soruIdx];
+  const toplam = hikaye.sorular.length;
+
   document.getElementById('hkProgressBar').style.width = '100%';
+  document.getElementById('hkProgressText').textContent = 'Soru ' + (hk.soruIdx + 1) + ' / ' + toplam;
+  document.getElementById('hkGeriBildirim').textContent = '';
+  document.getElementById('hkGeriBildirim').className = 'koyun-result';
+  document.getElementById('hkIleriBtn').style.display = 'none';
+
+  const kart   = document.getElementById('hkCumleKart');
+  const textEl = document.getElementById('hkCumleText');
+  kart.classList.remove('koyun-card--soru', 'koyun-card--bitis');
+  kart.classList.add('koyun-card--soru');
+
+  textEl.innerHTML = `<span style="font-size:1.1rem;color:#b45309;font-weight:700;">🔍 Anlama Sorusu</span><br><br>${soru.soru}`;
+
+  const secDiv = document.getElementById('hkSecenekler');
+  secDiv.innerHTML = '';
+  secDiv.style.display = 'flex';
+
+  soru.secenekler.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'hk-secbtn';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      secDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+      const gbEl = document.getElementById('hkGeriBildirim');
+      if (idx === soru.cevapIndex) {
+        hk.soruSkor++;
+        btn.classList.add('hk-secbtn--dogru');
+        gbEl.textContent = '⭐ Doğru!';
+        gbEl.className = 'koyun-result dogru';
+      } else {
+        btn.classList.add('hk-secbtn--yanlis');
+        secDiv.querySelectorAll('button')[soru.cevapIndex].classList.add('hk-secbtn--dogru');
+        gbEl.textContent = '🔄 ' + soru.secenekler[soru.cevapIndex] + ' doğruydu!';
+        gbEl.className = 'koyun-result';
+        gbEl.style.color = '#f97316';
+      }
+      setTimeout(() => {
+        hk.soruIdx++;
+        if (hk.soruIdx < hikaye.sorular.length) {
+          hkSoruGoster();
+        } else {
+          hkBitisEkrani();
+        }
+      }, 1200);
+    });
+    secDiv.appendChild(btn);
+  });
+}
+
+function hkBitisEkrani() {
+  const hikaye   = HIKAYE_DATA[hk.hikayeIdx];
+  const toplamSkor = hk.skor + (hk.soruSkor || 0);
+  const emoji    = toplamSkor >= 6 ? '🏆' : toplamSkor >= 4 ? '⭐' : '💪';
+  const sonHikaye = (hk.hikayeIdx >= HIKAYE_DATA.length - 1);
+
   document.getElementById('hkProgressText').textContent = 'Tamamlandı! 🎉';
   document.getElementById('hkSecenekler').style.display = 'none';
   document.getElementById('hkGeriBildirim').textContent = '';
 
-  const emoji = hk.skor >= 5 ? '🏆' : hk.skor >= 3 ? '⭐' : '💪';
-  const kart  = document.getElementById('hkCumleKart');
+  const kart = document.getElementById('hkCumleKart');
+  kart.classList.remove('koyun-card--soru');
   kart.classList.add('koyun-card--bitis');
 
-  const sonHikaye = (hk.hikayeIdx >= HIKAYE_DATA.length - 1);
-
   document.getElementById('hkCumleText').innerHTML = `
-    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
       <div style="font-size:3rem;">${emoji}</div>
       <div style="font-size:1.4rem;color:#7c3aed;font-weight:800;">Harika Okudun!</div>
-      <div style="font-size:0.95rem;color:#555;">${HIKAYE_DATA[hk.hikayeIdx].baslik}</div>
-      <div style="font-size:1.6rem;color:#f59e0b;font-weight:900;margin-top:4px;">⭐ ${hk.skor} puan!</div>
+      <div style="font-size:0.9rem;color:#555;font-style:italic;">${hikaye.bitisMesaji || hikaye.baslik}</div>
+      <div style="font-size:1.5rem;color:#f59e0b;font-weight:900;">⭐ ${toplamSkor} puan!</div>
     </div>
   `;
 
@@ -460,6 +612,8 @@ function hkBitti() {
       hk.hikayeIdx++;
       hk.cumleIdx  = 0;
       hk.skor      = 0;
+      hk.soruIdx   = 0;
+      hk.soruSkor  = 0;
       hk.bekliyor  = false;
       kart.classList.remove('koyun-card--bitis');
       ileri.textContent = 'İleri ▶';
