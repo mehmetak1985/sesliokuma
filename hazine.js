@@ -8,7 +8,7 @@ const SEVIYELER = [
   { v: [{k:'ARI', e:'🐝'}, {k:'KUŞ', e:'🐦'}, {k:'SÜT', e:'🥛'}, {k:'TOP', e:'⚽'}] },
   { v: [{k:'KEDİ', e:'🐈'}, {k:'KUZU', e:'🐑'}, {k:'ELMA', e:'🍎'}, {k:'KAPI', e:'🚪'}] },
   { v: [{k:'TAVUK', e:'🐔'}, {k:'PASTA', e:'🎂'}, {k:'ÜZÜM', e:'🍇'}, {k:'KİRAZ', e:'🍒'}] },
-  { v: [{k:'BALİNA', e:'🐋'}, {k:'TAVŞAN', e:'🐰'}, {k:'PEYNİR', e:'🧀'}, {k:'ORMAN', e:'🌲'}] },
+  { v: [{k:'BALİNA', e:'🐋'}, {k:'TAVŞAN', e:'🐰'}, {k:'PEYNİR', e:'🧀'}, {k:'ORMAN', e:'🌲🌳🌲'}] },
   { v: [{k:'ZÜRAFA', e:'🦒'}, {k:'KARINCA', e:'🐜'}, {k:'PENGUEN', e:'🐧'}, {k:'PATATES', e:'🥔'}] }
 ];
 
