@@ -254,33 +254,42 @@ let hkEkran = null;
 
 function hkEkranOlustur() {
   if (hkEkran) return;
+
   hkEkran = document.createElement('div');
   hkEkran.id = 'hikayeEkran';
-  hkEkran.style.cssText = 'display:none;position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);flex-direction:column;align-items:center;justify-content:flex-start;overflow:hidden;font-family:\'Baloo 2\',sans-serif;';
+  hkEkran.style.cssText = 'display:none;position:fixed;inset:0;z-index:500;overflow-y:auto;flex-direction:column;align-items:center;padding:20px 0 40px;';
 
   hkEkran.innerHTML = `
-    <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;box-sizing:border-box;background:rgba(255,255,255,0.06);backdrop-filter:blur(4px);">
-      <button id="hkGeriBtn" style="background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:1rem;padding:8px 16px;border-radius:20px;cursor:pointer;font-family:'Baloo 2',sans-serif;font-weight:600;">← Menü</button>
-      <div id="hkBaslik" style="color:#fff;font-size:0.95rem;font-weight:700;text-align:center;flex:1;margin:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Hikaye</div>
-      <div id="hkSkorBadge" style="background:rgba(255,215,0,0.2);border-radius:20px;padding:6px 14px;color:#ffd700;font-weight:800;font-size:1rem;">⭐ 0</div>
-    </div>
+    <div class="koyun-screen" style="gap:14px;">
 
-    <div style="width:100%;padding:8px 16px 0;box-sizing:border-box;">
-      <div style="background:rgba(255,255,255,0.1);border-radius:8px;height:6px;overflow:hidden;">
-        <div id="hkProgressBar" style="height:100%;background:#a78bfa;border-radius:8px;width:0%;transition:width 0.4s;"></div>
+      <button id="hkGeriBtn" class="btn-back" style="align-self:flex-start;">← Menü</button>
+
+      <div class="koyun-header">
+        <div>
+          <h2 class="koyun-title">Minik <span class="menu-title-book">📖</span> Okur</h2>
+          <p class="subtitle" id="hkBaslik">Hikaye</p>
+        </div>
+        <div class="koyun-score-badge">⭐ <span id="hkSkorBadge">0</span></div>
       </div>
-      <div id="hkProgressText" style="color:rgba(255,255,255,0.5);font-size:0.75rem;text-align:right;margin-top:3px;">1 / 1</div>
+
+      <div style="width:100%;">
+        <div style="background:rgba(255,255,255,0.18);border-radius:8px;height:7px;overflow:hidden;">
+          <div id="hkProgressBar" style="height:100%;background:#f9a825;border-radius:8px;width:0%;transition:width 0.4s;"></div>
+        </div>
+        <div id="hkProgressText" style="color:rgba(255,255,255,0.6);font-size:0.78rem;text-align:right;margin-top:3px;font-family:'Nunito',sans-serif;font-weight:700;">1 / 1</div>
+      </div>
+
+      <div class="koyun-card" id="hkCumleKart" style="min-height:130px;">
+        <div id="hkCumleText" style="font-family:'Nunito',sans-serif;font-size:clamp(1.1rem,4vw,1.4rem);font-weight:800;color:#1a2744;line-height:1.7;text-align:center;"></div>
+      </div>
+
+      <div id="hkSecenekler" style="display:none;flex-direction:row;flex-wrap:wrap;gap:12px;justify-content:center;width:100%;"></div>
+
+      <div id="hkGeriBildirim" class="koyun-result" style="min-height:36px;"></div>
+
+      <button id="hkIleriBtn" class="btn btn-start" style="display:none;min-width:180px;">İleri ▶</button>
+
     </div>
-
-    <div id="hkCumleKart" style="background:rgba(255,255,255,0.08);border-radius:20px;margin:12px 16px 8px;padding:24px 20px;width:calc(100% - 32px);box-sizing:border-box;min-height:90px;display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(255,255,255,0.12);">
-      <div id="hkCumleText" style="color:#fff;font-size:1.3rem;font-weight:700;line-height:1.7;text-align:center;letter-spacing:0.02em;"></div>
-    </div>
-
-    <div id="hkSecenekler" style="display:none;flex-direction:row;flex-wrap:wrap;gap:12px;justify-content:center;width:calc(100% - 32px);margin:0 16px;"></div>
-
-    <div id="hkGeriBildirim" style="min-height:32px;text-align:center;font-size:1rem;font-weight:700;color:#4ade80;margin:8px 16px 0;display:flex;align-items:center;justify-content:center;gap:6px;"></div>
-
-    <button id="hkIleriBtn" style="margin-top:auto;margin-bottom:28px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;border:none;border-radius:24px;font-size:1.15rem;font-weight:800;padding:16px 52px;cursor:pointer;font-family:'Baloo 2',sans-serif;box-shadow:0 4px 20px rgba(124,58,237,0.5);display:none;">İleri ▶</button>
   `;
 
   document.body.appendChild(hkEkran);
@@ -334,16 +343,14 @@ function hkCumleGoster() {
   const textEl = document.getElementById('hkCumleText');
 
   if (cumle.blankWord) {
-    kart.style.background  = 'rgba(255,235,150,0.10)';
-    kart.style.borderColor = 'rgba(255,215,0,0.3)';
+    kart.classList.add('koyun-card--soru');
     const boslukHTML = `<span id="hkBosluk" style="display:inline-block;min-width:90px;border-bottom:3px solid #ffd700;background:rgba(255,215,0,0.12);border-radius:6px;padding:0 10px;color:transparent;">____</span>`;
     textEl.innerHTML = cumle.text.replace(cumle.blankWord, boslukHTML);
     hkSecenekleriGoster(cumle);
     document.getElementById('hkIleriBtn').style.display = 'none';
     hk.bekliyor = true;
   } else {
-    kart.style.background  = 'rgba(255,255,255,0.08)';
-    kart.style.borderColor = 'rgba(255,255,255,0.12)';
+    kart.classList.remove('koyun-card--soru');
     textEl.textContent = cumle.text;
     document.getElementById('hkIleriBtn').style.display = 'block';
     hk.bekliyor = false;
@@ -392,17 +399,18 @@ function hkSecenekTikla(idx, cumle, btn, secDiv) {
     }
 
     secDiv.querySelectorAll('button').forEach(b => b.disabled = true);
-    gbEl.innerHTML = '<span style="font-size:1.4rem;">⭐</span> Harika!';
-    gbEl.style.color = '#4ade80';
+    gbEl.textContent = '⭐ Harika!';
+    gbEl.className = 'koyun-result dogru';
 
     setTimeout(() => { document.getElementById('hkIleriBtn').style.display = 'block'; }, 500);
 
   } else {
     btn.classList.add('hk-secbtn--yanlis');
     setTimeout(() => btn.classList.remove('hk-secbtn--yanlis'), 600);
-    gbEl.innerHTML = '🔄 Tekrar deneyelim!';
-    gbEl.style.color = '#fb923c';
-    setTimeout(() => { gbEl.textContent = ''; }, 1200);
+    gbEl.textContent = '🔄 Tekrar deneyelim!';
+    gbEl.className = 'koyun-result';
+    gbEl.style.color = '#f97316';
+    setTimeout(() => { gbEl.textContent = ''; gbEl.className = 'koyun-result'; gbEl.style.color = ''; }, 1200);
   }
 }
 
@@ -427,8 +435,7 @@ function hkBitti() {
 
   const emoji = hk.skor >= 5 ? '🏆' : hk.skor >= 3 ? '⭐' : '💪';
   const kart  = document.getElementById('hkCumleKart');
-  kart.style.background  = 'rgba(167,139,250,0.15)';
-  kart.style.borderColor = 'rgba(167,139,250,0.4)';
+  kart.classList.add('koyun-card--bitis');
 
   document.getElementById('hkCumleText').innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
