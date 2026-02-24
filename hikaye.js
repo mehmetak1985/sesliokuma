@@ -442,7 +442,7 @@ function hkCumleGoster() {
   // Kelime kelime göz takibi vurgulama
   const kelimeler = cumle.text.split(' ');
   // %50 yavaşlatıldı: 600ms/kelime
-  const KELIME_SURESI = 600;
+  const KELIME_SURESI = 840;
 
   // Her kelimeyi <span> içine al
   textEl.innerHTML = kelimeler
@@ -466,8 +466,8 @@ function hkCumleGoster() {
       // Mevcut kelimeyi vurgula
       const el = document.getElementById('hkKelime_' + i);
       if (el) {
-        el.style.color        = '#ffe082';
-        el.style.background   = 'rgba(255,224,130,0.18)';
+        el.style.color        = '#fff8e1';
+        el.style.background   = 'rgba(255,248,225,0.12)';
         el.style.borderRadius = '4px';
         el.style.padding      = '0 2px';
         el.style.transition   = 'color 0.1s, background 0.1s';
