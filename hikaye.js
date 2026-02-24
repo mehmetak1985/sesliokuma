@@ -359,14 +359,8 @@ function hkSecenekleriGoster(cumle) {
 
   cumle.options.forEach((opt, idx) => {
     const btn = document.createElement('button');
-    btn.className = 'harf-btn';
+    btn.className = 'hk-secbtn';
     btn.textContent = opt;
-    btn.style.width       = 'auto';
-    btn.style.height      = 'auto';
-    btn.style.padding     = '12px 22px';
-    btn.style.fontSize    = '1.1rem';
-    btn.style.borderRadius= '18px';
-    btn.style.minWidth    = '80px';
     btn.addEventListener('click', () => hkSecenekTikla(idx, cumle, btn, secDiv));
     secDiv.appendChild(btn);
   });
@@ -386,8 +380,7 @@ function hkSecenekTikla(idx, cumle, btn, secDiv) {
     hk.skor++;
     document.getElementById('hkSkorBadge').textContent = '⭐ ' + hk.skor;
 
-    btn.style.background = 'linear-gradient(135deg,#bbf7d0,#4ade80)';
-    btn.style.color      = '#14532d';
+    btn.classList.add('hk-secbtn--dogru');
 
     const boslukEl = document.getElementById('hkBosluk');
     if (boslukEl) {
@@ -405,8 +398,8 @@ function hkSecenekTikla(idx, cumle, btn, secDiv) {
     setTimeout(() => { document.getElementById('hkIleriBtn').style.display = 'block'; }, 500);
 
   } else {
-    btn.classList.add('harf-btn--yanlis');
-    setTimeout(() => btn.classList.remove('harf-btn--yanlis'), 600);
+    btn.classList.add('hk-secbtn--yanlis');
+    setTimeout(() => btn.classList.remove('hk-secbtn--yanlis'), 600);
     gbEl.innerHTML = '🔄 Tekrar deneyelim!';
     gbEl.style.color = '#fb923c';
     setTimeout(() => { gbEl.textContent = ''; }, 1200);
