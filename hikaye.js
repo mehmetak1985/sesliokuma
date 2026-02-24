@@ -426,19 +426,10 @@ function hkCumleGoster() {
   const kart   = document.getElementById('hkCumleKart');
   const textEl = document.getElementById('hkCumleText');
 
-  if (cumle.blankWord) {
-    kart.classList.add('koyun-card--soru');
-    const boslukHTML = `<span id="hkBosluk" style="display:inline-block;min-width:90px;border-bottom:3px solid #ffd700;background:rgba(255,215,0,0.12);border-radius:6px;padding:0 10px;color:transparent;">____</span>`;
-    textEl.innerHTML = cumle.text.replace(cumle.blankWord, boslukHTML);
-    hkSecenekleriGoster(cumle);
-    document.getElementById('hkIleriBtn').style.display = 'none';
-    hk.bekliyor = true;
-  } else {
-    kart.classList.remove('koyun-card--soru');
-    textEl.textContent = cumle.text;
-    document.getElementById('hkIleriBtn').style.display = 'block';
-    hk.bekliyor = false;
-  }
+  kart.classList.remove('koyun-card--soru');
+  textEl.textContent = cumle.text;
+  document.getElementById('hkIleriBtn').style.display = 'block';
+  hk.bekliyor = false;
 }
 
 // ═══════════════════════════════════════════════════════════════
