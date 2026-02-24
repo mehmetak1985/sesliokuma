@@ -442,7 +442,7 @@ function hkCumleGoster() {
   // Kelime kelime göz takibi vurgulama
   const kelimeler = cumle.text.split(' ');
   // %50 yavaşlatıldı: 600ms/kelime
-  const KELIME_SURESI = 840;
+  const KELIME_SURESI = 1176;
 
   // Her kelimeyi <span> içine al
   textEl.innerHTML = kelimeler
@@ -456,31 +456,37 @@ function hkCumleGoster() {
       if (i > 0) {
         const onceki = document.getElementById('hkKelime_' + (i - 1));
         if (onceki) {
-          onceki.style.color      = '';
-          onceki.style.background = '';
+          onceki.style.color        = '';
+          onceki.style.background   = '';
           onceki.style.borderRadius = '';
-          onceki.style.padding    = '';
-          onceki.style.transition = '';
+          onceki.style.padding      = '';
+          onceki.style.transition   = '';
+          onceki.style.border       = '';
+          onceki.style.fontWeight   = '';
         }
       }
       // Mevcut kelimeyi vurgula
       const el = document.getElementById('hkKelime_' + i);
       if (el) {
-        el.style.color        = '#fff8e1';
-        el.style.background   = 'rgba(255,248,225,0.12)';
-        el.style.borderRadius = '4px';
-        el.style.padding      = '0 2px';
-        el.style.transition   = 'color 0.1s, background 0.1s';
+        el.style.color        = '#e65100';
+        el.style.fontWeight   = '900';
+        el.style.background   = '#fff';
+        el.style.border       = '2.5px solid #f9a825';
+        el.style.borderRadius = '8px';
+        el.style.padding      = '1px 6px';
+        el.style.transition   = 'all 0.08s';
       }
 
       // Son kelimeyse: vurguyu kaldır ve İleri'yi göster
       if (i === kelimeler.length - 1) {
         setTimeout(() => {
           if (el) {
-            el.style.color      = '';
-            el.style.background = '';
+            el.style.color        = '';
+            el.style.fontWeight   = '';
+            el.style.background   = '';
+            el.style.border       = '';
             el.style.borderRadius = '';
-            el.style.padding    = '';
+            el.style.padding      = '';
           }
           document.getElementById('hkIleriBtn').style.display = 'block';
         }, KELIME_SURESI);
