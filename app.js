@@ -628,8 +628,8 @@ const SpeechController = (function () {
             if (bulunan) break;
           }
         }
-        // Eşleşme yoksa ana token'ı kullan (yanlış olarak işlenir)
-        validateWord(bulunan || anaTokenler[t]);
+        // Eşleşme yoksa validateWord çağırma — yanlış saymıyoruz
+        if (bulunan) validateWord(bulunan);
       }
     }
   }
@@ -841,7 +841,7 @@ function kelimeEslesir(konusulan, hedef) {
   if (konusulan === hedef) return true;
 
   // Fonetik normalize edilmiş versiyonu da dene
-  const fonetik = fonetikNormalize(konusulan, hedef);
+  const fonetik  = fonetikNormalize(konusulan, hedef);
   if (fonetik === hedef) return true;
 
   // Levenshtein: orijinal ve fonetik arasından en iyiyi al
@@ -940,7 +940,7 @@ function validateWord(konusulanKelime) {
 
   if (kelimeEslesir(token, hedef)) {
     // ✅ Doğru
-    kelimeKabul(span);
+    kelimeKabul(span, hedef);
 
   } else {
     // Eşleşme yok — kelimeye bağlı sayaç
@@ -958,7 +958,7 @@ function validateWord(konusulanKelime) {
     }
 
     if (denemeHakki === 0) {
-      // İlk başarısızlık: sarı efekt + "Tekrar deneyelim" + TTS
+      // İlk başarısızlık: sarı efekt + "Tekrar deneyelim" — TTS YOK
       denemeHakki = 1;
       span.style.transform   = 'scale(1.06)';
       span.style.background  = 'rgba(255,209,102,0.18)';
@@ -972,22 +972,22 @@ function validateWord(konusulanKelime) {
           span.style.borderColor = '';
           span.style.color       = '';
           span.className = 'word active';
+          micStatus.textContent = '🎤 Dinliyorum...';
         }
       }, 800);
-      SpeechController.speakCorrection(hedef, { rate: 0.72, pitch: 1.05 });
     } else {
-      // 2. başarısızlık: otomatik doğru kabul et, puan ver
+      // İkinci başarısızlık: otomatik doğru kabul et, puan ver
       denemeHakki = 0;
-      kelimeKabul(span);
+      kelimeKabul(span, hedef);
     }
   }
 }
 
-// ─── Kelimeyi kabul et (doğru veya otomatik) — puan ver, ilerle ──────────────
-function kelimeKabul(span) {
-  span.className   = 'word correct';
-  score           += 1;
-  totalScore      += 1;
+// ─── Kelimeyi doğru kabul et (puan ver, ilerle) ───────────────────────────────
+function kelimeKabul(span, hedef) {
+  span.className = 'word correct';
+  score      += 1;
+  totalScore += 1;
   bolumDogru++;
   yanlisSayac      = 0;
   yanlisSayacIndex = -1;
