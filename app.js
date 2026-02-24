@@ -114,8 +114,8 @@ function ekranGoster(el){tumEkranlariGizle();if(el){el.style.display='';el.class
 // Ana menü kart butonları
 document.querySelectorAll('.menu-card-btn').forEach(btn=>{btn.addEventListener('click',function(e){e.stopPropagation();const mod=this.dataset.mod;if(!mod)return;if(mod==='kelime-dunya'){ekranGoster(kelimeDunyaScreen);}else if(mod==='hikaye'){if(window.hikayeSecimBas)window.hikayeSecimBas();else ekranGoster(menuScreen);}else if(mod==='oyun-kose'){ekranGoster(oyunKoseScreen);}else if(mod==='sesli'){betaModalAc();}});});
 
-// Kelime Dünyası alt menü
-document.getElementById('smKelimeOyunu').addEventListener('click',()=>{ekranGoster(koyunScreen);if(window.kelimeOyunuBas)window.kelimeOyunuBas();});
+// Kelime Dünyası alt menü — DÜZELTME: koyunScreen açılmıyor, doğrudan kelimeOyunuBas
+document.getElementById('smKelimeOyunu').addEventListener('click',()=>{tumEkranlariGizle();if(window.kelimeOyunuBas)window.kelimeOyunuBas();});
 document.getElementById('smBalonPatlatma').addEventListener('click',()=>{ekranGoster(balonScreen);if(window.balonBas)window.balonBas();});
 document.getElementById('smUzayYolu').addEventListener('click',()=>{ekranGoster(uzayScreen);if(window.uzayBas)window.uzayBas();});
 
@@ -128,7 +128,7 @@ document.getElementById('smKelimeYapbozu').addEventListener('click',()=>{ekranGo
 document.getElementById('btnKelimeDunyaBack').addEventListener('click',()=>ekranGoster(menuScreen));
 document.getElementById('btnOyunKoseBack').addEventListener('click',()=>ekranGoster(menuScreen));
 document.getElementById('btnBack').addEventListener('click',()=>{mikrofoniSerbest();ekranGoster(menuScreen);});
-document.getElementById('btnKoyunBack').addEventListener('click',()=>{if(window.kelimeOyunuDurdur)window.kelimeOyunuDurdur();ekranGoster(menuScreen);});
+document.getElementById('btnKoyunBack').addEventListener('click',()=>{if(window.kelimeOyunuDurdur)window.kelimeOyunuDurdur();else ekranGoster(menuScreen);});
 document.getElementById('btnBalonBack').addEventListener('click',()=>{if(window.balonDurdur)window.balonDurdur();ekranGoster(kelimeDunyaScreen);});
 document.getElementById('btnUzayBack').addEventListener('click',()=>{if(window.uzayDurdur)window.uzayDurdur();ekranGoster(kelimeDunyaScreen);});
 document.getElementById('btnHazineBack').addEventListener('click',()=>{if(window.hazineDurdur)window.hazineDurdur();ekranGoster(oyunKoseScreen);});

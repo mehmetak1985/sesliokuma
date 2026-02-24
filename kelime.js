@@ -17,7 +17,7 @@ const KELIME_SEVIYELERI = [
   // Seviye 2 — 4 harf
   [
     { kelime: 'kedi', emoji: '🐱' },
-    { kelime: 'masa', emoji: '🪑' },
+    { kelime: 'kova', emoji: '🪣' },
     { kelime: 'elma', emoji: '🍎' },
     { kelime: 'balık', emoji: '🐟' },
     { kelime: 'arı', emoji: '🐝' },
