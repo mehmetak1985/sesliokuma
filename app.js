@@ -1854,25 +1854,54 @@ function tip2Goster(kelime, eksikIdxler) {
   harfKutuSatir.innerHTML = '';
   harfButonSatir.innerHTML = '';
 
-  let doldurulan = 0;
-  const eksikmis = [...eksikIdxler];
+  const doldu   = new Array(eksikIdxler.length).fill(false);
+  let secilen   = null; // seçili harf butonu
 
   function kutuCiz() {
     harfKutuSatir.innerHTML = '';
     for (let i = 0; i < kelime.length; i++) {
       const kutu = document.createElement('div');
       kutu.className = 'harf-kutu';
-      const eksikSira = eksikmis.indexOf(i);
+      const eksikSira = eksikIdxler.indexOf(i);
       if (eksikSira >= 0) {
-        if (eksikSira < doldurulan) {
+        if (doldu[eksikSira]) {
           kutu.textContent = kelime[i].toLocaleUpperCase('tr-TR');
           kutu.classList.add('harf-kutu--dogru');
-        } else if (eksikSira === doldurulan) {
-          kutu.textContent = '_';
-          kutu.classList.add('harf-kutu--bos', 'harf-kutu--aktif');
         } else {
           kutu.textContent = '_';
-          kutu.classList.add('harf-kutu--bos');
+          kutu.classList.add('harf-kutu--bos', 'harf-kutu--drop');
+          kutu.dataset.eksikSira = eksikSira;
+          kutu.dataset.hedef = normalTR(kelime[i]);
+          // Boşluğa tıklama → seçili harfi yerleştir
+          kutu.addEventListener('click', () => {
+            if (!secilen || koyunKilitli) return;
+            const gelen    = normalTR(secilen.dataset.harf);
+            const beklenen = kutu.dataset.hedef;
+            if (gelen === beklenen) {
+              doldu[parseInt(kutu.dataset.eksikSira)] = true;
+              secilen.style.visibility = 'hidden';
+              secilen.classList.remove('harf-btn--secili');
+              secilen = null;
+              kutuCiz();
+              if (doldu.every(Boolean)) {
+                sureyiDurdur();
+                koyunKilitli = true;
+                harfButonSatir.innerHTML = '';
+                koyunDogruYap(kelime);
+              }
+            } else {
+              // Yanlış
+              secilen.classList.add('harf-btn--yanlis');
+              secilen.classList.remove('harf-btn--secili');
+              koyunCard.className = 'koyun-card wrong-flash';
+              const eski = secilen;
+              secilen = null;
+              setTimeout(() => {
+                eski.classList.remove('harf-btn--yanlis');
+                koyunCard.className = 'koyun-card';
+              }, 600);
+            }
+          });
         }
       } else {
         kutu.textContent = kelime[i].toLocaleUpperCase('tr-TR');
@@ -1883,7 +1912,7 @@ function tip2Goster(kelime, eksikIdxler) {
 
   kutuCiz();
 
-  // Harf butonları — tek tıklama ile sıradaki boşluğa yerleşir
+  // Harf butonları — tıklayınca seçilir, sonra boşluğa tıkla
   const karisik = koyunKaristir(eksikIdxler.map(i => kelime[i]));
   karisik.forEach(harf => {
     const btn = document.createElement('button');
@@ -1892,29 +1921,12 @@ function tip2Goster(kelime, eksikIdxler) {
     btn.dataset.harf = normalTR(harf);
     btn.addEventListener('click', () => {
       if (koyunKilitli || btn.style.visibility === 'hidden') return;
-      const gelen    = normalTR(btn.dataset.harf);
-      const beklenen = normalTR(kelime[eksikmis[doldurulan]]);
-      if (gelen === beklenen) {
-        // Doğru — tek tıklama ile yerleş
-        btn.classList.add('harf-btn--dogru-flash');
-        btn.style.visibility = 'hidden';
-        doldurulan++;
-        kutuCiz();
-        if (doldurulan >= eksikmis.length) {
-          sureyiDurdur();
-          koyunKilitli = true;
-          harfButonSatir.innerHTML = '';
-          koyunDogruYap(kelime);
-        }
-      } else {
-        // Yanlış
-        btn.classList.add('harf-btn--yanlis');
-        koyunCard.className = 'koyun-card wrong-flash';
-        setTimeout(() => {
-          btn.classList.remove('harf-btn--yanlis');
-          koyunCard.className = 'koyun-card';
-        }, 600);
-      }
+      // Önceki seçimi kaldır
+      harfButonSatir.querySelectorAll('.harf-btn--secili')
+        .forEach(b => b.classList.remove('harf-btn--secili'));
+      if (secilen === btn) { secilen = null; return; } // toggle off
+      secilen = btn;
+      btn.classList.add('harf-btn--secili');
     });
     harfButonSatir.appendChild(btn);
   });
@@ -2148,3 +2160,4 @@ function kelimeOyunuGoster() {
   koyunKilitli   = false;
   koyunGoster();
 }
+
