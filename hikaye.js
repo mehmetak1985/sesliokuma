@@ -437,19 +437,36 @@ function hkBitti() {
   const kart  = document.getElementById('hkCumleKart');
   kart.classList.add('koyun-card--bitis');
 
+  const sonHikaye = (hk.hikayeIdx >= HIKAYE_DATA.length - 1);
+
   document.getElementById('hkCumleText').innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
       <div style="font-size:3rem;">${emoji}</div>
-      <div style="font-size:1.4rem;color:#a78bfa;font-weight:800;">Harika Okudun!</div>
-      <div style="font-size:0.95rem;color:rgba(255,255,255,0.6);">${HIKAYE_DATA[hk.hikayeIdx].baslik}</div>
-      <div style="font-size:1.6rem;color:#ffd700;font-weight:900;margin-top:4px;">⭐ ${hk.skor} puan!</div>
+      <div style="font-size:1.4rem;color:#7c3aed;font-weight:800;">Harika Okudun!</div>
+      <div style="font-size:0.95rem;color:#555;">${HIKAYE_DATA[hk.hikayeIdx].baslik}</div>
+      <div style="font-size:1.6rem;color:#f59e0b;font-weight:900;margin-top:4px;">⭐ ${hk.skor} puan!</div>
     </div>
   `;
 
   const ileri = document.getElementById('hkIleriBtn');
-  ileri.textContent = '▶ Menüye Dön';
   ileri.style.display = 'block';
-  ileri.onclick = hkKapat;
+
+  if (sonHikaye) {
+    ileri.textContent = '▶ Menüye Dön';
+    ileri.onclick = hkKapat;
+  } else {
+    ileri.textContent = '▶ Sonraki Hikaye';
+    ileri.onclick = () => {
+      hk.hikayeIdx++;
+      hk.cumleIdx  = 0;
+      hk.skor      = 0;
+      hk.bekliyor  = false;
+      kart.classList.remove('koyun-card--bitis');
+      ileri.textContent = 'İleri ▶';
+      ileri.onclick = hkIleri;
+      hkCumleGoster();
+    };
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
