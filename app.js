@@ -447,6 +447,7 @@ let score              = 0;
 let totalScore         = 0;
 let yanlisSayac        = 0;   // yanlış telaffuz sayacı (TTS tetikleme için)
 let yanlisSayacIndex   = -1;  // hangi kelime için sayılıyor (çapraz kelime birikimini önler)
+let denemeHakki        = 0;   // 0=ilk deneme, 1=tekrar hakkı verildi → 2. başarısızlıkta otomatik doğru
 let endGameTimer       = null; // race condition koruması
 let navTimer           = null; // hikaye no gösterme timer'ı
 
@@ -814,10 +815,39 @@ function levenshtein(a, b) {
   return dp[m][n];
 }
 
+// ─── Fonetik harita (çocuk ses gelişimi: r↔l, s↔ş, c↔ç vb.) ────────────────
+const FONETIK_HARITA = [
+  ['r','l'],['l','r'],
+  ['s','ş'],['ş','s'],
+  ['c','ç'],['ç','c'],
+  ['b','p'],['p','b'],
+  ['d','t'],['t','d'],
+  ['g','k'],['k','g'],
+  ['v','f'],['f','v'],
+];
+function fonetikNormalize(konusulan, hedef) {
+  let s = konusulan;
+  for (let i = 0; i < hedef.length && i < s.length; i++) {
+    if (s[i] !== hedef[i]) {
+      const eslesme = FONETIK_HARITA.find(([k, v]) => k === s[i] && v === hedef[i]);
+      if (eslesme) s = s.slice(0, i) + hedef[i] + s.slice(i + 1);
+    }
+  }
+  return s;
+}
+
 // ─── Toleranslı eşleşme (katmanlı, mod farkındalıklı) ────────────────────────
 function kelimeEslesir(konusulan, hedef) {
   if (konusulan === hedef) return true;
-  const dist     = levenshtein(konusulan, hedef);
+
+  // Fonetik normalize edilmiş versiyonu da dene
+  const fonetik = fonetikNormalize(konusulan, hedef);
+  if (fonetik === hedef) return true;
+
+  // Levenshtein: orijinal ve fonetik arasından en iyiyi al
+  const dist1    = levenshtein(konusulan, hedef);
+  const dist2    = levenshtein(fonetik,   hedef);
+  const dist     = Math.min(dist1, dist2);
   const maxLen   = Math.max(hedef.length, konusulan.length);
   const dogruluk = (1 - dist / maxLen) * 100;
 
@@ -909,45 +939,32 @@ function validateWord(konusulanKelime) {
   const span  = wordSpans[currentWordIndex];
 
   if (kelimeEslesir(token, hedef)) {
-    // ✅ Doğru — TTS YOK
-    span.className = 'word correct';
-    // Her doğru kelime 1 ⭐
-    score      += 1;
-    totalScore += 1;
-    bolumDogru++;
-    yanlisSayac = 0;   // doğru olunca yanlış sayacını sıfırla
-    yanlisSayacIndex = -1;
-    currentWordIndex++;
-    requestAnimationFrame(updateUI);
-
-    if (currentWordIndex === targetWords.length) {
-      // Cümle / hikaye bittiğinde yıldız ve zorlanma rozetlerini kontrol et
-      kontrolRozetlerYildiz();
-      kontrolRozetlerZorluk();
-      endGame();
-    }
+    // ✅ Doğru
+    kelimeKabul(span);
 
   } else {
-    // ❌ Yanlış
-    // yanlisSayac: kelimeye bağlı — farklı kelimelerde birikmez
+    // Eşleşme yok — kelimeye bağlı sayaç
     if (yanlisSayacIndex !== currentWordIndex) {
       yanlisSayac      = 0;
       yanlisSayacIndex = currentWordIndex;
+      denemeHakki      = 0;
     }
     yanlisSayac++;
 
-    // bolumYanlis: kelime başına bir kez say (ilk yanlışta)
+    // bolumYanlis: kelime başına bir kez say
     if (yanlisSayac === 1) {
       bolumYanlis++;
       kelimeHatalar[hedef] = (kelimeHatalar[hedef] || 0) + 1;
     }
 
-    if (yanlisSayac === 1) {
-      // İlk yanlış: hafif sarı ipucu efekti
+    if (denemeHakki === 0) {
+      // İlk başarısızlık: sarı efekt + "Tekrar deneyelim" + TTS
+      denemeHakki = 1;
       span.style.transform   = 'scale(1.06)';
       span.style.background  = 'rgba(255,209,102,0.18)';
       span.style.borderColor = 'var(--yellow)';
       span.style.color       = 'var(--yellow)';
+      micStatus.textContent  = '💪 Tekrar deneyelim!';
       setTimeout(() => {
         if (currentWordIndex < targetWords.length && wordSpans[currentWordIndex] === span) {
           span.style.transform   = '';
@@ -956,22 +973,32 @@ function validateWord(konusulanKelime) {
           span.style.color       = '';
           span.className = 'word active';
         }
-      }, 250);
-    } else {
-      // 2. ve sonraki yanlış: shake animasyonu
-      span.className = 'word wrong';
-      setTimeout(() => {
-        if (currentWordIndex < targetWords.length && wordSpans[currentWordIndex] === span) {
-          span.className = 'word active';
-        }
-      }, 250);
-    }
-
-    // 2. yanlışta telaffuzu seslendir
-    if (yanlisSayac >= 2) {
-      yanlisSayac = 0;
+      }, 800);
       SpeechController.speakCorrection(hedef, { rate: 0.72, pitch: 1.05 });
+    } else {
+      // 2. başarısızlık: otomatik doğru kabul et, puan ver
+      denemeHakki = 0;
+      kelimeKabul(span);
     }
+  }
+}
+
+// ─── Kelimeyi kabul et (doğru veya otomatik) — puan ver, ilerle ──────────────
+function kelimeKabul(span) {
+  span.className   = 'word correct';
+  score           += 1;
+  totalScore      += 1;
+  bolumDogru++;
+  yanlisSayac      = 0;
+  yanlisSayacIndex = -1;
+  denemeHakki      = 0;
+  currentWordIndex++;
+  requestAnimationFrame(updateUI);
+
+  if (currentWordIndex === targetWords.length) {
+    kontrolRozetlerYildiz();
+    kontrolRozetlerZorluk();
+    endGame();
   }
 }
 
