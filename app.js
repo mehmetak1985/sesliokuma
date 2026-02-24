@@ -1638,10 +1638,11 @@ const KELIME_EMOJI = {
   'kedi':'🐱','köpek':'🐶','kuş':'🐦','balık':'🐟','arı':'🐝',
   'inek':'🐄','at':'🐴','tavuk':'🐔','kelebek':'🦋','karınca':'🐜',
   'aslan':'🦁','kaplan':'🐯','fil':'🐘','maymun':'🐒','penguen':'🐧',
-  'kaplumbağa':'🐢','timsah':'🐊','zürafası':'🦒','zebra':'🦓','kurt':'🐺',
+  'kaplumbağa':'🐢','timsah':'🐊','zürafa':'🦒','zebra':'🦓','kurt':'🐺',
   // Meyveler
   'elma':'🍎','armut':'🍐','muz':'🍌','çilek':'🍓','portakal':'🍊',
   'kiraz':'🍒','üzüm':'🍇','kavun':'🍈','karpuz':'🍉','şeftali':'🍑',
+  'limon':'🍋','mango':'🥭','ananas':'🍍','kivi':'🥝','nar':'🍎',
   // Renkler
   'kırmızı':'🔴','mavi':'🔵','sarı':'🟡','yeşil':'🟢','mor':'🟣',
   'turuncu':'🟠','beyaz':'⚪','siyah':'⚫','pembe':'🩷','kahve':'🟫',
@@ -1654,15 +1655,14 @@ const KOYUN_KELIMELER = [
   'kedi','köpek','kuş','balık','arı',
   'inek','at','tavuk','kelebek','aslan',
   'kaplan','fil','maymun','penguen','kaplumbağa',
-  'timsah','zebra','kurt','karınca','ördek',
+  'timsah','zebra','kurt','karınca','zürafa',
   // Meyveler (15)
   'elma','armut','muz','çilek','portakal',
   'kiraz','üzüm','kavun','karpuz','şeftali',
-  'limon','incir','erik','vişne','hurma',
-  // Renkler (15)
+  'limon','mango','ananas','kivi','nar',
+  // Renkler (10)
   'kırmızı','mavi','sarı','yeşil','mor',
   'turuncu','beyaz','siyah','pembe','kahve',
-  'gri','lacivert','bej','krem','eflatun',
 ];
 
 // ─── Türkçe harf havuzu ───────────────────────────────────────
