@@ -36,11 +36,11 @@
       <div class="hmenu-items">
         <button class="hmenu-item" id="hmAchievements">
           <span class="hmenu-icon">&#127942;</span>
-          <span class="hmenu-label">Ba&#351;ar&#305;lar&#305;m</span>
+          <span class="hmenu-label">Başarılarım</span>
         </button>
         <button class="hmenu-item" id="hmSes">
           <span class="hmenu-icon">&#128266;</span>
-          <span class="hmenu-label" id="hmSesLabel">Ses A&#351;&#305;k</span>
+          <span class="hmenu-label" id="hmSesLabel">Ses Açık</span>
           <span class="hmenu-toggle" id="hmSesToggle"></span>
         </button>
         <button class="hmenu-item">
@@ -53,19 +53,19 @@
         </button>
         <button class="hmenu-item">
           <span class="hmenu-icon">&#9993;&#65039;</span>
-          <span class="hmenu-label">Bize Ula&#351;</span>
+          <span class="hmenu-label">Bize Ulaş</span>
         </button>
         <button class="hmenu-item hmenu-item--bagis">
           <span class="hmenu-icon">&#128149;</span>
-          <span class="hmenu-label">Ba&#287;&#305;&#351; Yap</span>
+          <span class="hmenu-label">Bağış Yap</span>
         </button>
         <button class="hmenu-item" id="hmHakkimizda">
           <span class="hmenu-icon">&#128218;</span>
-          <span class="hmenu-label">Hakk&#305;m&#305;zda</span>
+          <span class="hmenu-label">Hakkımızda</span>
         </button>
         <button class="hmenu-item" id="hmGizlilik">
           <span class="hmenu-icon">&#128274;</span>
-          <span class="hmenu-label">Gizlilik Politikas&#305;</span>
+          <span class="hmenu-label">Gizlilik Politikası</span>
         </button>
       </div>
     </div>
@@ -76,34 +76,22 @@
     <h1 class="menu-title">Minik <span class="menu-title-book">📖</span> Okur</h1>
   </div>
 
-  <!-- Mod kartları -->
+  <!-- Ana Menü Kartları (4 kategori) -->
   <div class="menu-cards">
 
-    <!-- Alıştırma -->
-    <div class="menu-card menu-card--alistirma" id="menuCardAlistirma">
-      <div class="menu-card-label-top">Alıştırma</div>
+    <!-- 🎯 Kelime Dünyası (kategori, alt menü var) -->
+    <div class="menu-card menu-card--kelime-dunya" id="menuCardKelimeDunya">
+      <div class="menu-card-label-top">Kelime Dünyası</div>
       <div class="menu-card-art">
-        <span class="menu-card-emoji">✏️</span>
+        <span class="menu-card-emoji">🎯</span>
         <div class="menu-card-deco">
-          <span>✔️</span><span>❓</span><span>✔️</span>
+          <span>🧩</span><span>🎈</span><span>🚀</span>
         </div>
       </div>
-      <button class="menu-card-btn menu-card-btn--orange" data-mod="alistirma">Alıştırma</button>
+      <button class="menu-card-btn menu-card-btn--purple" data-mod="kelime-dunya">Kelime Dünyası</button>
     </div>
 
-    <!-- Kelime Oyunu -->
-    <div class="menu-card menu-card--kelime" id="menuCardKelime">
-      <div class="menu-card-label-top">Kelime Oyunu</div>
-      <div class="menu-card-art">
-        <span class="menu-card-emoji">🧩</span>
-        <div class="menu-card-deco">
-          <span>🐱</span><span>⭐</span><span>🍎</span>
-        </div>
-      </div>
-      <button class="menu-card-btn menu-card-btn--green" data-mod="kelime">Kelime Oyunu</button>
-    </div>
-
-    <!-- Hikaye -->
+    <!-- 📖 Hikaye -->
     <div class="menu-card menu-card--hikaye" id="menuCardHikaye">
       <div class="menu-card-label-top">Hikaye</div>
       <div class="menu-card-art">
@@ -113,6 +101,36 @@
         </div>
       </div>
       <button class="menu-card-btn menu-card-btn--blue" data-mod="hikaye">Hikaye</button>
+    </div>
+
+    <!-- 🎮 Oyun Köşesi (kategori, alt menü var) -->
+    <div class="menu-card menu-card--oyun-kose" id="menuCardOyunKose">
+      <div class="menu-card-label-top">Oyun Köşesi</div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">🎮</span>
+        <div class="menu-card-deco">
+          <span>🪙</span><span>🃏</span><span>🔤</span>
+        </div>
+      </div>
+      <button class="menu-card-btn menu-card-btn--green" data-mod="oyun-kose">Oyun Köşesi</button>
+    </div>
+
+    <!-- 🎤 Sesli Okuma (beta) — EN SONDA -->
+    <div class="menu-card menu-card--sesli" id="menuCardSesli">
+      <div class="menu-card-label-top">
+        Sesli Okuma
+        <span class="beta-badge">beta</span>
+      </div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">🎤</span>
+        <div class="menu-card-deco">
+          <span>✔️</span><span>❓</span><span>✔️</span>
+        </div>
+      </div>
+      <button class="menu-card-btn menu-card-btn--orange" data-mod="sesli">
+        Sesli Okuma
+        <span class="beta-badge">beta</span>
+      </button>
     </div>
 
   </div>
@@ -125,16 +143,98 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
-     OYUN EKRANI
+     KELİME DÜNYASI ALT MENÜ EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="submenu-screen" id="kelimeDunyaScreen" style="display:none">
+
+  <div class="submenu-topbar">
+    <button class="btn-back" id="btnKelimeDunyaBack">← Menü</button>
+    <span class="submenu-title">🎯 Kelime Dünyası</span>
+  </div>
+
+  <div class="submenu-cards">
+
+    <div class="submenu-card submenu-card--kelime" id="smKelimeOyunu">
+      <span class="submenu-card-emoji">🧩</span>
+      <div class="submenu-card-name">Kelime Oyunu</div>
+      <div class="submenu-card-desc">Harfleri birleştir</div>
+    </div>
+
+    <div class="submenu-card submenu-card--balon" id="smBalonPatlatma">
+      <span class="submenu-card-emoji">🎈</span>
+      <div class="submenu-card-name">Balon Patlatma</div>
+      <div class="submenu-card-desc">Doğru heceyi patlat</div>
+    </div>
+
+    <div class="submenu-card submenu-card--uzay" id="smUzayYolu">
+      <span class="submenu-card-emoji">🚀</span>
+      <div class="submenu-card-name">Uzay Yolu</div>
+      <div class="submenu-card-desc">Doğru yolu seç</div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OYUN KÖŞESİ ALT MENÜ EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="submenu-screen" id="oyunKoseScreen" style="display:none">
+
+  <div class="submenu-topbar">
+    <button class="btn-back" id="btnOyunKoseBack">← Menü</button>
+    <span class="submenu-title">🎮 Oyun Köşesi</span>
+  </div>
+
+  <div class="submenu-cards">
+
+    <div class="submenu-card submenu-card--hazine" id="smGizliHazine">
+      <span class="submenu-card-emoji">🪙</span>
+      <div class="submenu-card-name">Gizli Hazine</div>
+      <div class="submenu-card-desc">Sandığı aç</div>
+    </div>
+
+    <div class="submenu-card submenu-card--hafiza" id="smHafizaKartlari">
+      <span class="submenu-card-emoji">🃏</span>
+      <div class="submenu-card-name">Hafıza Kartları</div>
+      <div class="submenu-card-desc">Çiftleri bul</div>
+    </div>
+
+    <div class="submenu-card submenu-card--yapboz" id="smKelimeYapbozu">
+      <span class="submenu-card-emoji">🔤</span>
+      <div class="submenu-card-name">Kelime Yapbozu</div>
+      <div class="submenu-card-desc">Harfleri yerleştir</div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SESLİ OKUMA BETA UYARI MODALI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="beta-modal-overlay" id="betaModalOverlay" style="display:none">
+  <div class="beta-modal-card">
+    <div class="beta-modal-icon">🎤</div>
+    <div class="beta-modal-title">Sesli Okuma <span class="beta-badge">beta</span></div>
+    <div class="beta-modal-text">Bu mod bazı cihazlarda eksik çalışabilir.</div>
+    <div class="beta-modal-btns">
+      <button class="beta-modal-btn beta-modal-btn--devam" id="betaDevamBtn">Devam Et</button>
+      <button class="beta-modal-btn beta-modal-btn--geri" id="betaGeriBtn">Geri Dön</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OYUN EKRANI (Sesli Okuma)
      ═══════════════════════════════════════════════════════════ -->
 <div class="game-container" id="gameContainer" style="display:none">
 
-  <!-- Geri butonu -->
   <button class="btn-back" id="btnBack">← Menü</button>
 
   <div class="title-area">
     <h1 id="modeTitle">Minik <span class="menu-title-book">📖</span> Okur</h1>
-    <p class="subtitle" id="modeSubtitle">Alıştırma</p>
+    <p class="subtitle" id="modeSubtitle">Sesli Okuma</p>
     <div class="level-selector">
       <span class="level-label">SEVİYE</span>
       <div class="level-buttons">
@@ -213,29 +313,22 @@
     <div class="koyun-score-badge">⭐ <span id="koyunScore">0</span></div>
   </div>
 
-  <!-- Resim kartı -->
   <div class="koyun-card" id="koyunCard">
     <div class="koyun-emoji" id="koyunEmoji">🐱</div>
     <div class="koyun-hint" id="koyunHint" style="display:none">_ _ _ _</div>
   </div>
 
-  <!-- Sonuç banner -->
   <div class="koyun-result" id="koyunResult"></div>
 
-  <!-- ── v3: Oyun Alanı ──────────────────────────────────── -->
   <div class="harf-secme-alani" id="harfSecmeAlani">
-    <!-- Kelime gösterimi: harf kutuları -->
     <div class="harf-kutu-satir" id="harfKutuSatir"></div>
-    <!-- Harf butonları (tip1: seç, tip2: sürükle, tip3: sırala) -->
     <div class="harf-buton-satir" id="harfButonSatir"></div>
   </div>
 
-  <!-- Geç butonu -->
   <div class="button-row" style="margin-top:8px">
     <button class="btn btn-skip" id="koyunBtnSkip" style="padding:14px 28px">⏭ Geç</button>
   </div>
 
-  <!-- Gizli eski mic elementleri (JS referans korunuyor) -->
   <div style="display:none">
     <div id="koyunMicIndicator"></div>
     <div id="koyunMicStatus"></div>
@@ -244,6 +337,80 @@
     <div id="koyunErrorMsg"></div>
   </div>
 
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     BALON PATLATMA EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="oyun-ekran" id="balonScreen" style="display:none">
+  <button class="btn-back" id="btnBalonBack">← Geri</button>
+  <div class="oyun-header">
+    <h2 class="koyun-title">🎈 Balon Patlatma</h2>
+    <div class="koyun-score-badge">⭐ <span id="balonScore">0</span></div>
+  </div>
+  <div class="balon-seviye-bar">
+    <span id="balonSeviyeText">Seviye 1</span>
+    <span id="balonHedefText"></span>
+  </div>
+  <div class="balon-alan" id="balonAlan"></div>
+  <div class="balon-sonuc" id="balonSonuc"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     UZAY YOLU EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="oyun-ekran" id="uzayScreen" style="display:none">
+  <button class="btn-back" id="btnUzayBack">← Geri</button>
+  <div class="oyun-header">
+    <h2 class="koyun-title">🚀 Uzay Yolu</h2>
+    <div class="koyun-score-badge">⭐ <span id="uzayScore">0</span></div>
+  </div>
+  <div class="uzay-alan" id="uzayAlan"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     GİZLİ HAZİNE EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="oyun-ekran" id="hazineScreen" style="display:none">
+  <button class="btn-back" id="btnHazineBack">← Geri</button>
+  <div class="oyun-header">
+    <h2 class="koyun-title">🪙 Gizli Hazine</h2>
+    <div class="koyun-score-badge">⭐ <span id="hazineScore">0</span></div>
+  </div>
+  <div class="hazine-alan" id="hazineAlan"></div>
+  <div class="hazine-sonuc" id="hazineSonuc"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HAFIZA KARTLARI EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="oyun-ekran" id="hafizaScreen" style="display:none">
+  <button class="btn-back" id="btnHafizaBack">← Geri</button>
+  <div class="oyun-header">
+    <h2 class="koyun-title">🃏 Hafıza Kartları</h2>
+    <div class="koyun-score-badge">⭐ <span id="hafizaScore">0</span></div>
+  </div>
+  <div class="hafiza-seviye-bar">
+    <span id="hafizaSeviyeText">Seviye 1</span>
+  </div>
+  <div class="hafiza-alan" id="hafizaAlan"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     KELIME YAPBOZU EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="oyun-ekran" id="yapbozScreen" style="display:none">
+  <button class="btn-back" id="btnYapbozBack">← Geri</button>
+  <div class="oyun-header">
+    <h2 class="koyun-title">🔤 Kelime Yapbozu</h2>
+    <div class="koyun-score-badge">⭐ <span id="yapbozScore">0</span></div>
+  </div>
+  <div class="yapboz-seviye-bar">
+    <span id="yapbozSeviyeText">Seviye 1 / 5</span>
+    <span id="yapbozKelimeText">Kelime 1 / 5</span>
+  </div>
+  <div class="yapboz-alan" id="yapbozAlan"></div>
+  <div class="yapboz-sonuc" id="yapbozSonuc"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -313,9 +480,8 @@
   });
 })();
 </script>
-<!-- ═══════════════════════════════════════════════════════════
-     HAKKIMIZDA MODAL
-     ═══════════════════════════════════════════════════════════ -->
+
+<!-- HAKKIMIZDA MODAL -->
 <div class="info-modal-overlay" id="hakkimizdaOverlay" style="display:none">
   <div class="info-modal-card">
     <button class="info-modal-close" id="hakkimizdaClose">&#10005;</button>
@@ -332,9 +498,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     GİZLİLİK POLİTİKASI MODAL
-     ═══════════════════════════════════════════════════════════ -->
+<!-- GİZLİLİK POLİTİKASI MODAL -->
 <div class="info-modal-overlay" id="gizlilikOverlay" style="display:none">
   <div class="info-modal-card">
     <button class="info-modal-close" id="gizlilikClose">&#10005;</button>
@@ -344,17 +508,13 @@
       <p><strong>Son güncelleme:</strong> 2025</p>
       <p>Minik Okur uygulamasını kullandığınız için teşekkür ederiz. Gizliliğiniz bizim için son derece önemlidir.</p>
       <h3>Topladığımız Veriler</h3>
-      <p>Minik Okur, kullanıcılarından <strong>herhangi bir kişisel veri toplamamaktadır.</strong> Uygulama; ad, soyad, e-posta adresi, telefon numarası veya konum bilgisi gibi kişisel bilgiler talep etmez ve kaydetmez.</p>
+      <p>Minik Okur, kullanıcılarından <strong>herhangi bir kişisel veri toplamamaktadır.</strong></p>
       <h3>Ses Tanıma</h3>
       <p>Uygulama, okuma alıştırmaları sırasında cihazınızın yerleşik ses tanıma özelliğini kullanır. Ses kayıtları yalnızca anlık olarak işlenir; sunucularımıza gönderilmez ve depolanmaz.</p>
       <h3>Üçüncü Taraf Hizmetler</h3>
       <p>Uygulama herhangi bir reklam ağı, analitik servisi veya üçüncü taraf izleme aracı içermez.</p>
       <h3>Çocukların Gizliliği</h3>
-      <p>Minik Okur, çocuklara yönelik tasarlanmıştır. 13 yaşın altındaki bireylerden bilerek kişisel veri toplamıyoruz. Ebeveynlerin veya yasal vasilerin herhangi bir endişesi varsa bizimle iletişime geçebilirler.</p>
-      <h3>Veri Güvenliği</h3>
-      <p>Herhangi bir kullanıcı verisi toplanmadığından, veri ihlali riski de bulunmamaktadır.</p>
-      <h3>Politika Değişiklikleri</h3>
-      <p>Bu gizlilik politikasını zaman zaman güncelleyebiliriz. Değişiklikler bu sayfada yayımlanacaktır.</p>
+      <p>Minik Okur, çocuklara yönelik tasarlanmıştır. 13 yaşın altındaki bireylerden bilerek kişisel veri toplamıyoruz.</p>
       <h3>İletişim</h3>
       <p>Gizlilik politikamıza ilişkin sorularınız için uygulama içi "Bize Ulaş" seçeneğini kullanabilirsiniz.</p>
     </div>
@@ -396,5 +556,10 @@
 <script src="hikaye.js"></script>
 <script src="hikaye-secim.js"></script>
 <script src="app.js"></script>
+<script src="balon.js"></script>
+<script src="uzay.js"></script>
+<script src="hazine.js"></script>
+<script src="hafiza.js"></script>
+<script src="yapboz.js"></script>
 </body>
 </html>
