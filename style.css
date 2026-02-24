@@ -1758,3 +1758,14 @@ body::after  { display: none; }
   background: linear-gradient(135deg, #bbf7d0, #4ade80) !important;
   color: #14532d !important;
 }
+
+/* ── Hikaye cümle kart varyantları ─────────────────────────── */
+.koyun-card--soru {
+  border-color: #f9a825 !important;
+  box-shadow: var(--shadow-card), 0 0 0 6px rgba(249,168,37,0.18) !important;
+}
+.koyun-card--bitis {
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe) !important;
+  border-color: #7c3aed !important;
+  box-shadow: var(--shadow-card), 0 0 0 6px rgba(124,58,237,0.15) !important;
+}
