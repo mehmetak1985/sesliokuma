@@ -1,103 +1,136 @@
 (function(){
 "use strict";
 
-const SORULAR=[
-  {soru:'BALIK',dogru:'BALIK',yanlis:'BALKI',emoji:'🐟'},
-  {soru:'GÜNEŞ',dogru:'GÜNEŞ',yanlis:'GÜNŞE',emoji:'☀️'},
-  {soru:'ARABA',dogru:'ARABA',yanlis:'ARBAA',emoji:'🚗'},
-  {soru:'ELMA',dogru:'ELMA',yanlis:'EMLA',emoji:'🍎'},
-  {soru:'KÖPEK',dogru:'KÖPEK',yanlis:'KÖPKE',emoji:'🐶'},
-  {soru:'UÇAK',dogru:'UÇAK',yanlis:'UÇKA',emoji:'✈️'},
-  {soru:'ZÜRAFA',dogru:'ZÜRAFA',yanlis:'ZÜRFA',emoji:'🦒'},
-  {soru:'ÇİLEK',dogru:'ÇİLEK',yanlis:'ÇİELK',emoji:'🍓'}
+const KELIMELER = [
+  {k:'BALIK', e:'🐟'}, {k:'GÜNEŞ', e:'☀️'}, {k:'ARABA', e:'🚗'},
+  {k:'ELMA', e:'🍎'}, {k:'KÖPEK', e:'🐶'}, {k:'UÇAK', e:'✈️'},
+  {k:'ZÜRAFA', e:'🦒'}, {k:'ÇİLEK', e:'🍓'}, {k:'GEMİ', e:'🚢'}
 ];
 
-let soruIdx=0, puan=0, durduruldu=false, cevapBekleniyor=false, audioCtx=null;
+let soruIdx=0, puan=0, dogruSayaci=0, audioCtx=null, kilit = false;
 const alan=document.getElementById('uzayAlan'), puanEl=document.getElementById('uzayScore');
 
-// Cerrah Dokunuşu: Global AudioContext yönetimi
+// ANALİZ 1: Ses Bağlamı Yönetimi (Sürekli Resume İhtiyacı)
 function initAudio() { 
-  if(!audioCtx) audioCtx = new(window.AudioContext||window.webkitAudioContext)(); 
-  if(audioCtx.state === 'suspended') audioCtx.resume();
+    if(!audioCtx) audioCtx = new(window.AudioContext||window.webkitAudioContext)(); 
+    if(audioCtx.state === 'suspended') audioCtx.resume();
 }
 
 function render(){
-  if(!alan||durduruldu)return;
-  const s=SORULAR[soruIdx % SORULAR.length];
-  const solMu=Math.random()>0.5;
+  if(!alan) return;
+  // ANALİZ 2: Dizi Sınırı Kontrolü (Güvenli Erişim)
+  const s = KELIMELER[soruIdx % KELIMELER.length];
+  const secenekSayisi = soruIdx >= 3 ? 3 : 2;
+  
+  let secenekler = [s.k];
+  while(secenekler.length < secenekSayisi){
+      let y = KELIMELER[Math.floor(Math.random()*KELIMELER.length)].k;
+      if(!secenekler.includes(y)) secenekler.push(y);
+  }
+  secenekler = shuffle(secenekler);
 
-  alan.innerHTML=`
-    <div class="uzay-soru-kart" style="text-align:center; padding:15px; background:rgba(255,255,255,0.05); border-radius:20px; border:1px solid rgba(255,255,255,0.1);">
-        <div style="font-size:clamp(3rem, 10vw, 4.5rem); margin-bottom:5px; animation:pop 0.5s;">${s.emoji}</div>
-        <div style="font-size:1.2rem; font-weight:bold; color:#00f2ff; text-transform:uppercase;">Bu Hangisi?</div>
+  alan.innerHTML = `
+    <div style="text-align:center; color:#fff; padding:10px; user-select:none;">
+        <div style="font-size:clamp(3.5rem, 10vw, 5rem); animation:pop 0.5s;">${s.e}</div>
+        <div style="font-size:1.1rem; color:#00f2ff; font-weight:bold; text-shadow:0 0 5px #00f2ff;">
+            ${3 - dogruSayaci} BAŞARILI MANEVRA KALDI
+        </div>
     </div>
-    <div style="height:200px; position:relative; overflow:hidden; margin:15px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
-        <div id="uzayGemi" style="font-size:3.5rem; position:absolute; bottom:10px; left:50%; transform:translateX(-50%); transition:all 0.7s cubic-bezier(0.47, 0, 0.74, 0.71); z-index:10; filter:drop-shadow(0 0 10px #fff);">🚀</div>
+    <div style="height:240px; position:relative; overflow:hidden; background:radial-gradient(circle at bottom, #1b2735 0%, transparent 70%); border-radius:20px; margin:15px 0;">
+        <div id="uzayGemi" style="font-size:4.5rem; position:absolute; bottom:10px; left:50%; transform:translateX(-50%); z-index:10; filter:drop-shadow(0 0 15px #fff); transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">🚀</div>
+        <div id="ates" style="display:none; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%); font-size:3rem; animation:atesYan 0.15s infinite;">🔥</div>
     </div>
-    <div id="uzayYollar" style="display:flex; justify-content:center; gap:15px; padding:0 10px;">
-        <button class="uzay-yol" id="yolSol" style="flex:1; padding:18px 10px; font-size:1rem; font-weight:bold; cursor:pointer; border-radius:15px; border:2px solid #fff; background:transparent; color:#fff; transition:0.2s;">${solMu?s.dogru:s.yanlis}</button>
-        <button class="uzay-yol" id="yolSag" style="flex:1; padding:18px 10px; font-size:1rem; font-weight:bold; cursor:pointer; border-radius:15px; border:2px solid #fff; background:transparent; color:#fff; transition:0.2s;">${solMu?s.yanlis:s.dogru}</button>
+    <div id="butonlar" style="display:flex; justify-content:center; gap:12px; padding:0 10px;">
+        ${secenekler.map(metin => `
+            <button class="uzay-btn" onclick="uzayKontrol('${metin}', this)" 
+                style="flex:1; padding:18px 5px; font-size:1.1rem; font-weight:bold; cursor:pointer; border-radius:18px; border:2px solid #fff; background:rgba(255,255,255,0.05); color:#fff; transition:0.3s; touch-action:manipulation;">
+                ${metin}
+            </button>
+        `).join('')}
     </div>
   `;
-
-  cevapBekleniyor=true;
-  document.getElementById('yolSol').onclick=()=> { initAudio(); cevapla(solMu?'SOL':'SAG', document.getElementById('yolSol').textContent); };
-  document.getElementById('yolSag').onclick=()=> { initAudio(); cevapla(solMu?'SAG':'SOL', document.getElementById('yolSag').textContent); };
+  kilit = false;
 }
 
-function cevapla(yon, metin){
-  if(!cevapBekleniyor||durduruldu)return;
-  const s=SORULAR[soruIdx % SORULAR.length];
-  const dogru=metin===s.dogru;
-  const gemi=document.getElementById('uzayGemi');
+window.uzayKontrol = (secilen, btn) => {
+    if(kilit) return;
+    initAudio();
+    const s = KELIMELER[soruIdx % KELIMELER.length];
+    const gemi = document.getElementById('uzayGemi');
+    const ates = document.getElementById('ates');
 
-  if(dogru){
-    cevapBekleniyor=false; // Hacker önlemi: Çift tıklamayı engelle
-    puan+=20; if(puanEl)puanEl.textContent=puan;
-    
-    // Roket fırlatma animasyonu
-    gemi.style.bottom="300px";
-    gemi.style.left=yon==='SOL'?"10%":"90%";
-    gemi.style.opacity="0";
-    gemi.style.transform="translateX(-50%) scale(0.5)";
-    
-    playSpaceSound(800, 0.5);
-    
-    setTimeout(()=>{
-      soruIdx++;
-      render();
-    }, 800);
-  } else {
-    // Yanlış cevap efekti
-    gemi.style.animation="shake 0.4s ease-in-out";
-    playSpaceSound(150, 0.2);
-    setTimeout(()=>gemi.style.animation="", 400);
-  }
-}
+    if(secilen === s.k){
+        kilit = true;
+        dogruSayaci++;
+        puan += 25;
+        if(puanEl) puanEl.textContent = puan;
+        
+        btn.style.background = "#00c853";
+        btn.style.borderColor = "#00c853";
+        btn.style.boxShadow = "0 0 20px #00c853";
 
-function playSpaceSound(f,d){
-  if(!audioCtx) return;
-  try {
+        if(dogruSayaci >= 3){
+            ates.style.display = "block";
+            gemi.style.transition = "bottom 2s ease-in, transform 2s ease-in";
+            gemi.style.bottom = "600px";
+            gemi.style.transform = "translateX(-50%) scale(0.5)";
+            playLaunchSound();
+            dogruSayaci = 0;
+            setTimeout(() => { soruIdx++; render(); }, 2100);
+        } else {
+            gemi.style.bottom = "80px";
+            playTone(600, 0.15);
+            setTimeout(() => { soruIdx++; render(); }, 800);
+        }
+    } else {
+        // ANALİZ 3: Yanlış Cevapta Görsel Geri Bildirim
+        playTone(150, 0.3);
+        btn.style.background = "#ff1744";
+        btn.style.borderColor = "#ff1744";
+        btn.style.animation = "shakeBtn 0.4s";
+        gemi.style.animation = "shake 0.4s";
+        setTimeout(() => {
+            btn.style.animation = "";
+            gemi.style.animation = "";
+            btn.style.background = "rgba(255,255,255,0.05)";
+            btn.style.borderColor = "#fff";
+        }, 400);
+    }
+};
+
+function playTone(f, d) {
+    if(!audioCtx) return;
     const o=audioCtx.createOscillator(), g=audioCtx.createGain();
     o.connect(g); g.connect(audioCtx.destination);
-    o.type = 'sine';
     o.frequency.setValueAtTime(f, audioCtx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(f*2, audioCtx.currentTime+d);
     g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+d);
-    o.start(); o.stop(audioCtx.currentTime+d);
-  } catch(e) { console.error("Ses hatası:", e); }
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+    o.start(); o.stop(audioCtx.currentTime + d);
 }
 
-window.uzayBas=()=>{ soruIdx=0; puan=0; if(puanEl)puanEl.textContent=0; render(); };
+function playLaunchSound(){
+    if(!audioCtx) return;
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sawtooth'; // Daha motor benzeri bir ses
+    o.frequency.setValueAtTime(80, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 1.8);
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.8);
+    o.start(); o.stop(audioCtx.currentTime + 1.8);
+}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+window.uzayBas = () => { soruIdx=0; dogruSayaci=0; puan=0; if(puanEl) puanEl.textContent=0; render(); };
 window.uzayBas();
 
 const st=document.createElement('style');
 st.innerHTML=`
-  @keyframes shake{0%,100%{left:50%} 20%{left:45%} 40%{left:55%} 60%{left:47%} 80%{left:53%}}
-  @keyframes pop{0%{transform:scale(0.8); opacity:0} 100%{transform:scale(1); opacity:1}}
-  .uzay-yol:active{background:#fff !important; color:#000 !important; transform:translateY(2px);}
-  .uzay-yol:hover{border-color:#00f2ff; box-shadow: 0 0 10px #00f2ff;}
+  @keyframes shake{0%,100%{left:50%} 25%{left:47%} 75%{left:53%}}
+  @keyframes shakeBtn{0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)}}
+  @keyframes pop{0%{transform:scale(0.8);opacity:0} 100%{transform:scale(1);opacity:1}}
+  @keyframes atesYan{0%,100%{transform:translateX(-50%) scale(1); opacity:0.8} 50%{transform:translateX(-50%) scale(1.3); opacity:1}}
+  .uzay-btn:active{transform:scale(0.95); transition: 0.1s;}
 `;
 document.head.appendChild(st);
 })();
