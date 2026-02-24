@@ -385,8 +385,13 @@ function hkEkranOlustur() {
 // AÇMA / KAPAMA
 // ═══════════════════════════════════════════════════════════════
 function hkAc(hikayeIdx) {
+  if (typeof hkSecimAc === 'function') { hkSecimAc(); return; }
+  hkAcHikaye(hikayeIdx || 0);
+}
+
+function hkAcHikaye(hikayeIdx) {
   hkEkranOlustur();
-  hk.hikayeIdx = hikayeIdx || 0;
+  hk.hikayeIdx = hikayeIdx;
   hk.cumleIdx  = 0;
   hk.skor      = 0;
   hk.bekliyor  = false;
@@ -398,11 +403,13 @@ function hkAc(hikayeIdx) {
 function hkKapat() {
   if (hkEkran) hkEkran.style.display = 'none';
   hk.aktif = false;
-  if (typeof menuGoster === 'function') menuGoster();
-  else { const ms = document.getElementById('menuScreen'); if (ms) ms.style.display = 'flex'; }
-  if (typeof totalScore !== 'undefined') totalScore += hk.skor;
-  const mst = document.getElementById('menuTotalScore');
+  var msc = document.getElementById('menuScoreText');
+  var mst = document.getElementById('menuTotalScore');
+  if (msc && typeof totalScore !== 'undefined') msc.textContent = totalScore;
   if (mst && typeof totalScore !== 'undefined') mst.textContent = totalScore;
+  if (typeof hkSecimAc === 'function') hkSecimAc();
+  else if (typeof menuGoster === 'function') menuGoster();
+  else { var ms = document.getElementById('menuScreen'); if (ms) ms.style.display = 'flex'; }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -557,6 +564,16 @@ function hkSecenekTikla(idx, cumle, btn, secDiv) {
 // ═══════════════════════════════════════════════════════════════
 function hkIleri() {
   const hikaye = HIKAYE_DATA[hk.hikayeIdx];
+  // Her ileri basışta +1 puan
+  hk.skor++;
+  if (typeof totalScore !== 'undefined') {
+    totalScore++;
+    var ms = document.getElementById('menuScoreText');
+    var mt = document.getElementById('menuTotalScore');
+    if (ms) ms.textContent = totalScore;
+    if (mt) mt.textContent = totalScore;
+  }
+  document.getElementById('hkSkorBadge').textContent = '⭐ ' + hk.skor;
   hk.cumleIdx++;
   if (hk.cumleIdx >= hikaye.cumleler.length) hkBitti();
   else hkCumleGoster();
