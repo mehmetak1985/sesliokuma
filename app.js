@@ -1634,20 +1634,35 @@ if (hmAchievements) {
 
 // ─── Kelime → Emoji tablosu ───────────────────────────────────
 const KELIME_EMOJI = {
+  // Hayvanlar
   'kedi':'🐱','köpek':'🐶','kuş':'🐦','balık':'🐟','arı':'🐝',
   'inek':'🐄','at':'🐴','tavuk':'🐔','kelebek':'🦋','karınca':'🐜',
-  'çiçek':'🌸','ağaç':'🌳','elma':'🍎','güneş':'☀️','ay':'🌙',
-  'yıldız':'⭐','bulut':'☁️','kar':'❄️','yağmur':'🌧️',
-  'kitap':'📚','kalem':'✏️','okul':'🏫','ev':'🏠','araba':'🚗',
-  'top':'⚽','balon':'🎈','pasta':'🎂','armut':'🍐','muz':'🍌',
-  'çilek':'🍓','portakal':'🍊','sepet':'🧺','masa':'🪑','kapı':'🚪',
+  'aslan':'🦁','kaplan':'🐯','fil':'🐘','maymun':'🐒','penguen':'🐧',
+  'kaplumbağa':'🐢','timsah':'🐊','zürafası':'🦒','zebra':'🦓','kurt':'🐺',
+  // Meyveler
+  'elma':'🍎','armut':'🍐','muz':'🍌','çilek':'🍓','portakal':'🍊',
+  'kiraz':'🍒','üzüm':'🍇','kavun':'🍈','karpuz':'🍉','şeftali':'🍑',
+  // Renkler
+  'kırmızı':'🔴','mavi':'🔵','sarı':'🟡','yeşil':'🟢','mor':'🟣',
+  'turuncu':'🟠','beyaz':'⚪','siyah':'⚫','pembe':'🩷','kahve':'🟫',
+  // Diğer
+  'güneş':'☀️','ay':'🌙','yıldız':'⭐','bulut':'☁️','çiçek':'🌸',
 };
 
 const KOYUN_KELIMELER = [
-  'kedi','köpek','kuş','balık','arı','inek','at','tavuk','kelebek',
-  'çiçek','ağaç','elma','güneş','ay','yıldız','bulut',
-  'kitap','kalem','okul','ev','araba','top','balon','pasta',
-  'armut','muz','çilek','portakal',
+  // Hayvanlar (20)
+  'kedi','köpek','kuş','balık','arı',
+  'inek','at','tavuk','kelebek','aslan',
+  'kaplan','fil','maymun','penguen','kaplumbağa',
+  'timsah','zebra','kurt','karınca','ördek',
+  // Meyveler (15)
+  'elma','armut','muz','çilek','portakal',
+  'kiraz','üzüm','kavun','karpuz','şeftali',
+  'limon','incir','erik','vişne','hurma',
+  // Renkler (15)
+  'kırmızı','mavi','sarı','yeşil','mor',
+  'turuncu','beyaz','siyah','pembe','kahve',
+  'gri','lacivert','bej','krem','eflatun',
 ];
 
 // ─── Türkçe harf havuzu ───────────────────────────────────────
@@ -1764,9 +1779,9 @@ function sureyiDurdur() {
 // TİP 1: HARF SEÇME
 // ═══════════════════════════════════════════════════════════════
 function tip1Goster(kelime, eksikIdxler, secenekSayisi) {
-  let doldurulan  = 0;
-  let yanlisSayac1 = 0; // bu harf için yanlış hak sayacı
-  const eksikmis  = [...eksikIdxler];
+  let doldurulan   = 0;
+  let yanlisSayac1 = 0;
+  const eksikmis   = [...eksikIdxler];
 
   function kutuCiz() {
     harfKutuSatir.innerHTML = '';
@@ -1776,11 +1791,9 @@ function tip1Goster(kelime, eksikIdxler, secenekSayisi) {
       const eksikSira = eksikmis.indexOf(i);
       if (eksikSira >= 0) {
         if (eksikSira < doldurulan) {
-          // Doldurulmuş boşluk
           kutu.textContent = kelime[i].toLocaleUpperCase('tr-TR');
           kutu.classList.add('harf-kutu--dogru');
         } else if (eksikSira === doldurulan) {
-          // Aktif boşluk
           kutu.textContent = '_';
           kutu.classList.add('harf-kutu--bos', 'harf-kutu--aktif');
         } else {
@@ -1797,7 +1810,7 @@ function tip1Goster(kelime, eksikIdxler, secenekSayisi) {
 
   function butonCiz() {
     harfButonSatir.innerHTML = '';
-    yanlisSayac1 = 0; // yeni harf → sayacı sıfırla
+    yanlisSayac1 = 0;
     const hedefHarf = kelime[eksikmis[doldurulan]];
     const yanlislar = HARF_HAVUZU
       .filter(h => normalTR(h) !== normalTR(hedefHarf))
@@ -1834,7 +1847,6 @@ function tip1Goster(kelime, eksikIdxler, secenekSayisi) {
             koyunCard.className = 'koyun-card';
           }, 600);
           if (yanlisSayac1 >= 2) {
-            // 2. yanlış → doğru harfi yeşil göster, kullanıcı tıklasın
             setTimeout(() => {
               harfButonSatir.querySelectorAll('.harf-btn').forEach(b => {
                 if (normalTR(b.textContent) === normalTR(hedefHarf)) {
@@ -1861,7 +1873,7 @@ function tip2Goster(kelime, eksikIdxler) {
   harfButonSatir.innerHTML = '';
 
   const doldu      = new Array(eksikIdxler.length).fill(false);
-  const yanlisSay2 = new Array(eksikIdxler.length).fill(0); // her boşluk için hak
+  const yanlisSay2 = {};  // boşluk sira → yanlış sayısı
   let secilen      = null;
 
   function kutuCiz() {
@@ -1878,15 +1890,15 @@ function tip2Goster(kelime, eksikIdxler) {
           kutu.textContent = '_';
           kutu.classList.add('harf-kutu--bos', 'harf-kutu--drop');
           kutu.dataset.eksikSira = eksikSira;
-          kutu.dataset.hedef     = normalTR(kelime[i]);
+          kutu.dataset.hedef = normalTR(kelime[i]);
+          // Boşluğa tıklama → seçili harfi yerleştir
           kutu.addEventListener('click', () => {
             if (!secilen || koyunKilitli) return;
             const gelen    = normalTR(secilen.dataset.harf);
             const beklenen = kutu.dataset.hedef;
             const sira     = parseInt(kutu.dataset.eksikSira);
             if (gelen === beklenen) {
-              // ✅ Doğru
-              doldu[sira] = true;
+              doldu[parseInt(kutu.dataset.eksikSira)] = true;
               secilen.style.visibility = 'hidden';
               secilen.classList.remove('harf-btn--secili');
               secilen = null;
@@ -1899,21 +1911,21 @@ function tip2Goster(kelime, eksikIdxler) {
               }
             } else {
               // ❌ Yanlış
-              yanlisSay2[sira]++;
+              yanlisSay2[sira] = (yanlisSay2[sira] || 0) + 1;
               secilen.classList.add('harf-btn--yanlis');
               secilen.classList.remove('harf-btn--secili');
               koyunCard.className = 'koyun-card wrong-flash';
               const eski = secilen;
+              const beklenenIpucu = beklenen;
               secilen = null;
               setTimeout(() => {
                 eski.classList.remove('harf-btn--yanlis');
                 koyunCard.className = 'koyun-card';
               }, 600);
               if (yanlisSay2[sira] >= 2) {
-                // 2. yanlış → doğru butonu yeşil göster
                 setTimeout(() => {
                   harfButonSatir.querySelectorAll('.harf-btn').forEach(b => {
-                    if (normalTR(b.dataset.harf) === beklenen && b.style.visibility !== 'hidden') {
+                    if (normalTR(b.dataset.harf) === beklenenIpucu && b.style.visibility !== 'hidden') {
                       b.classList.add('harf-btn--ipucu');
                     }
                   });
@@ -1931,6 +1943,7 @@ function tip2Goster(kelime, eksikIdxler) {
 
   kutuCiz();
 
+  // Harf butonları — tıklayınca seçilir, sonra boşluğa tıkla
   const karisik = koyunKaristir(eksikIdxler.map(i => kelime[i]));
   karisik.forEach(harf => {
     const btn = document.createElement('button');
@@ -1939,9 +1952,10 @@ function tip2Goster(kelime, eksikIdxler) {
     btn.dataset.harf = normalTR(harf);
     btn.addEventListener('click', () => {
       if (koyunKilitli || btn.style.visibility === 'hidden') return;
+      // Önceki seçimi kaldır
       harfButonSatir.querySelectorAll('.harf-btn--secili')
         .forEach(b => b.classList.remove('harf-btn--secili'));
-      if (secilen === btn) { secilen = null; return; }
+      if (secilen === btn) { secilen = null; return; } // toggle off
       secilen = btn;
       btn.classList.add('harf-btn--secili');
     });
@@ -1956,9 +1970,10 @@ function tip3Goster(kelime) {
   harfKutuSatir.innerHTML = '';
   harfButonSatir.innerHTML = '';
 
+  // İlk harf sabit, geri kalanlar karışık sırada seçilecek
   const hedefSira  = [];
   let siradakiIdx  = 1;
-  let yanlisSayac3 = 0; // aktif harf için yanlış hak sayacı
+  let yanlisSayac3 = 0;
 
   function kutuCiz() {
     harfKutuSatir.innerHTML = '';
@@ -1979,7 +1994,7 @@ function tip3Goster(kelime) {
 
   function butonCiz() {
     harfButonSatir.innerHTML = '';
-    yanlisSayac3 = 0; // yeni harf → sayacı sıfırla
+    // Kalan harfler (doldurulanlar hariç)
     const kalanlar = [];
     for (let i = 1; i < kelime.length; i++) {
       if (!hedefSira[i]) kalanlar.push({ harf: kelime[i], idx: i });
@@ -1994,10 +2009,12 @@ function tip3Goster(kelime) {
         if (koyunKilitli) return;
         if (idx === siradakiIdx) {
           // ✅ Doğru sıra
+          yanlisSayac3 = 0;
           hedefSira[idx] = true;
           siradakiIdx++;
           kutuCiz();
           if (siradakiIdx >= kelime.length) {
+            // Tamamlandı
             sureyiDurdur();
             koyunKilitli = true;
             harfButonSatir.innerHTML = '';
@@ -2015,7 +2032,6 @@ function tip3Goster(kelime) {
             koyunCard.className = 'koyun-card';
           }, 600);
           if (yanlisSayac3 >= 2) {
-            // 2. yanlış → doğru sıradaki harfi yeşil göster
             setTimeout(() => {
               harfButonSatir.querySelectorAll('.harf-btn').forEach(b => {
                 if (parseInt(b.dataset.idx) === siradakiIdx) {
