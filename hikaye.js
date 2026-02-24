@@ -335,7 +335,6 @@ let hk = {
 // EKRAN
 // ═══════════════════════════════════════════════════════════════
 let hkEkran = null;
-let hkSecimEkran = null;
 
 function hkEkranOlustur() {
   if (hkEkran) return;
@@ -386,10 +385,6 @@ function hkEkranOlustur() {
 // AÇMA / KAPAMA
 // ═══════════════════════════════════════════════════════════════
 function hkAc(hikayeIdx) {
-  hkSecimAc();
-}
-
-function hkAcHikaye(hikayeIdx) {
   hkEkranOlustur();
   hk.hikayeIdx = hikayeIdx || 0;
   hk.cumleIdx  = 0;
@@ -403,17 +398,18 @@ function hkAcHikaye(hikayeIdx) {
 function hkKapat() {
   if (hkEkran) hkEkran.style.display = 'none';
   hk.aktif = false;
+  if (typeof menuGoster === 'function') menuGoster();
+  else { const ms = document.getElementById('menuScreen'); if (ms) ms.style.display = 'flex'; }
   if (typeof totalScore !== 'undefined') totalScore += hk.skor;
   const mst = document.getElementById('menuTotalScore');
   if (mst && typeof totalScore !== 'undefined') mst.textContent = totalScore;
-  hkSecimAc();
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CÜMLE GÖSTER — kelime kelime göz takibi vurgulama
+// CÜMLE GÖSTER — kelime kelime göz takibi
 // ═══════════════════════════════════════════════════════════════
 function hkCumleGoster() {
-  const hikaye = HIKAYE_DATA[hk.hikayeIdx];
+  var hikaye = HIKAYE_DATA[hk.hikayeIdx];
 
   // blankWord olan cumleler atlaniyor
   while (hk.cumleIdx < hikaye.cumleler.length && hikaye.cumleler[hk.cumleIdx].blankWord) {
@@ -421,8 +417,8 @@ function hkCumleGoster() {
   }
   if (hk.cumleIdx >= hikaye.cumleler.length) { hkBitti(); return; }
 
-  const cumle  = hikaye.cumleler[hk.cumleIdx];
-  const toplam = hikaye.cumleler.length;
+  var cumle  = hikaye.cumleler[hk.cumleIdx];
+  var toplam = hikaye.cumleler.length;
 
   document.getElementById('hkBaslik').textContent = '📖 ' + hikaye.baslik;
   document.getElementById('hkProgressBar').style.width = Math.round((hk.cumleIdx / toplam) * 100) + '%';
@@ -430,61 +426,40 @@ function hkCumleGoster() {
   document.getElementById('hkSkorBadge').textContent = '⭐ ' + hk.skor;
   document.getElementById('hkGeriBildirim').textContent = '';
 
-  const secDiv = document.getElementById('hkSecenekler');
+  var secDiv = document.getElementById('hkSecenekler');
   secDiv.style.display = 'none';
   secDiv.innerHTML = '';
 
-  const kart   = document.getElementById('hkCumleKart');
-  const textEl = document.getElementById('hkCumleText');
+  var kart   = document.getElementById('hkCumleKart');
+  var textEl = document.getElementById('hkCumleText');
 
   kart.classList.remove('koyun-card--soru');
   hk.bekliyor = false;
   document.getElementById('hkIleriBtn').style.display = 'none';
 
-  // Kelime kelime vurgulama — 1176ms/kelime
-  const kelimeler = cumle.text.split(' ');
-  const KELIME_SURESI = 1176;
+  var kelimeler = cumle.text.split(' ');
+  var SURE = 1176;
 
-  textEl.innerHTML = kelimeler
-    .map(function(k, i) { return '<span id="hkKelime_' + i + '">' + k + '</span>'; })
-    .join(' ');
+  var spanlar = kelimeler.map(function(k, i) {
+    return '<span id="hkK' + i + '">' + k + '</span>';
+  });
+  textEl.innerHTML = spanlar.join(' ');
 
   kelimeler.forEach(function(_, i) {
     setTimeout(function() {
       if (i > 0) {
-        var onceki = document.getElementById('hkKelime_' + (i - 1));
-        if (onceki) {
-          onceki.style.color = '';
-          onceki.style.fontWeight = '';
-          onceki.style.background = '';
-          onceki.style.outline = '';
-          onceki.style.borderRadius = '';
-          onceki.style.padding = '';
-        }
+        var p = document.getElementById('hkK' + (i - 1));
+        if (p) { p.style.color=''; p.style.fontWeight=''; p.style.background=''; p.style.outline=''; p.style.borderRadius=''; p.style.padding=''; }
       }
-      var el = document.getElementById('hkKelime_' + i);
-      if (el) {
-        el.style.color = '#e65100';
-        el.style.fontWeight = '900';
-        el.style.background = '#fff';
-        el.style.outline = '2.5px solid #f9a825';
-        el.style.borderRadius = '8px';
-        el.style.padding = '1px 6px';
-      }
+      var el = document.getElementById('hkK' + i);
+      if (el) { el.style.color='#e65100'; el.style.fontWeight='900'; el.style.background='#fff'; el.style.outline='2.5px solid #f9a825'; el.style.borderRadius='8px'; el.style.padding='1px 6px'; }
       if (i === kelimeler.length - 1) {
         setTimeout(function() {
-          if (el) {
-            el.style.color = '';
-            el.style.fontWeight = '';
-            el.style.background = '';
-            el.style.outline = '';
-            el.style.borderRadius = '';
-            el.style.padding = '';
-          }
+          if (el) { el.style.color=''; el.style.fontWeight=''; el.style.background=''; el.style.outline=''; el.style.borderRadius=''; el.style.padding=''; }
           document.getElementById('hkIleriBtn').style.display = 'block';
-        }, KELIME_SURESI);
+        }, SURE);
       }
-    }, i * KELIME_SURESI);
+    }, i * SURE);
   });
 }
 
@@ -651,7 +626,7 @@ function hkBitisEkrani() {
   ileri.style.display = 'block';
 
   if (sonHikaye) {
-    ileri.textContent = '▶ Hikaye Sec';
+    ileri.textContent = '▶ Menüye Dön';
     ileri.onclick = hkKapat;
   } else {
     ileri.textContent = '▶ Sonraki Hikaye';
@@ -668,85 +643,6 @@ function hkBitisEkrani() {
       hkCumleGoster();
     };
   }
-}
-
-
-// ═══════════════════════════════════════════════════════════════
-// HİKAYE SEÇİM EKRANI
-// ═══════════════════════════════════════════════════════════════
-function hkSecimEkraniOlustur() {
-  if (hkSecimEkran) return;
-
-  hkSecimEkran = document.createElement('div');
-  hkSecimEkran.id = 'hikayeSecimEkran';
-  hkSecimEkran.style.cssText = 'display:none;position:fixed;inset:0;z-index:500;overflow-y:auto;flex-direction:column;align-items:center;padding:20px 0 40px;';
-
-  var wrap = document.createElement('div');
-  wrap.className = 'koyun-screen';
-  wrap.style.gap = '18px';
-
-  var geriBtn = document.createElement('button');
-  geriBtn.className = 'btn-back';
-  geriBtn.style.alignSelf = 'flex-start';
-  geriBtn.textContent = '← Menü';
-  geriBtn.addEventListener('click', function() {
-    hkSecimEkran.style.display = 'none';
-    if (typeof menuGoster === 'function') menuGoster();
-    else { var ms = document.getElementById('menuScreen'); if (ms) ms.style.display = 'flex'; }
-  });
-  wrap.appendChild(geriBtn);
-
-  var hdr = document.createElement('div');
-  hdr.className = 'koyun-header';
-  var hdrL = document.createElement('div');
-  var ttl = document.createElement('h2');
-  ttl.className = 'koyun-title';
-  ttl.textContent = 'Minik Okur';
-  var stl = document.createElement('p');
-  stl.className = 'subtitle';
-  stl.textContent = 'Hikaye seç';
-  hdrL.appendChild(ttl);
-  hdrL.appendChild(stl);
-  var bdg = document.createElement('div');
-  bdg.className = 'koyun-score-badge';
-  bdg.textContent = HIKAYE_DATA.length + ' hikaye';
-  hdr.appendChild(hdrL);
-  hdr.appendChild(bdg);
-  wrap.appendChild(hdr);
-
-  var serit = document.createElement('div');
-  serit.style.cssText = 'display:flex;flex-direction:row;gap:12px;overflow-x:auto;padding:10px 4px 16px;width:100%;-webkit-overflow-scrolling:touch;';
-
-  HIKAYE_DATA.forEach(function(h, i) {
-    var k = document.createElement('div');
-    k.style.cssText = 'flex:0 0 auto;width:130px;background:#fff;border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,0.13);border:2.5px solid #f9a825;transition:transform 0.15s,box-shadow 0.15s;font-family:Nunito,sans-serif;';
-    var n = document.createElement('div');
-    n.style.cssText = 'font-size:1.6rem;font-weight:900;color:#f9a825;margin-bottom:4px;';
-    n.textContent = i + 1;
-    var b = document.createElement('div');
-    b.style.cssText = 'font-size:0.72rem;font-weight:700;color:#1a2744;line-height:1.3;';
-    b.textContent = h.baslik;
-    k.appendChild(n);
-    k.appendChild(b);
-    k.addEventListener('mouseenter', function() { k.style.transform='scale(1.06)'; k.style.boxShadow='0 6px 18px rgba(249,168,37,0.35)'; });
-    k.addEventListener('mouseleave', function() { k.style.transform=''; k.style.boxShadow='0 3px 10px rgba(0,0,0,0.13)'; });
-    k.addEventListener('click', function() { hkSecimEkran.style.display='none'; hkAcHikaye(i); });
-    serit.appendChild(k);
-  });
-  wrap.appendChild(serit);
-
-  var tip = document.createElement('p');
-  tip.style.cssText = 'color:rgba(255,255,255,0.6);font-size:0.8rem;font-family:Nunito,sans-serif;margin-top:-6px;';
-  tip.textContent = 'Bir hikayeye dokun';
-  wrap.appendChild(tip);
-
-  hkSecimEkran.appendChild(wrap);
-  document.body.appendChild(hkSecimEkran);
-}
-
-function hkSecimAc() {
-  hkSecimEkraniOlustur();
-  hkSecimEkran.style.display = 'flex';
 }
 
 // ═══════════════════════════════════════════════════════════════
