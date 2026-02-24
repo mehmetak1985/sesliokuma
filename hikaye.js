@@ -334,7 +334,99 @@ let hk = {
 // ═══════════════════════════════════════════════════════════════
 // EKRAN
 // ═══════════════════════════════════════════════════════════════
-let hkEkran = null;
+let hkEkran   = null;
+let hkSecimEkran = null;
+
+// ═══════════════════════════════════════════════════════════════
+// HİKAYE SEÇİM EKRANI — yatay kaydırmalı şerit
+// ═══════════════════════════════════════════════════════════════
+function hkSecimEkraniOlustur() {
+  if (hkSecimEkran) return;
+
+  hkSecimEkran = document.createElement('div');
+  hkSecimEkran.id = 'hikayeSecimEkran';
+  hkSecimEkran.style.cssText = 'display:none;position:fixed;inset:0;z-index:500;overflow-y:auto;flex-direction:column;align-items:center;padding:20px 0 40px;';
+
+  const kartlarHTML = HIKAYE_DATA.map((h, i) => `
+    <div class="hk-secim-kart" data-idx="${i}" style="
+      flex:0 0 auto;
+      width:130px;
+      background:#fff;
+      border-radius:16px;
+      padding:14px 10px;
+      text-align:center;
+      cursor:pointer;
+      box-shadow:0 3px 10px rgba(0,0,0,0.13);
+      border:2.5px solid #f9a825;
+      transition:transform 0.15s,box-shadow 0.15s;
+      font-family:'Nunito',sans-serif;
+    ">
+      <div style="font-size:1.6rem;font-weight:900;color:#f9a825;margin-bottom:4px;">${i+1}</div>
+      <div style="font-size:0.72rem;font-weight:700;color:#1a2744;line-height:1.3;">${h.baslik}</div>
+    </div>
+  `).join('');
+
+  hkSecimEkran.innerHTML = `
+    <div class="koyun-screen" style="gap:18px;">
+      <button id="hkSecimGeriBtn" class="btn-back" style="align-self:flex-start;">← Menü</button>
+
+      <div class="koyun-header">
+        <div>
+          <h2 class="koyun-title">Minik <span class="menu-title-book">📖</span> Okur</h2>
+          <p class="subtitle">Hikaye seç</p>
+        </div>
+        <div class="koyun-score-badge">📚 ${HIKAYE_DATA.length} hikaye</div>
+      </div>
+
+      <div style="
+        display:flex;
+        flex-direction:row;
+        gap:12px;
+        overflow-x:auto;
+        padding:10px 4px 16px;
+        width:100%;
+        scrollbar-width:thin;
+        scrollbar-color:#f9a825 rgba(255,255,255,0.2);
+        -webkit-overflow-scrolling:touch;
+      " id="hkSecimSerit">
+        ${kartlarHTML}
+      </div>
+
+      <p style="color:rgba(255,255,255,0.6);font-size:0.8rem;font-family:'Nunito',sans-serif;margin-top:-6px;">
+        👆 Bir hikayeye dokun
+      </p>
+    </div>
+  `;
+
+  document.body.appendChild(hkSecimEkran);
+
+  document.getElementById('hkSecimGeriBtn').addEventListener('click', () => {
+    hkSecimEkran.style.display = 'none';
+    if (typeof menuGoster === 'function') menuGoster();
+    else { const ms = document.getElementById('menuScreen'); if (ms) ms.style.display = 'flex'; }
+  });
+
+  hkSecimEkran.querySelectorAll('.hk-secim-kart').forEach(kart => {
+    kart.addEventListener('mouseenter', () => {
+      kart.style.transform = 'scale(1.06)';
+      kart.style.boxShadow = '0 6px 18px rgba(249,168,37,0.35)';
+    });
+    kart.addEventListener('mouseleave', () => {
+      kart.style.transform = '';
+      kart.style.boxShadow = '0 3px 10px rgba(0,0,0,0.13)';
+    });
+    kart.addEventListener('click', () => {
+      const idx = parseInt(kart.dataset.idx);
+      hkSecimEkran.style.display = 'none';
+      hkAcHikaye(idx);
+    });
+  });
+}
+
+function hkSecimAc() {
+  hkSecimEkraniOlustur();
+  hkSecimEkran.style.display = 'flex';
+}
 
 function hkEkranOlustur() {
   if (hkEkran) return;
@@ -385,6 +477,11 @@ function hkEkranOlustur() {
 // AÇMA / KAPAMA
 // ═══════════════════════════════════════════════════════════════
 function hkAc(hikayeIdx) {
+  // Seçim ekranını aç (hikayeIdx parametre olsa da artık seçim ekranı önce gelir)
+  hkSecimAc();
+}
+
+function hkAcHikaye(hikayeIdx) {
   hkEkranOlustur();
   hk.hikayeIdx = hikayeIdx || 0;
   hk.cumleIdx  = 0;
@@ -398,11 +495,11 @@ function hkAc(hikayeIdx) {
 function hkKapat() {
   if (hkEkran) hkEkran.style.display = 'none';
   hk.aktif = false;
-  if (typeof menuGoster === 'function') menuGoster();
-  else { const ms = document.getElementById('menuScreen'); if (ms) ms.style.display = 'flex'; }
   if (typeof totalScore !== 'undefined') totalScore += hk.skor;
   const mst = document.getElementById('menuTotalScore');
   if (mst && typeof totalScore !== 'undefined') mst.textContent = totalScore;
+  // Seçim ekranına dön
+  hkSecimAc();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -659,7 +756,7 @@ function hkBitisEkrani() {
 
   if (sonHikaye) {
     ileri.textContent = '▶ Menüye Dön';
-    ileri.onclick = hkKapat;
+    ileri.onclick = () => { if (hkEkran) hkEkran.style.display = "none"; hk.aktif = false; if (typeof totalScore !== "undefined") totalScore += hk.skor; const mst = document.getElementById("menuTotalScore"); if (mst && typeof totalScore !== "undefined") mst.textContent = totalScore; hkSecimAc(); };
   } else {
     ileri.textContent = '▶ Sonraki Hikaye';
     ileri.onclick = () => {
