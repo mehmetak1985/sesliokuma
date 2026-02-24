@@ -11,9 +11,9 @@ const HIKAYE_DATA = [
     id: 1, baslik: 'Mina ve Oyuncak Arabası',
     cumleler: [
       { text: 'Mina kırmızı oyuncak arabasını aldı.', blankWord: null },
-      { text: 'Arabayı yere koydu ve hafifçe itti.', blankWord: null },
+      { text: 'Arabayı yere koydu ve hafifçe itti.', blankWord: 'Arabayı', options: ['Arabayı','Kalemi','Defteri'], correctIndex: 0 },
       { text: 'Araba hızla ilerledi ve masanın ayağına çarptı.', blankWord: null },
-      { text: 'Mina önce şaşırdı, sonra gülmeye başladı.', blankWord: null },
+      { text: 'Mina önce şaşırdı, sonra gülmeye başladı.', blankWord: 'gülmeye', options: ['gülmeye','ağlamaya','kaçmaya'], correctIndex: 0 },
       { text: 'Arabasını dikkatli sürmesi gerektiğini anladı.', blankWord: null }
     ],
     sorular: [
@@ -26,9 +26,9 @@ const HIKAYE_DATA = [
     id: 2, baslik: 'Baran ve Yapboz',
     cumleler: [
       { text: 'Baran yapboz parçalarını masaya yaydı.', blankWord: null },
-      { text: 'Önce köşe parçalarını buldu.', blankWord: null },
+      { text: 'Önce köşe parçalarını buldu.', blankWord: 'köşe', options: ['köşe','renkli','küçük'], correctIndex: 0 },
       { text: 'Parçaları birleştirirken sabırlı davrandı.', blankWord: null },
-      { text: 'Sonunda güzel bir hayvan resmi ortaya çıktı.', blankWord: null },
+      { text: 'Sonunda güzel bir hayvan resmi ortaya çıktı.', blankWord: 'hayvan', options: ['hayvan','orman','şehir'], correctIndex: 0 },
       { text: 'Baran başardığı için gurur duydu.', blankWord: null }
     ],
     sorular: [
@@ -41,9 +41,9 @@ const HIKAYE_DATA = [
     id: 3, baslik: 'Henna ve Kediler',
     cumleler: [
       { text: 'Henna bahçeye çıktığında iki küçük kedi çimenlerde oynuyordu.', blankWord: null },
-      { text: 'Kediler bir kelebeği kovalamaya başladı.', blankWord: null },
+      { text: 'Kediler bir kelebeği kovalamaya başladı.', blankWord: 'kelebeği', options: ['kelebeği','topu','yaprağı'], correctIndex: 0 },
       { text: 'Henna da onların peşinden koştu ama dikkatli yürüdü.', blankWord: null },
-      { text: 'Kediler yorulunca gölgede dinlendiler.', blankWord: null },
+      { text: 'Kediler yorulunca gölgede dinlendiler.', blankWord: 'gölgede', options: ['gölgede','yolda','evde'], correctIndex: 0 },
       { text: 'Henna onları severken mutlu hissetti.', blankWord: null }
     ],
     sorular: [
@@ -56,9 +56,9 @@ const HIKAYE_DATA = [
     id: 4, baslik: 'Mustafa ve Yeni Ayakkabıları',
     cumleler: [
       { text: 'Mustafa yeni ayakkabılarını giydi.', blankWord: null },
-      { text: 'Çimlerde top oynamaya başladı.', blankWord: null },
+      { text: 'Çimlerde top oynamaya başladı.', blankWord: 'top', options: ['top','ip','kitap'], correctIndex: 0 },
       { text: 'Koşarken ayakkabılarının çok rahat olduğunu fark etti.', blankWord: null },
-      { text: 'Ama çimenler ıslaktı ve biraz kaydı.', blankWord: null },
+      { text: 'Ama çimenler ıslaktı ve biraz kaydı.', blankWord: 'ıslaktı', options: ['ıslaktı','kuruydu','temizdi'], correctIndex: 0 },
       { text: 'Mustafa dikkatli olması gerektiğini öğrendi.', blankWord: null }
     ],
     sorular: [
@@ -71,9 +71,9 @@ const HIKAYE_DATA = [
     id: 5, baslik: 'Asya ve Yağmur',
     cumleler: [
       { text: 'Asya camdan dışarı baktı.', blankWord: null },
-      { text: 'Yağmur yağıyordu.', blankWord: null },
+      { text: 'Yağmur yağıyordu.', blankWord: 'Yağmur', options: ['Yağmur','Güneş','Rüzgar'], correctIndex: 0 },
       { text: 'Şemsiyesini alıp annesiyle dışarı çıktı.', blankWord: null },
-      { text: 'Ayakkabıları ıslandı.', blankWord: null },
+      { text: 'Ayakkabıları ıslandı.', blankWord: 'ıslandı', options: ['ıslandı','kurudu','yandı'], correctIndex: 0 },
       { text: 'Asya eve dönünce kuru çorap giydi.', blankWord: null }
     ],
     sorular: [
@@ -86,9 +86,9 @@ const HIKAYE_DATA = [
     id: 6, baslik: 'Yusuf ve Kitap',
     cumleler: [
       { text: 'Yusuf kitaplığından bir hikaye kitabı seçti.', blankWord: null },
-      { text: 'Kitabı sessizce okumaya başladı.', blankWord: null },
+      { text: 'Kitabı sessizce okumaya başladı.', blankWord: 'sessizce', options: ['sessizce','hızlıca','yüksek sesle'], correctIndex: 0 },
       { text: 'Anlamadığı bir kelimeyi annesine sordu.', blankWord: null },
-      { text: 'Yeni kelimenin anlamını öğrenince hikayeyi daha iyi anladı.', blankWord: null }
+      { text: 'Yeni kelimenin anlamını öğrenince hikayeyi daha iyi anladı.', blankWord: 'anladı', options: ['anladı','unuttu','kapattı'], correctIndex: 0 }
     ],
     sorular: [
       { soru: 'Yusuf kitabı nasıl okudu?', secenekler: ['Bağırarak','Sessizce','Hızlıca'], cevapIndex: 1 },
@@ -100,9 +100,9 @@ const HIKAYE_DATA = [
     id: 7, baslik: 'Zeynep ve Çiçekler',
     cumleler: [
       { text: 'Zeynep bahçedeki çiçekleri suladı.', blankWord: null },
-      { text: 'Bazı çiçeklerin yaprakları solmuştu.', blankWord: null },
+      { text: 'Bazı çiçeklerin yaprakları solmuştu.', blankWord: 'solmuştu', options: ['solmuştu','açmıştı','kopmuştu'], correctIndex: 0 },
       { text: 'Daha fazla su verdikten sonra birkaç gün bekledi.', blankWord: null },
-      { text: 'Çiçekler yeniden canlandı.', blankWord: null },
+      { text: 'Çiçekler yeniden canlandı.', blankWord: 'canlandı', options: ['canlandı','kurudu','düştü'], correctIndex: 0 },
       { text: 'Zeynep sabırlı olmanın önemini öğrendi.', blankWord: null }
     ],
     sorular: [
@@ -115,9 +115,9 @@ const HIKAYE_DATA = [
     id: 8, baslik: 'Maysa ve Resim',
     cumleler: [
       { text: 'Maysa resim defterini açtı.', blankWord: null },
-      { text: 'Önce güneş çizdi, sonra bir ev yaptı.', blankWord: null },
+      { text: 'Önce güneş çizdi, sonra bir ev yaptı.', blankWord: 'güneş', options: ['güneş','ağaç','balık'], correctIndex: 0 },
       { text: 'Boyarken çizgilerin dışına taştı ama pes etmedi.', blankWord: null },
-      { text: 'Resmini tamamladığında çok güzel görünüyordu.', blankWord: null }
+      { text: 'Resmini tamamladığında çok güzel görünüyordu.', blankWord: 'güzel', options: ['güzel','karanlık','küçük'], correctIndex: 0 }
     ],
     sorular: [
       { soru: 'Maysa ilk önce ne çizdi?', secenekler: ['Ev','Güneş','Bulut'], cevapIndex: 1 },
@@ -129,9 +129,9 @@ const HIKAYE_DATA = [
     id: 9, baslik: 'Mehmet ve Uçurtma',
     cumleler: [
       { text: 'Mehmet uçurtmasını gökyüzüne bıraktı.', blankWord: null },
-      { text: 'Rüzgar hafif esiyordu.', blankWord: null },
+      { text: 'Rüzgar hafif esiyordu.', blankWord: 'Rüzgar', options: ['Rüzgar','Yağmur','Kar'], correctIndex: 0 },
       { text: 'Uçurtma bazen düşer gibi oldu ama Mehmet ipi sıkı tuttu.', blankWord: null },
-      { text: 'Bir süre sonra uçurtma daha yükseğe çıktı.', blankWord: null }
+      { text: 'Bir süre sonra uçurtma daha yükseğe çıktı.', blankWord: 'yükseğe', options: ['yükseğe','aşağıya','yana'], correctIndex: 0 }
     ],
     sorular: [
       { soru: 'Uçurtmanın uçması için ne esiyordu?', secenekler: ['Kar','Rüzgar','Duman'], cevapIndex: 1 },
@@ -143,9 +143,9 @@ const HIKAYE_DATA = [
     id: 10, baslik: 'Yağmur ve Kütüphane',
     cumleler: [
       { text: 'Yağmur kütüphaneye gitti.', blankWord: null },
-      { text: 'Sessiz olması gerektiğini biliyordu.', blankWord: null },
+      { text: 'Sessiz olması gerektiğini biliyordu.', blankWord: 'Sessiz', options: ['Sessiz','Hızlı','Mutlu'], correctIndex: 0 },
       { text: 'Kitabını dikkatle seçti ve yerine oturdu.', blankWord: null },
-      { text: 'Çevresindekileri rahatsız etmeden okudu.', blankWord: null }
+      { text: 'Çevresindekileri rahatsız etmeden okudu.', blankWord: 'okudu', options: ['okudu','koştu','uyudu'], correctIndex: 0 }
     ],
     sorular: [
       { soru: 'Yağmur nereye gitti?', secenekler: ['Parka','Markete','Kütüphaneye'], cevapIndex: 2 },
@@ -157,9 +157,9 @@ const HIKAYE_DATA = [
     id: 11, baslik: 'Çiçek ve Dostluk',
     cumleler: [
       { text: 'Çiçek parkta tek başına oturan bir çocuk gördü.', blankWord: null },
-      { text: 'Yanına gidip selam verdi.', blankWord: null },
+      { text: 'Yanına gidip selam verdi.', blankWord: 'selam', options: ['selam','taş','oyuncak'], correctIndex: 0 },
       { text: 'Birlikte salıncağa bindiler.', blankWord: null },
-      { text: 'O gün yeni bir arkadaş edindi.', blankWord: null }
+      { text: 'O gün yeni bir arkadaş edindi.', blankWord: 'arkadaş', options: ['arkadaş','kalem','çiçek'], correctIndex: 0 }
     ],
     sorular: [
       { soru: 'Çiçek çocukla birlikte neye bindi?', secenekler: ['Kaydırak','Araba','Salıncak'], cevapIndex: 2 },
@@ -171,9 +171,9 @@ const HIKAYE_DATA = [
     id: 12, baslik: 'Emir ve Kayıp Kalem',
     cumleler: [
       { text: 'Emir ödev yapmak için masaya oturdu.', blankWord: null },
-      { text: 'Kalemini bulamadı.', blankWord: null },
+      { text: 'Kalemini bulamadı.', blankWord: 'Kalemini', options: ['Kalemini','Defterini','Silgisini'], correctIndex: 0 },
       { text: 'Çantasını ve masasını aradı ama kalem yoktu.', blankWord: null },
-      { text: 'Çantasının küçük cebine baktı ve kalemini buldu.', blankWord: null },
+      { text: 'Çantasının küçük cebine baktı ve kalemini buldu.', blankWord: 'buldu', options: ['buldu','attı','kaybetti'], correctIndex: 0 },
       { text: 'Emir eşyalarını düzenli koyması gerektiğini anladı.', blankWord: null }
     ],
     sorular: [
@@ -186,9 +186,9 @@ const HIKAYE_DATA = [
     id: 13, baslik: 'Beyaz ve Paylaşmak',
     cumleler: [
       { text: 'Beyaz parkta bisküviyle oturuyordu.', blankWord: null },
-      { text: 'Yanındaki çocuk üzgün görünüyordu çünkü yiyeceği yoktu.', blankWord: null },
+      { text: 'Yanındaki çocuk üzgün görünüyordu çünkü yiyeceği yoktu.', blankWord: 'üzgün', options: ['üzgün','mutlu','hızlı'], correctIndex: 0 },
       { text: 'Beyaz bisküvisini ikiye böldü ve yarısını verdi.', blankWord: null },
-      { text: 'Çocuk gülümsedi.', blankWord: null },
+      { text: 'Çocuk gülümsedi.', blankWord: 'gülümsedi', options: ['gülümsedi','ağladı','kaçtı'], correctIndex: 0 },
       { text: 'Beyaz paylaşmanın insanı mutlu ettiğini fark etti.', blankWord: null }
     ],
     sorular: [
@@ -201,9 +201,9 @@ const HIKAYE_DATA = [
     id: 14, baslik: 'Kaan ve Zamanında Uyanmak',
     cumleler: [
       { text: 'Kaan sabah alarmı duydu ama kapattı.', blankWord: null },
-      { text: 'Biraz daha uyumak istedi.', blankWord: null },
+      { text: 'Biraz daha uyumak istedi.', blankWord: 'uyumak', options: ['uyumak','koşmak','yazmak'], correctIndex: 0 },
       { text: 'Uyandığında okula geç kaldığını fark etti.', blankWord: null },
-      { text: 'Aceleyle hazırlandı ama servisi kaçırdı.', blankWord: null },
+      { text: 'Aceleyle hazırlandı ama servisi kaçırdı.', blankWord: 'kaçırdı', options: ['kaçırdı','yakaladı','bekledi'], correctIndex: 0 },
       { text: 'Ertesi gün alarm çalınca hemen kalktı.', blankWord: null }
     ],
     sorular: [
@@ -216,9 +216,9 @@ const HIKAYE_DATA = [
     id: 15, baslik: 'Elvan ve Bitki',
     cumleler: [
       { text: 'Elvan küçük bir saksıya tohum ekti.', blankWord: null },
-      { text: 'Her gün düzenli olarak suladı.', blankWord: null },
+      { text: 'Her gün düzenli olarak suladı.', blankWord: 'suladı', options: ['suladı','kesti','attı'], correctIndex: 0 },
       { text: 'İlk gün hiçbir şey çıkmadı.', blankWord: null },
-      { text: 'Birkaç gün sonra küçük bir filiz gördü.', blankWord: null },
+      { text: 'Birkaç gün sonra küçük bir filiz gördü.', blankWord: 'filiz', options: ['filiz','taş','bulut'], correctIndex: 0 },
       { text: 'Sabırlı olmanın önemli olduğunu öğrendi.', blankWord: null }
     ],
     sorular: [
@@ -231,9 +231,9 @@ const HIKAYE_DATA = [
     id: 16, baslik: 'Berk ve Kırılan Bardak',
     cumleler: [
       { text: 'Berk mutfakta su almak istedi.', blankWord: null },
-      { text: 'Bardağı hızlıca aldı ve elinden düşürdü.', blankWord: null },
+      { text: 'Bardağı hızlıca aldı ve elinden düşürdü.', blankWord: 'düşürdü', options: ['düşürdü','tuttu','sakladı'], correctIndex: 0 },
       { text: 'Bardak kırıldı.', blankWord: null },
-      { text: 'Berk korktu ama annesine gerçeği söyledi.', blankWord: null },
+      { text: 'Berk korktu ama annesine gerçeği söyledi.', blankWord: 'gerçeği', options: ['gerçeği','yalanı','hikayeyi'], correctIndex: 0 },
       { text: 'Berk bir dahaki sefere yavaş davranmaya karar verdi.', blankWord: null }
     ],
     sorular: [
@@ -246,9 +246,9 @@ const HIKAYE_DATA = [
     id: 17, baslik: 'Defne ve Grup Çalışması',
     cumleler: [
       { text: 'Defne okulda grup çalışması yaptı.', blankWord: null },
-      { text: 'Herkes bir görev aldı.', blankWord: null },
+      { text: 'Herkes bir görev aldı.', blankWord: 'görev', options: ['görev','oyuncak','renk'], correctIndex: 0 },
       { text: 'Defne afişi boyadı.', blankWord: null },
-      { text: 'Birlikte çalışınca ödevleri daha güzel oldu.', blankWord: null },
+      { text: 'Birlikte çalışınca ödevleri daha güzel oldu.', blankWord: 'güzel', options: ['güzel','kötü','küçük'], correctIndex: 0 },
       { text: 'Öğretmenleri onları tebrik etti.', blankWord: null }
     ],
     sorular: [
@@ -261,9 +261,9 @@ const HIKAYE_DATA = [
     id: 18, baslik: 'Aras ve Cesaret',
     cumleler: [
       { text: 'Aras sınıfta şiir okumaktan çekiniyordu.', blankWord: null },
-      { text: 'Sırası geldiğinde kalbi hızlı attı.', blankWord: null },
+      { text: 'Sırası geldiğinde kalbi hızlı attı.', blankWord: 'kalbi', options: ['kalbi','ayağı','eli'], correctIndex: 0 },
       { text: 'Derin bir nefes aldı ve okumaya başladı.', blankWord: null },
-      { text: 'Şiiri bitirdiğinde alkış aldı.', blankWord: null },
+      { text: 'Şiiri bitirdiğinde alkış aldı.', blankWord: 'alkış', options: ['alkış','ceza','bağırış'], correctIndex: 0 },
       { text: 'Aras cesur davrandığı için gurur duydu.', blankWord: null }
     ],
     sorular: [
@@ -276,9 +276,9 @@ const HIKAYE_DATA = [
     id: 19, baslik: 'İlayda ve Doğru Karar',
     cumleler: [
       { text: 'İlayda parkta oynarken yerde bir cüzdan buldu.', blankWord: null },
-      { text: 'İçinde para ve kimlik vardı.', blankWord: null },
+      { text: 'İçinde para ve kimlik vardı.', blankWord: 'kimlik', options: ['kimlik','taş','oyuncak'], correctIndex: 0 },
       { text: 'Parayı almak istemedi.', blankWord: null },
-      { text: 'En yakın görevliye götürdü.', blankWord: null },
+      { text: 'En yakın görevliye götürdü.', blankWord: 'götürdü', options: ['götürdü','sakladı','attı'], correctIndex: 0 },
       { text: 'İlayda doğru olanı yaptığı için mutlu oldu.', blankWord: null }
     ],
     sorular: [
@@ -291,9 +291,9 @@ const HIKAYE_DATA = [
     id: 20, baslik: 'Onur ve Sabır',
     cumleler: [
       { text: 'Onur yeni bir model uçak yapmak istedi.', blankWord: null },
-      { text: 'Parçaları birleştirirken zorlandı.', blankWord: null },
+      { text: 'Parçaları birleştirirken zorlandı.', blankWord: 'zorlandı', options: ['zorlandı','koştu','uyudu'], correctIndex: 0 },
       { text: 'Birkaç kez hata yaptı.', blankWord: null },
-      { text: 'Sonunda uçağı tamamladı.', blankWord: null },
+      { text: 'Sonunda uçağı tamamladı.', blankWord: 'tamamladı', options: ['tamamladı','kırdı','bıraktı'], correctIndex: 0 },
       { text: 'Onur sabırlı olunca başarabildiğini anladı.', blankWord: null }
     ],
     sorular: [
@@ -306,9 +306,9 @@ const HIKAYE_DATA = [
     id: 21, baslik: 'Henna ve Asya',
     cumleler: [
       { text: 'Henna ve Asya sabah uyandı.', blankWord: null },
-      { text: 'Birlikte dışarı çıktılar.', blankWord: null },
+      { text: 'Birlikte dışarı çıktılar.', blankWord: 'dışarı', options: ['dışarı','içeri','okula'], correctIndex: 0 },
       { text: 'Kedilerini sevip bir süre izlediler.', blankWord: null },
-      { text: 'Akşam yemek yediler ve dişlerini fırçaladılar.', blankWord: null },
+      { text: 'Akşam yemek yediler ve dişlerini fırçaladılar.', blankWord: 'fırçaladılar', options: ['fırçaladılar','koştular','sakladılar'], correctIndex: 0 },
       { text: 'Gece olunca mutlu bir günün ardından uyudular.', blankWord: null }
     ],
     sorular: [
@@ -406,19 +406,19 @@ function hkKapat() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CÜMLE GÖSTER — kelime kelime göz takibi
+// CÜMLE GÖSTER — kelime kelime göz takibi vurgulama
 // ═══════════════════════════════════════════════════════════════
 function hkCumleGoster() {
-  var hikaye = HIKAYE_DATA[hk.hikayeIdx];
+  const hikaye = HIKAYE_DATA[hk.hikayeIdx];
 
-  // blankWord olan cumleler atlaniyor
+  // blankWord olan cümleleri tamamen atla, sıradakine geç
   while (hk.cumleIdx < hikaye.cumleler.length && hikaye.cumleler[hk.cumleIdx].blankWord) {
     hk.cumleIdx++;
   }
   if (hk.cumleIdx >= hikaye.cumleler.length) { hkBitti(); return; }
 
-  var cumle  = hikaye.cumleler[hk.cumleIdx];
-  var toplam = hikaye.cumleler.length;
+  const cumle  = hikaye.cumleler[hk.cumleIdx];
+  const toplam = hikaye.cumleler.length;
 
   document.getElementById('hkBaslik').textContent = '📖 ' + hikaye.baslik;
   document.getElementById('hkProgressBar').style.width = Math.round((hk.cumleIdx / toplam) * 100) + '%';
@@ -426,40 +426,72 @@ function hkCumleGoster() {
   document.getElementById('hkSkorBadge').textContent = '⭐ ' + hk.skor;
   document.getElementById('hkGeriBildirim').textContent = '';
 
-  var secDiv = document.getElementById('hkSecenekler');
+  const secDiv = document.getElementById('hkSecenekler');
   secDiv.style.display = 'none';
   secDiv.innerHTML = '';
 
-  var kart   = document.getElementById('hkCumleKart');
-  var textEl = document.getElementById('hkCumleText');
+  const kart   = document.getElementById('hkCumleKart');
+  const textEl = document.getElementById('hkCumleText');
 
   kart.classList.remove('koyun-card--soru');
   hk.bekliyor = false;
+
+  // İleri butonunu gizle — vurgulama bitince gösterilecek
   document.getElementById('hkIleriBtn').style.display = 'none';
 
-  var kelimeler = cumle.text.split(' ');
-  var SURE = 1176;
+  // Kelime kelime göz takibi vurgulama
+  const kelimeler = cumle.text.split(' ');
+  // %50 yavaşlatıldı: 600ms/kelime
+  const KELIME_SURESI = 1176;
 
-  var spanlar = kelimeler.map(function(k, i) {
-    return '<span id="hkK' + i + '">' + k + '</span>';
-  });
-  textEl.innerHTML = spanlar.join(' ');
+  // Her kelimeyi <span> içine al
+  textEl.innerHTML = kelimeler
+    .map((k, i) => `<span id="hkKelime_${i}">${k}</span>`)
+    .join(' ');
 
-  kelimeler.forEach(function(_, i) {
-    setTimeout(function() {
+  // Sırayla vurgula
+  kelimeler.forEach((_, i) => {
+    setTimeout(() => {
+      // Önceki kelimeyi sıfırla
       if (i > 0) {
-        var p = document.getElementById('hkK' + (i - 1));
-        if (p) { p.style.color=''; p.style.fontWeight=''; p.style.background=''; p.style.outline=''; p.style.borderRadius=''; p.style.padding=''; }
+        const onceki = document.getElementById('hkKelime_' + (i - 1));
+        if (onceki) {
+          onceki.style.color        = '';
+          onceki.style.background   = '';
+          onceki.style.borderRadius = '';
+          onceki.style.padding      = '';
+          onceki.style.transition   = '';
+          onceki.style.border       = '';
+          onceki.style.fontWeight   = '';
+        }
       }
-      var el = document.getElementById('hkK' + i);
-      if (el) { el.style.color='#e65100'; el.style.fontWeight='900'; el.style.background='#fff'; el.style.outline='2.5px solid #f9a825'; el.style.borderRadius='8px'; el.style.padding='1px 6px'; }
+      // Mevcut kelimeyi vurgula
+      const el = document.getElementById('hkKelime_' + i);
+      if (el) {
+        el.style.color        = '#e65100';
+        el.style.fontWeight   = '900';
+        el.style.background   = '#fff';
+        el.style.border       = '2.5px solid #f9a825';
+        el.style.borderRadius = '8px';
+        el.style.padding      = '1px 6px';
+        el.style.transition   = 'all 0.08s';
+      }
+
+      // Son kelimeyse: vurguyu kaldır ve İleri'yi göster
       if (i === kelimeler.length - 1) {
-        setTimeout(function() {
-          if (el) { el.style.color=''; el.style.fontWeight=''; el.style.background=''; el.style.outline=''; el.style.borderRadius=''; el.style.padding=''; }
+        setTimeout(() => {
+          if (el) {
+            el.style.color        = '';
+            el.style.fontWeight   = '';
+            el.style.background   = '';
+            el.style.border       = '';
+            el.style.borderRadius = '';
+            el.style.padding      = '';
+          }
           document.getElementById('hkIleriBtn').style.display = 'block';
-        }, SURE);
+        }, KELIME_SURESI);
       }
-    }, i * SURE);
+    }, i * KELIME_SURESI);
   });
 }
 

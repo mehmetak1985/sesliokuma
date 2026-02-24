@@ -1,803 +1,399 @@
-"use strict";
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minik Okur</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// ═══════════════════════════════════════════════════════════════
-// HİKAYE MODU — v2
-// blankWord: null  → sadece oku, İleri ile geç
-// blankWord: 'kelime' → boşluk doldur, doğru cevap verilmeden geçilmez
-// ═══════════════════════════════════════════════════════════════
+<div class="stars" id="stars"></div>
 
-const HIKAYE_DATA = [
-  {
-    id: 1, baslik: 'Mina ve Oyuncak Arabası',
-    cumleler: [
-      { text: 'Mina kırmızı oyuncak arabasını aldı.', blankWord: null },
-      { text: 'Arabayı yere koydu ve hafifçe itti.', blankWord: null },
-      { text: 'Araba hızla ilerledi ve masanın ayağına çarptı.', blankWord: null },
-      { text: 'Mina önce şaşırdı, sonra gülmeye başladı.', blankWord: null },
-      { text: 'Arabasını dikkatli sürmesi gerektiğini anladı.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Mina ne ile oynuyordu?', secenekler: ['Bebek','Araba','Top'], cevapIndex: 1 },
-      { soru: 'Araba nereye çarptı?', secenekler: ['Kapıya','Sandalyeye','Masaya'], cevapIndex: 2 }
-    ],
-    bitisMesaji: 'Tebrikler! Dikkatli sürüş puanın: 100'
-  },
-  {
-    id: 2, baslik: 'Baran ve Yapboz',
-    cumleler: [
-      { text: 'Baran yapboz parçalarını masaya yaydı.', blankWord: null },
-      { text: 'Önce köşe parçalarını buldu.', blankWord: null },
-      { text: 'Parçaları birleştirirken sabırlı davrandı.', blankWord: null },
-      { text: 'Sonunda güzel bir hayvan resmi ortaya çıktı.', blankWord: null },
-      { text: 'Baran başardığı için gurur duydu.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Baran masaya ne yaydı?', secenekler: ['Kitaplar','Parçalar','Boyalar'], cevapIndex: 1 },
-      { soru: 'Yapbozdan ne resmi çıktı?', secenekler: ['Hayvan','Ev','Araba'], cevapIndex: 0 }
-    ],
-    bitisMesaji: 'Harikasın! Sabırlı olduğun için kazandın: 100 Puan'
-  },
-  {
-    id: 3, baslik: 'Henna ve Kediler',
-    cumleler: [
-      { text: 'Henna bahçeye çıktığında iki küçük kedi çimenlerde oynuyordu.', blankWord: null },
-      { text: 'Kediler bir kelebeği kovalamaya başladı.', blankWord: null },
-      { text: 'Henna da onların peşinden koştu ama dikkatli yürüdü.', blankWord: null },
-      { text: 'Kediler yorulunca gölgede dinlendiler.', blankWord: null },
-      { text: 'Henna onları severken mutlu hissetti.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Kediler neyi kovaladı?', secenekler: ['Kuşu','Kelebeği','Fareyi'], cevapIndex: 1 },
-      { soru: 'Kediler nerede dinlendi?', secenekler: ['Gölgede','Çatıda','Ağaçta'], cevapIndex: 0 }
-    ],
-    bitisMesaji: 'Mükemmel! Hayvan sevgisi puanın: 100'
-  },
-  {
-    id: 4, baslik: 'Mustafa ve Yeni Ayakkabıları',
-    cumleler: [
-      { text: 'Mustafa yeni ayakkabılarını giydi.', blankWord: null },
-      { text: 'Çimlerde top oynamaya başladı.', blankWord: null },
-      { text: 'Koşarken ayakkabılarının çok rahat olduğunu fark etti.', blankWord: null },
-      { text: 'Ama çimenler ıslaktı ve biraz kaydı.', blankWord: null },
-      { text: 'Mustafa dikkatli olması gerektiğini öğrendi.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Mustafa ne oynamaya başladı?', secenekler: ['Saklambaç','Top','Koşu'], cevapIndex: 1 },
-      { soru: 'Çimenler nasıldı?', secenekler: ['Kuru','Sarı','Islak'], cevapIndex: 2 }
-    ],
-    bitisMesaji: 'Süper! Dikkat puanın: 100'
-  },
-  {
-    id: 5, baslik: 'Asya ve Yağmur',
-    cumleler: [
-      { text: 'Asya camdan dışarı baktı.', blankWord: null },
-      { text: 'Yağmur yağıyordu.', blankWord: null },
-      { text: 'Şemsiyesini alıp annesiyle dışarı çıktı.', blankWord: null },
-      { text: 'Ayakkabıları ıslandı.', blankWord: null },
-      { text: 'Asya eve dönünce kuru çorap giydi.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Asya dışarı çıkarken yanına ne aldı?', secenekler: ['Mont','Şemsiye','Şapka'], cevapIndex: 1 },
-      { soru: 'Asya eve dönünce ne giydi?', secenekler: ['Çorap','Terlik','Ceket'], cevapIndex: 0 }
-    ],
-    bitisMesaji: 'Tebrikler! Yağmur macerası puanın: 100'
-  },
-  {
-    id: 6, baslik: 'Yusuf ve Kitap',
-    cumleler: [
-      { text: 'Yusuf kitaplığından bir hikaye kitabı seçti.', blankWord: null },
-      { text: 'Kitabı sessizce okumaya başladı.', blankWord: null },
-      { text: 'Anlamadığı bir kelimeyi annesine sordu.', blankWord: null },
-      { text: 'Yeni kelimenin anlamını öğrenince hikayeyi daha iyi anladı.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Yusuf kitabı nasıl okudu?', secenekler: ['Bağırarak','Sessizce','Hızlıca'], cevapIndex: 1 },
-      { soru: 'Yusuf kelimeyi kime sordu?', secenekler: ['Babasına','Abisine','Annesine'], cevapIndex: 2 }
-    ],
-    bitisMesaji: 'Harika! Okuma puanın: 100'
-  },
-  {
-    id: 7, baslik: 'Zeynep ve Çiçekler',
-    cumleler: [
-      { text: 'Zeynep bahçedeki çiçekleri suladı.', blankWord: null },
-      { text: 'Bazı çiçeklerin yaprakları solmuştu.', blankWord: null },
-      { text: 'Daha fazla su verdikten sonra birkaç gün bekledi.', blankWord: null },
-      { text: 'Çiçekler yeniden canlandı.', blankWord: null },
-      { text: 'Zeynep sabırlı olmanın önemini öğrendi.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Zeynep neyi suladı?', secenekler: ['Ağaçları','Çiçekleri','Otları'], cevapIndex: 1 },
-      { soru: 'Çiçeklere ne verince canlandılar?', secenekler: ['Toprak','Güneş','Su'], cevapIndex: 2 }
-    ],
-    bitisMesaji: 'Tebrikler! Doğa dostu puanın: 100'
-  },
-  {
-    id: 8, baslik: 'Maysa ve Resim',
-    cumleler: [
-      { text: 'Maysa resim defterini açtı.', blankWord: null },
-      { text: 'Önce güneş çizdi, sonra bir ev yaptı.', blankWord: null },
-      { text: 'Boyarken çizgilerin dışına taştı ama pes etmedi.', blankWord: null },
-      { text: 'Resmini tamamladığında çok güzel görünüyordu.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Maysa ilk önce ne çizdi?', secenekler: ['Ev','Güneş','Bulut'], cevapIndex: 1 },
-      { soru: 'Maysa neyin dışına taştı?', secenekler: ['Çizgilerin','Kağıdın','Masanın'], cevapIndex: 0 }
-    ],
-    bitisMesaji: 'Harika! Sanatçı puanın: 100'
-  },
-  {
-    id: 9, baslik: 'Mehmet ve Uçurtma',
-    cumleler: [
-      { text: 'Mehmet uçurtmasını gökyüzüne bıraktı.', blankWord: null },
-      { text: 'Rüzgar hafif esiyordu.', blankWord: null },
-      { text: 'Uçurtma bazen düşer gibi oldu ama Mehmet ipi sıkı tuttu.', blankWord: null },
-      { text: 'Bir süre sonra uçurtma daha yükseğe çıktı.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Uçurtmanın uçması için ne esiyordu?', secenekler: ['Kar','Rüzgar','Duman'], cevapIndex: 1 },
-      { soru: 'Mehmet neyi sıkı tuttu?', secenekler: ['İpi','Çubuğu','Kuyruğu'], cevapIndex: 0 }
-    ],
-    bitisMesaji: 'Süper! Rüzgar puanın: 100'
-  },
-  {
-    id: 10, baslik: 'Yağmur ve Kütüphane',
-    cumleler: [
-      { text: 'Yağmur kütüphaneye gitti.', blankWord: null },
-      { text: 'Sessiz olması gerektiğini biliyordu.', blankWord: null },
-      { text: 'Kitabını dikkatle seçti ve yerine oturdu.', blankWord: null },
-      { text: 'Çevresindekileri rahatsız etmeden okudu.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Yağmur nereye gitti?', secenekler: ['Parka','Markete','Kütüphaneye'], cevapIndex: 2 },
-      { soru: 'Yağmur kütüphanede nasıl olmalıydı?', secenekler: ['Hızlı','Sessiz','Hareketli'], cevapIndex: 1 }
-    ],
-    bitisMesaji: 'Harikasın! Kültür puanın: 100'
-  },
-  {
-    id: 11, baslik: 'Çiçek ve Dostluk',
-    cumleler: [
-      { text: 'Çiçek parkta tek başına oturan bir çocuk gördü.', blankWord: null },
-      { text: 'Yanına gidip selam verdi.', blankWord: null },
-      { text: 'Birlikte salıncağa bindiler.', blankWord: null },
-      { text: 'O gün yeni bir arkadaş edindi.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Çiçek çocukla birlikte neye bindi?', secenekler: ['Kaydırak','Araba','Salıncak'], cevapIndex: 2 },
-      { soru: 'Çiçek o gün ne edindi?', secenekler: ['Arkadaş','Kedi','Kitap'], cevapIndex: 0 }
-    ],
-    bitisMesaji: 'Tebrikler! Dostluk puanın: 100'
-  },
-  {
-    id: 12, baslik: 'Emir ve Kayıp Kalem',
-    cumleler: [
-      { text: 'Emir ödev yapmak için masaya oturdu.', blankWord: null },
-      { text: 'Kalemini bulamadı.', blankWord: null },
-      { text: 'Çantasını ve masasını aradı ama kalem yoktu.', blankWord: null },
-      { text: 'Çantasının küçük cebine baktı ve kalemini buldu.', blankWord: null },
-      { text: 'Emir eşyalarını düzenli koyması gerektiğini anladı.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Emir masaya ne için oturdu?', secenekler: ['Yemek','Ödev','Oyun'], cevapIndex: 1 },
-      { soru: 'Emir kalemini nerede buldu?', secenekler: ['Yerde','Cepte','Kitapta'], cevapIndex: 1 }
-    ],
-    bitisMesaji: 'Harika! Düzen puanın: 100'
-  },
-  {
-    id: 13, baslik: 'Beyaz ve Paylaşmak',
-    cumleler: [
-      { text: 'Beyaz parkta bisküviyle oturuyordu.', blankWord: null },
-      { text: 'Yanındaki çocuk üzgün görünüyordu çünkü yiyeceği yoktu.', blankWord: null },
-      { text: 'Beyaz bisküvisini ikiye böldü ve yarısını verdi.', blankWord: null },
-      { text: 'Çocuk gülümsedi.', blankWord: null },
-      { text: 'Beyaz paylaşmanın insanı mutlu ettiğini fark etti.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Beyaz ne yiyordu?', secenekler: ['Elma','Bisküvi','Ekmek'], cevapIndex: 1 },
-      { soru: 'Diğer çocuk bisküviyi alınca ne yaptı?', secenekler: ['Gülümsedi','Ağladı','Kızdı'], cevapIndex: 0 }
-    ],
-    bitisMesaji: 'Mükemmel! Paylaşım puanın: 100'
-  },
-  {
-    id: 14, baslik: 'Kaan ve Zamanında Uyanmak',
-    cumleler: [
-      { text: 'Kaan sabah alarmı duydu ama kapattı.', blankWord: null },
-      { text: 'Biraz daha uyumak istedi.', blankWord: null },
-      { text: 'Uyandığında okula geç kaldığını fark etti.', blankWord: null },
-      { text: 'Aceleyle hazırlandı ama servisi kaçırdı.', blankWord: null },
-      { text: 'Ertesi gün alarm çalınca hemen kalktı.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Kaan neyi kaçırdı?', secenekler: ['Topu','Servisi','Uçağı'], cevapIndex: 1 },
-      { soru: 'Kaan sabah neyi kapattı?', secenekler: ['Işığı','Kapıyı','Alarmı'], cevapIndex: 2 }
-    ],
-    bitisMesaji: 'Tebrikler! Zaman yönetimi puanın: 100'
-  },
-  {
-    id: 15, baslik: 'Elvan ve Bitki',
-    cumleler: [
-      { text: 'Elvan küçük bir saksıya tohum ekti.', blankWord: null },
-      { text: 'Her gün düzenli olarak suladı.', blankWord: null },
-      { text: 'İlk gün hiçbir şey çıkmadı.', blankWord: null },
-      { text: 'Birkaç gün sonra küçük bir filiz gördü.', blankWord: null },
-      { text: 'Sabırlı olmanın önemli olduğunu öğrendi.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Elvan saksıya ne ekti?', secenekler: ['Çiçek','Tohum','Taş'], cevapIndex: 1 },
-      { soru: 'Saksıdan ne çıktı?', secenekler: ['Dal','Böcek','Filiz'], cevapIndex: 2 }
-    ],
-    bitisMesaji: 'Harika! Sabır puanın: 100'
-  },
-  {
-    id: 16, baslik: 'Berk ve Kırılan Bardak',
-    cumleler: [
-      { text: 'Berk mutfakta su almak istedi.', blankWord: null },
-      { text: 'Bardağı hızlıca aldı ve elinden düşürdü.', blankWord: null },
-      { text: 'Bardak kırıldı.', blankWord: null },
-      { text: 'Berk korktu ama annesine gerçeği söyledi.', blankWord: null },
-      { text: 'Berk bir dahaki sefere yavaş davranmaya karar verdi.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Mutfakta ne kırıldı?', secenekler: ['Tabak','Bardak','Kaşık'], cevapIndex: 1 },
-      { soru: 'Berk annesine neyi söyledi?', secenekler: ['Gerçeği','Yalanı','Şarkıyı'], cevapIndex: 0 }
-    ],
-    bitisMesaji: 'Mükemmel! Dürüstlük puanın: 100'
-  },
-  {
-    id: 17, baslik: 'Defne ve Grup Çalışması',
-    cumleler: [
-      { text: 'Defne okulda grup çalışması yaptı.', blankWord: null },
-      { text: 'Herkes bir görev aldı.', blankWord: null },
-      { text: 'Defne afişi boyadı.', blankWord: null },
-      { text: 'Birlikte çalışınca ödevleri daha güzel oldu.', blankWord: null },
-      { text: 'Öğretmenleri onları tebrik etti.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Defne nerede grup çalışması yaptı?', secenekler: ['Parkta','Okulda','Evde'], cevapIndex: 1 },
-      { soru: 'Defne neyi boyadı?', secenekler: ['Masayı','Duvarı','Afişi'], cevapIndex: 2 }
-    ],
-    bitisMesaji: 'Süper! İş birliği puanın: 100'
-  },
-  {
-    id: 18, baslik: 'Aras ve Cesaret',
-    cumleler: [
-      { text: 'Aras sınıfta şiir okumaktan çekiniyordu.', blankWord: null },
-      { text: 'Sırası geldiğinde kalbi hızlı attı.', blankWord: null },
-      { text: 'Derin bir nefes aldı ve okumaya başladı.', blankWord: null },
-      { text: 'Şiiri bitirdiğinde alkış aldı.', blankWord: null },
-      { text: 'Aras cesur davrandığı için gurur duydu.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Aras ne okudu?', secenekler: ['Kitap','Şiir','Gazete'], cevapIndex: 1 },
-      { soru: 'Aras şiiri bitirince ne aldı?', secenekler: ['Alkış','Hediye','Puan'], cevapIndex: 0 }
-    ],
-    bitisMesaji: 'Harika! Cesaret puanın: 100'
-  },
-  {
-    id: 19, baslik: 'İlayda ve Doğru Karar',
-    cumleler: [
-      { text: 'İlayda parkta oynarken yerde bir cüzdan buldu.', blankWord: null },
-      { text: 'İçinde para ve kimlik vardı.', blankWord: null },
-      { text: 'Parayı almak istemedi.', blankWord: null },
-      { text: 'En yakın görevliye götürdü.', blankWord: null },
-      { text: 'İlayda doğru olanı yaptığı için mutlu oldu.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'İlayda yerde ne buldu?', secenekler: ['Anahtar','Cüzdan','Kalem'], cevapIndex: 1 },
-      { soru: 'İlayda cüzdanı kime götürdü?', secenekler: ['Arkadaşına','Annesine','Görevliye'], cevapIndex: 2 }
-    ],
-    bitisMesaji: 'Tebrikler! Dürüstlük puanın: 100'
-  },
-  {
-    id: 20, baslik: 'Onur ve Sabır',
-    cumleler: [
-      { text: 'Onur yeni bir model uçak yapmak istedi.', blankWord: null },
-      { text: 'Parçaları birleştirirken zorlandı.', blankWord: null },
-      { text: 'Birkaç kez hata yaptı.', blankWord: null },
-      { text: 'Sonunda uçağı tamamladı.', blankWord: null },
-      { text: 'Onur sabırlı olunca başarabildiğini anladı.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Onur ne yapmak istedi?', secenekler: ['Gemi','Uçak','Araba'], cevapIndex: 1 },
-      { soru: 'Onur uçağı ne zaman bitirdi?', secenekler: ['Hemen','Sonunda','Ertesi gün'], cevapIndex: 1 }
-    ],
-    bitisMesaji: 'Süper! Sabır puanın: 100'
-  },
-  {
-    id: 21, baslik: 'Henna ve Asya',
-    cumleler: [
-      { text: 'Henna ve Asya sabah uyandı.', blankWord: null },
-      { text: 'Birlikte dışarı çıktılar.', blankWord: null },
-      { text: 'Kedilerini sevip bir süre izlediler.', blankWord: null },
-      { text: 'Akşam yemek yediler ve dişlerini fırçaladılar.', blankWord: null },
-      { text: 'Gece olunca mutlu bir günün ardından uyudular.', blankWord: null }
-    ],
-    sorular: [
-      { soru: 'Henna ve Asya kimi sevdiler?', secenekler: ['Köpeği','Kediyi','Kuşu'], cevapIndex: 1 },
-      { soru: 'Uyumadan önce ne yaptılar?', secenekler: ['Oyun oynadılar','Süt içtiler','Diş fırçaladılar'], cevapIndex: 2 }
-    ],
-    bitisMesaji: 'Mükemmel! Sağlık puanın: 100'
-  }
-];
+<!-- ═══════════════════════════════════════════════════════════
+     ANA MENÜ EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="menu-screen" id="menuScreen">
 
-
-// ═══════════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════════
-let hk = {
-  aktif:     false,
-  hikayeIdx: 0,
-  cumleIdx:  0,
-  skor:      0,
-  bekliyor:  false,
-};
-
-// ═══════════════════════════════════════════════════════════════
-// EKRAN
-// ═══════════════════════════════════════════════════════════════
-let hkEkran   = null;
-let hkSecimEkran = null;
-
-// ═══════════════════════════════════════════════════════════════
-// HİKAYE SEÇİM EKRANI — yatay kaydırmalı şerit
-// ═══════════════════════════════════════════════════════════════
-function hkSecimEkraniOlustur() {
-  if (hkSecimEkran) return;
-
-  hkSecimEkran = document.createElement('div');
-  hkSecimEkran.id = 'hikayeSecimEkran';
-  hkSecimEkran.style.cssText = 'display:none;position:fixed;inset:0;z-index:500;overflow-y:auto;flex-direction:column;align-items:center;padding:20px 0 40px;';
-
-  const kartlarHTML = HIKAYE_DATA.map((h, i) => `
-    <div class="hk-secim-kart" data-idx="${i}" style="
-      flex:0 0 auto;
-      width:130px;
-      background:#fff;
-      border-radius:16px;
-      padding:14px 10px;
-      text-align:center;
-      cursor:pointer;
-      box-shadow:0 3px 10px rgba(0,0,0,0.13);
-      border:2.5px solid #f9a825;
-      transition:transform 0.15s,box-shadow 0.15s;
-      font-family:'Nunito',sans-serif;
-    ">
-      <div style="font-size:1.6rem;font-weight:900;color:#f9a825;margin-bottom:4px;">${i+1}</div>
-      <div style="font-size:0.72rem;font-weight:700;color:#1a2744;line-height:1.3;">${h.baslik}</div>
+  <!-- Üst bar: Hamburger + Puan -->
+  <div class="menu-topbar">
+    <div class="menu-topbar-left">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menü">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-  `).join('');
+    <div class="menu-topbar-right">
+      <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
+    </div>
+  </div>
 
-  hkSecimEkran.innerHTML = \`
-    <div class="koyun-screen" style="gap:18px;">
-      <button id="hkSecimGeriBtn" class="btn-back" style="align-self:flex-start;">← Menü</button>
+  <!-- Hamburger Modal -->
+  <div class="hmenu-overlay" id="hmenuOverlay">
+    <div class="hmenu-panel">
+      <button class="hmenu-close" id="hmenuClose">&#10005;</button>
+      <div class="hmenu-logo">&#127891; Minik Okur</div>
+      <div class="hmenu-items">
+        <button class="hmenu-item" id="hmAchievements">
+          <span class="hmenu-icon">&#127942;</span>
+          <span class="hmenu-label">Ba&#351;ar&#305;lar&#305;m</span>
+        </button>
+        <button class="hmenu-item" id="hmSes">
+          <span class="hmenu-icon">&#128266;</span>
+          <span class="hmenu-label" id="hmSesLabel">Ses A&#351;&#305;k</span>
+          <span class="hmenu-toggle" id="hmSesToggle"></span>
+        </button>
+        <button class="hmenu-item">
+          <span class="hmenu-icon">&#11088;</span>
+          <span class="hmenu-label">Bize Puan Ver</span>
+        </button>
+        <button class="hmenu-item">
+          <span class="hmenu-icon">&#128226;</span>
+          <span class="hmenu-label">Tavsiye Et</span>
+        </button>
+        <button class="hmenu-item">
+          <span class="hmenu-icon">&#9993;&#65039;</span>
+          <span class="hmenu-label">Bize Ula&#351;</span>
+        </button>
+        <button class="hmenu-item hmenu-item--bagis">
+          <span class="hmenu-icon">&#128149;</span>
+          <span class="hmenu-label">Ba&#287;&#305;&#351; Yap</span>
+        </button>
+        <button class="hmenu-item" id="hmHakkimizda">
+          <span class="hmenu-icon">&#128218;</span>
+          <span class="hmenu-label">Hakk&#305;m&#305;zda</span>
+        </button>
+        <button class="hmenu-item" id="hmGizlilik">
+          <span class="hmenu-icon">&#128274;</span>
+          <span class="hmenu-label">Gizlilik Politikas&#305;</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
-      <div class="koyun-header">
-        <div>
-          <h2 class="koyun-title">Minik <span class="menu-title-book">📖</span> Okur</h2>
-          <p class="subtitle">Hikaye seç</p>
+  <!-- Logo -->
+  <div class="menu-logo">
+    <h1 class="menu-title">Minik <span class="menu-title-book">📖</span> Okur</h1>
+  </div>
+
+  <!-- Mod kartları -->
+  <div class="menu-cards">
+
+    <!-- Alıştırma -->
+    <div class="menu-card menu-card--alistirma" id="menuCardAlistirma">
+      <div class="menu-card-label-top">Alıştırma</div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">✏️</span>
+        <div class="menu-card-deco">
+          <span>✔️</span><span>❓</span><span>✔️</span>
         </div>
-        <div class="koyun-score-badge">📚 ${HIKAYE_DATA.length} hikaye</div>
       </div>
-
-      <div style="
-        display:flex;
-        flex-direction:row;
-        gap:12px;
-        overflow-x:auto;
-        padding:10px 4px 16px;
-        width:100%;
-        scrollbar-width:thin;
-        scrollbar-color:#f9a825 rgba(255,255,255,0.2);
-        -webkit-overflow-scrolling:touch;
-      " id="hkSecimSerit">
-        ${kartlarHTML}
-      </div>
-
-      <p style="color:rgba(255,255,255,0.6);font-size:0.8rem;font-family:'Nunito',sans-serif;margin-top:-6px;">
-        👆 Bir hikayeye dokun
-      </p>
+      <button class="menu-card-btn menu-card-btn--orange" data-mod="alistirma">Alıştırma</button>
     </div>
-  \`;
 
-  document.body.appendChild(hkSecimEkran);
-
-  document.getElementById('hkSecimGeriBtn').addEventListener('click', () => {
-    hkSecimEkran.style.display = 'none';
-    if (typeof menuGoster === 'function') menuGoster();
-    else { const ms = document.getElementById('menuScreen'); if (ms) ms.style.display = 'flex'; }
-  });
-
-  hkSecimEkran.querySelectorAll('.hk-secim-kart').forEach(kart => {
-    kart.addEventListener('mouseenter', () => {
-      kart.style.transform = 'scale(1.06)';
-      kart.style.boxShadow = '0 6px 18px rgba(249,168,37,0.35)';
-    });
-    kart.addEventListener('mouseleave', () => {
-      kart.style.transform = '';
-      kart.style.boxShadow = '0 3px 10px rgba(0,0,0,0.13)';
-    });
-    kart.addEventListener('click', () => {
-      const idx = parseInt(kart.dataset.idx);
-      hkSecimEkran.style.display = 'none';
-      hkAcHikaye(idx);
-    });
-  });
-}
-
-function hkSecimAc() {
-  hkSecimEkraniOlustur();
-  hkSecimEkran.style.display = 'flex';
-}
-
-function hkEkranOlustur() {
-  if (hkEkran) return;
-
-  hkEkran = document.createElement('div');
-  hkEkran.id = 'hikayeEkran';
-  hkEkran.style.cssText = 'display:none;position:fixed;inset:0;z-index:500;overflow-y:auto;flex-direction:column;align-items:center;padding:20px 0 40px;';
-
-  hkEkran.innerHTML = `
-    <div class="koyun-screen" style="gap:14px;">
-
-      <button id="hkGeriBtn" class="btn-back" style="align-self:flex-start;">← Menü</button>
-
-      <div class="koyun-header">
-        <div>
-          <h2 class="koyun-title">Minik <span class="menu-title-book">📖</span> Okur</h2>
-          <p class="subtitle" id="hkBaslik">Hikaye</p>
+    <!-- Kelime Oyunu -->
+    <div class="menu-card menu-card--kelime" id="menuCardKelime">
+      <div class="menu-card-label-top">Kelime Oyunu</div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">🧩</span>
+        <div class="menu-card-deco">
+          <span>🐱</span><span>⭐</span><span>🍎</span>
         </div>
-        <div class="koyun-score-badge">⭐ <span id="hkSkorBadge">0</span></div>
       </div>
+      <button class="menu-card-btn menu-card-btn--green" data-mod="kelime">Kelime Oyunu</button>
+    </div>
 
-      <div style="width:100%;">
-        <div style="background:rgba(255,255,255,0.18);border-radius:8px;height:7px;overflow:hidden;">
-          <div id="hkProgressBar" style="height:100%;background:#f9a825;border-radius:8px;width:0%;transition:width 0.4s;"></div>
+    <!-- Hikaye -->
+    <div class="menu-card menu-card--hikaye" id="menuCardHikaye">
+      <div class="menu-card-label-top">Hikaye</div>
+      <div class="menu-card-art">
+        <span class="menu-card-emoji">📖</span>
+        <div class="menu-card-deco">
+          <span>🌟</span><span>🐑</span><span>🌙</span>
         </div>
-        <div id="hkProgressText" style="color:rgba(255,255,255,0.6);font-size:0.78rem;text-align:right;margin-top:3px;font-family:'Nunito',sans-serif;font-weight:700;">1 / 1</div>
       </div>
+      <button class="menu-card-btn menu-card-btn--blue" data-mod="hikaye">Hikaye</button>
+    </div>
 
-      <div class="koyun-card" id="hkCumleKart" style="min-height:130px;">
-        <div id="hkCumleText" style="font-family:'Nunito',sans-serif;font-size:clamp(1.1rem,4vw,1.4rem);font-weight:800;color:#1a2744;line-height:1.7;text-align:center;"></div>
+  </div>
+
+  <!-- Alt yıldız şeridi -->
+  <div class="menu-footer">
+    <span class="menu-footer-score">Toplam Yıldız: <strong id="menuTotalScore">0</strong> ⭐</span>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OYUN EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="game-container" id="gameContainer" style="display:none">
+
+  <!-- Geri butonu -->
+  <button class="btn-back" id="btnBack">← Menü</button>
+
+  <div class="title-area">
+    <h1 id="modeTitle">Minik <span class="menu-title-book">📖</span> Okur</h1>
+    <p class="subtitle" id="modeSubtitle">Alıştırma</p>
+    <div class="level-selector">
+      <span class="level-label">SEVİYE</span>
+      <div class="level-buttons">
+        <button class="lvl-btn active" data-level="0" style="--lvl-color:#ef476f">1</button>
+        <button class="lvl-btn" data-level="1" style="--lvl-color:#f4a261">2</button>
+        <button class="lvl-btn" data-level="2" style="--lvl-color:#ffd166">3</button>
+        <button class="lvl-btn" data-level="3" style="--lvl-color:#06d6a0">4</button>
+        <button class="lvl-btn" data-level="4" style="--lvl-color:#118ab2">5</button>
       </div>
-
-      <div id="hkSecenekler" style="display:none;flex-direction:row;flex-wrap:wrap;gap:12px;justify-content:center;width:100%;"></div>
-
-      <div id="hkGeriBildirim" class="koyun-result" style="min-height:36px;"></div>
-
-      <button id="hkIleriBtn" class="btn btn-start" style="display:none;min-width:180px;">İleri ▶</button>
-
     </div>
-  `;
-
-  document.body.appendChild(hkEkran);
-  document.getElementById('hkGeriBtn').addEventListener('click', hkKapat);
-  document.getElementById('hkIleriBtn').addEventListener('click', hkIleri);
-}
-
-// ═══════════════════════════════════════════════════════════════
-// AÇMA / KAPAMA
-// ═══════════════════════════════════════════════════════════════
-function hkAc(hikayeIdx) {
-  // Seçim ekranını aç (hikayeIdx parametre olsa da artık seçim ekranı önce gelir)
-  hkSecimAc();
-}
-
-function hkAcHikaye(hikayeIdx) {
-  hkEkranOlustur();
-  hk.hikayeIdx = hikayeIdx || 0;
-  hk.cumleIdx  = 0;
-  hk.skor      = 0;
-  hk.bekliyor  = false;
-  hk.aktif     = true;
-  hkEkran.style.display = 'flex';
-  hkCumleGoster();
-}
-
-function hkKapat() {
-  if (hkEkran) hkEkran.style.display = 'none';
-  hk.aktif = false;
-  if (typeof totalScore !== 'undefined') totalScore += hk.skor;
-  const mst = document.getElementById('menuTotalScore');
-  if (mst && typeof totalScore !== 'undefined') mst.textContent = totalScore;
-  // Seçim ekranına dön
-  hkSecimAc();
-}
-
-// ═══════════════════════════════════════════════════════════════
-// CÜMLE GÖSTER — kelime kelime göz takibi vurgulama
-// ═══════════════════════════════════════════════════════════════
-function hkCumleGoster() {
-  const hikaye = HIKAYE_DATA[hk.hikayeIdx];
-
-  // blankWord olan cümleleri tamamen atla, sıradakine geç
-  while (hk.cumleIdx < hikaye.cumleler.length && hikaye.cumleler[hk.cumleIdx].blankWord) {
-    hk.cumleIdx++;
-  }
-  if (hk.cumleIdx >= hikaye.cumleler.length) { hkBitti(); return; }
-
-  const cumle  = hikaye.cumleler[hk.cumleIdx];
-  const toplam = hikaye.cumleler.length;
-
-  document.getElementById('hkBaslik').textContent = '📖 ' + hikaye.baslik;
-  document.getElementById('hkProgressBar').style.width = Math.round((hk.cumleIdx / toplam) * 100) + '%';
-  document.getElementById('hkProgressText').textContent = (hk.cumleIdx + 1) + ' / ' + toplam;
-  document.getElementById('hkSkorBadge').textContent = '⭐ ' + hk.skor;
-  document.getElementById('hkGeriBildirim').textContent = '';
-
-  const secDiv = document.getElementById('hkSecenekler');
-  secDiv.style.display = 'none';
-  secDiv.innerHTML = '';
-
-  const kart   = document.getElementById('hkCumleKart');
-  const textEl = document.getElementById('hkCumleText');
-
-  kart.classList.remove('koyun-card--soru');
-  hk.bekliyor = false;
-
-  // İleri butonunu gizle — vurgulama bitince gösterilecek
-  document.getElementById('hkIleriBtn').style.display = 'none';
-
-  // Kelime kelime göz takibi vurgulama
-  const kelimeler = cumle.text.split(' ');
-  // %50 yavaşlatıldı: 600ms/kelime
-  const KELIME_SURESI = 1176;
-
-  // Her kelimeyi <span> içine al
-  textEl.innerHTML = kelimeler
-    .map((k, i) => `<span id="hkKelime_${i}">${k}</span>`)
-    .join(' ');
-
-  // Sırayla vurgula
-  kelimeler.forEach((_, i) => {
-    setTimeout(() => {
-      // Önceki kelimeyi sıfırla
-      if (i > 0) {
-        const onceki = document.getElementById('hkKelime_' + (i - 1));
-        if (onceki) {
-          onceki.style.color        = '';
-          onceki.style.background   = '';
-          onceki.style.borderRadius = '';
-          onceki.style.padding      = '';
-          onceki.style.transition   = '';
-          onceki.style.outline      = '';
-          onceki.style.fontWeight   = '';
-        }
-      }
-      // Mevcut kelimeyi vurgula
-      const el = document.getElementById('hkKelime_' + i);
-      if (el) {
-        el.style.color        = '#e65100';
-        el.style.fontWeight   = '900';
-        el.style.background   = '#fff';
-        el.style.outline      = '2.5px solid #f9a825';
-        el.style.borderRadius = '8px';
-        el.style.padding      = '1px 6px';
-        el.style.transition   = 'all 0.08s';
-      }
-
-      // Son kelimeyse: vurguyu kaldır ve İleri'yi göster
-      if (i === kelimeler.length - 1) {
-        setTimeout(() => {
-          if (el) {
-            el.style.color        = '';
-            el.style.fontWeight   = '';
-            el.style.background   = '';
-            el.style.outline      = '';
-            el.style.borderRadius = '';
-            el.style.padding      = '';
-          }
-          document.getElementById('hkIleriBtn').style.display = 'block';
-        }, KELIME_SURESI);
-      }
-    }, i * KELIME_SURESI);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-// SEÇENEKLER — harf-btn sınıfını kullan
-// ═══════════════════════════════════════════════════════════════
-function hkSecenekleriGoster(cumle) {
-  const secDiv = document.getElementById('hkSecenekler');
-  secDiv.style.display = 'flex';
-
-  cumle.options.forEach((opt, idx) => {
-    const btn = document.createElement('button');
-    btn.className = 'hk-secbtn';
-    btn.textContent = opt;
-    btn.addEventListener('click', () => hkSecenekTikla(idx, cumle, btn, secDiv));
-    secDiv.appendChild(btn);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-// SEÇENEK TIKLA
-// ═══════════════════════════════════════════════════════════════
-function hkSecenekTikla(idx, cumle, btn, secDiv) {
-  if (!hk.bekliyor) return;
-
-  const dogru = idx === cumle.correctIndex;
-  const gbEl  = document.getElementById('hkGeriBildirim');
-
-  if (dogru) {
-    hk.bekliyor = false;
-    hk.skor++;
-    document.getElementById('hkSkorBadge').textContent = '⭐ ' + hk.skor;
-
-    btn.classList.add('hk-secbtn--dogru');
-
-    const boslukEl = document.getElementById('hkBosluk');
-    if (boslukEl) {
-      boslukEl.style.color       = '#ffd700';
-      boslukEl.style.fontWeight  = '900';
-      boslukEl.style.background  = 'rgba(255,215,0,0.2)';
-      boslukEl.style.borderBottom= '3px solid #ffd700';
-      boslukEl.textContent       = cumle.blankWord;
-    }
-
-    secDiv.querySelectorAll('button').forEach(b => b.disabled = true);
-    gbEl.textContent = '⭐ Harika!';
-    gbEl.className = 'koyun-result dogru';
-
-    setTimeout(() => { document.getElementById('hkIleriBtn').style.display = 'block'; }, 500);
-
-  } else {
-    btn.classList.add('hk-secbtn--yanlis');
-    setTimeout(() => btn.classList.remove('hk-secbtn--yanlis'), 600);
-    gbEl.textContent = '🔄 Tekrar deneyelim!';
-    gbEl.className = 'koyun-result';
-    gbEl.style.color = '#f97316';
-    setTimeout(() => { gbEl.textContent = ''; gbEl.className = 'koyun-result'; gbEl.style.color = ''; }, 1200);
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════
-// İLERİ
-// ═══════════════════════════════════════════════════════════════
-function hkIleri() {
-  const hikaye = HIKAYE_DATA[hk.hikayeIdx];
-  hk.cumleIdx++;
-  if (hk.cumleIdx >= hikaye.cumleler.length) hkBitti();
-  else hkCumleGoster();
-}
-
-// ═══════════════════════════════════════════════════════════════
-// BİTİŞ — Önce sorular, sonra bitiş ekranı
-// ═══════════════════════════════════════════════════════════════
-function hkBitti() {
-  const hikaye = HIKAYE_DATA[hk.hikayeIdx];
-  // Sorular varsa önce soruları göster
-  if (hikaye.sorular && hikaye.sorular.length > 0) {
-    hk.soruIdx   = 0;
-    hk.soruSkor  = 0;
-    hkSoruGoster();
-  } else {
-    hkBitisEkrani();
-  }
-}
-
-function hkSoruGoster() {
-  const hikaye = HIKAYE_DATA[hk.hikayeIdx];
-  const soru   = hikaye.sorular[hk.soruIdx];
-  const toplam = hikaye.sorular.length;
-
-  document.getElementById('hkProgressBar').style.width = '100%';
-  document.getElementById('hkProgressText').textContent = 'Soru ' + (hk.soruIdx + 1) + ' / ' + toplam;
-  document.getElementById('hkGeriBildirim').textContent = '';
-  document.getElementById('hkGeriBildirim').className = 'koyun-result';
-  document.getElementById('hkIleriBtn').style.display = 'none';
-
-  const kart   = document.getElementById('hkCumleKart');
-  const textEl = document.getElementById('hkCumleText');
-  kart.classList.remove('koyun-card--soru', 'koyun-card--bitis');
-  kart.classList.add('koyun-card--soru');
-
-  textEl.innerHTML = `<span style="font-size:1.1rem;color:#b45309;font-weight:700;">🔍 Anlama Sorusu</span><br><br>${soru.soru}`;
-
-  const secDiv = document.getElementById('hkSecenekler');
-  secDiv.innerHTML = '';
-  secDiv.style.display = 'flex';
-
-  soru.secenekler.forEach((opt, idx) => {
-    const btn = document.createElement('button');
-    btn.className = 'hk-secbtn';
-    btn.textContent = opt;
-    btn.addEventListener('click', () => {
-      secDiv.querySelectorAll('button').forEach(b => b.disabled = true);
-      const gbEl = document.getElementById('hkGeriBildirim');
-      if (idx === soru.cevapIndex) {
-        hk.soruSkor++;
-        btn.classList.add('hk-secbtn--dogru');
-        gbEl.textContent = '⭐ Doğru!';
-        gbEl.className = 'koyun-result dogru';
-      } else {
-        btn.classList.add('hk-secbtn--yanlis');
-        secDiv.querySelectorAll('button')[soru.cevapIndex].classList.add('hk-secbtn--dogru');
-        gbEl.textContent = '🔄 ' + soru.secenekler[soru.cevapIndex] + ' doğruydu!';
-        gbEl.className = 'koyun-result';
-        gbEl.style.color = '#f97316';
-      }
-      setTimeout(() => {
-        hk.soruIdx++;
-        if (hk.soruIdx < hikaye.sorular.length) {
-          hkSoruGoster();
-        } else {
-          hkBitisEkrani();
-        }
-      }, 1200);
-    });
-    secDiv.appendChild(btn);
-  });
-}
-
-function hkBitisEkrani() {
-  const hikaye   = HIKAYE_DATA[hk.hikayeIdx];
-  const toplamSkor = hk.skor + (hk.soruSkor || 0);
-  const emoji    = toplamSkor >= 6 ? '🏆' : toplamSkor >= 4 ? '⭐' : '💪';
-  const sonHikaye = (hk.hikayeIdx >= HIKAYE_DATA.length - 1);
-
-  document.getElementById('hkProgressText').textContent = 'Tamamlandı! 🎉';
-  document.getElementById('hkSecenekler').style.display = 'none';
-  document.getElementById('hkGeriBildirim').textContent = '';
-
-  const kart = document.getElementById('hkCumleKart');
-  kart.classList.remove('koyun-card--soru');
-  kart.classList.add('koyun-card--bitis');
-
-  document.getElementById('hkCumleText').innerHTML = `
-    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-      <div style="font-size:3rem;">${emoji}</div>
-      <div style="font-size:1.4rem;color:#7c3aed;font-weight:800;">Harika Okudun!</div>
-      <div style="font-size:0.9rem;color:#555;font-style:italic;">${hikaye.bitisMesaji || hikaye.baslik}</div>
-      <div style="font-size:1.5rem;color:#f59e0b;font-weight:900;">⭐ ${toplamSkor} puan!</div>
+    <div class="tab-strip">
+      <button class="tab-btn active" id="tabAlistirma">📝 Alıştırma</button>
+      <button class="tab-btn" id="tabHikaye">📖 Hikaye</button>
     </div>
-  `;
+  </div>
 
-  const ileri = document.getElementById('hkIleriBtn');
-  ileri.style.display = 'block';
+  <div class="story-progress" id="storyProgress">
+    <div class="story-progress-header">
+      <button class="story-nav-btn" id="btnHikayeGeri">&#9664;</button>
+      <div class="story-progress-title" id="storyTitle">📖 Hikaye</div>
+      <button class="story-nav-btn" id="btnHikayeIleri">&#9654;</button>
+    </div>
+    <div class="story-progress-bar-wrap">
+      <div class="story-progress-bar" id="storyBar"></div>
+    </div>
+    <div class="story-progress-text" id="storyProgressText">1 / 16</div>
+  </div>
 
-  if (sonHikaye) {
-    ileri.textContent = '▶ Menüye Dön';
-    ileri.onclick = () => { if (hkEkran) hkEkran.style.display = "none"; hk.aktif = false; if (typeof totalScore !== "undefined") totalScore += hk.skor; const mst = document.getElementById("menuTotalScore"); if (mst && typeof totalScore !== "undefined") mst.textContent = totalScore; hkSecimAc(); };
-  } else {
-    ileri.textContent = '▶ Sonraki Hikaye';
-    ileri.onclick = () => {
-      hk.hikayeIdx++;
-      hk.cumleIdx  = 0;
-      hk.skor      = 0;
-      hk.soruIdx   = 0;
-      hk.soruSkor  = 0;
-      hk.bekliyor  = false;
-      kart.classList.remove('koyun-card--bitis');
-      ileri.textContent = 'İleri ▶';
-      ileri.onclick = hkIleri;
-      hkCumleGoster();
-    };
-  }
-}
+  <div class="score-card">
+    <span class="score-icon">⭐</span>
+    <div>
+      <div class="score-label">Puan</div>
+      <div class="score-value" id="scoreDisplay">0</div>
+    </div>
+  </div>
 
-// ═══════════════════════════════════════════════════════════════
-// MENÜ ENTEGRASYONU
-// ═══════════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', function () {
-  const hikayeBtn = document.querySelector('[data-mod="hikaye"]');
-  if (hikayeBtn) {
-    hikayeBtn.addEventListener('click', function (e) {
-      e.stopImmediatePropagation();
-      const ms = document.getElementById('menuScreen');
-      if (ms) ms.style.display = 'none';
-      const gc = document.getElementById('gameContainer');
-      if (gc) gc.style.display = 'none';
-      hkAc(0);
-    }, true);
-  }
+  <div class="word-card" id="wordCard"></div>
+  <button class="btn-skip" id="btnSkip">Geç</button>
 
-  const hikayeKart = document.getElementById('menuCardHikaye');
-  if (hikayeKart) {
-    hikayeKart.addEventListener('click', function (e) {
-      if (e.target.classList.contains('menu-card-btn')) return;
-      e.stopImmediatePropagation();
-      const ms = document.getElementById('menuScreen');
-      if (ms) ms.style.display = 'none';
-      hkAc(0);
-    }, true);
-  }
-});
+  <div class="mic-area">
+    <div class="mic-indicator" id="micIndicator">🎤</div>
+    <div class="mic-status" id="micStatus">Başlamak için düğmeye bas</div>
+  </div>
+
+  <div class="interim-text" id="interimText"></div>
+
+  <div class="button-row">
+    <button class="btn btn-start" id="btnStart">▶ Başla</button>
+    <button class="btn btn-stop" id="btnStop" disabled>🔄 Tekrar</button>
+  </div>
+
+  <div class="congrats-banner" id="congratsBanner">
+    🎉 Tebrikler! Harika okudun! 🎉
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="no-support" id="noSupport">
+    😔 Üzgünüm, tarayıcın sesli tanıma özelliğini desteklemiyor. Lütfen Google Chrome kullan.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     KELİME OYUNU EKRANI
+     ═══════════════════════════════════════════════════════════ -->
+<div class="koyun-screen" id="koyunScreen" style="display:none">
+
+  <button class="btn-back" id="btnKoyunBack">← Menü</button>
+
+  <div class="koyun-header">
+    <div>
+      <h2 class="koyun-title">Minik <span class="menu-title-book">📖</span> Okur</h2>
+      <p class="subtitle">Kelime Oyunu</p>
+    </div>
+    <div class="koyun-score-badge">⭐ <span id="koyunScore">0</span></div>
+  </div>
+
+  <!-- Resim kartı -->
+  <div class="koyun-card" id="koyunCard">
+    <div class="koyun-emoji" id="koyunEmoji">🐱</div>
+    <div class="koyun-hint" id="koyunHint" style="display:none">_ _ _ _</div>
+  </div>
+
+  <!-- Sonuç banner -->
+  <div class="koyun-result" id="koyunResult"></div>
+
+  <!-- ── v3: Oyun Alanı ──────────────────────────────────── -->
+  <div class="harf-secme-alani" id="harfSecmeAlani">
+    <!-- Kelime gösterimi: harf kutuları -->
+    <div class="harf-kutu-satir" id="harfKutuSatir"></div>
+    <!-- Harf butonları (tip1: seç, tip2: sürükle, tip3: sırala) -->
+    <div class="harf-buton-satir" id="harfButonSatir"></div>
+  </div>
+
+  <!-- Geç butonu -->
+  <div class="button-row" style="margin-top:8px">
+    <button class="btn btn-skip" id="koyunBtnSkip" style="padding:14px 28px">⏭ Geç</button>
+  </div>
+
+  <!-- Gizli eski mic elementleri (JS referans korunuyor) -->
+  <div style="display:none">
+    <div id="koyunMicIndicator"></div>
+    <div id="koyunMicStatus"></div>
+    <div id="koyunInterimText"></div>
+    <button id="koyunBtnStart"></button>
+    <div id="koyunErrorMsg"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     RAPOR OVERLAY
+     ═══════════════════════════════════════════════════════════ -->
+<div class="report-overlay" id="reportOverlay">
+  <div class="report-card">
+    <div class="report-emoji" id="reportEmoji">🌟</div>
+    <div class="report-title" id="reportTitle">Bölüm Tamamlandı!</div>
+    <div class="report-subtitle" id="reportSubtitle"></div>
+    <div class="report-stats">
+      <div class="report-stat">
+        <div class="report-stat-val green" id="reportDogru">0</div>
+        <div class="report-stat-lbl">Doğru</div>
+      </div>
+      <div class="report-stat">
+        <div class="report-stat-val red" id="reportYanlis">0</div>
+        <div class="report-stat-lbl">Yanlış</div>
+      </div>
+      <div class="report-stat">
+        <div class="report-stat-val yellow" id="reportPuan">0</div>
+        <div class="report-stat-lbl">Puan</div>
+      </div>
+    </div>
+    <div class="report-hard-words" id="reportHardWords" style="display:none">
+      <span class="hw-title">En çok takılan kelimeler</span>
+      <span id="reportHardList"></span>
+    </div>
+    <div class="report-timer-bar-wrap" id="reportTimerWrap" style="display:none">
+      <div class="report-timer-bar" id="reportTimerBar" style="width:100%"></div>
+    </div>
+    <div class="report-btn-row" id="reportBtnRow">
+      <button class="report-btn primary" id="reportBtnNext">▶ Devam</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ROZET KUTLAMA / TOAST
+     ═══════════════════════════════════════════════════════════ -->
+<div class="ach-toast" id="achToast">
+  <div class="ach-toast-card">
+    <div class="ach-toast-title" id="achToastTitle">Yeni Rozet!</div>
+    <div class="ach-toast-desc" id="achToastDesc"></div>
+  </div>
+</div>
+
+<script>
+// Hamburger menü aç/kapat
+(function(){
+  var overlay  = document.getElementById('hmenuOverlay');
+  var btnOpen  = document.getElementById('hamburgerBtn');
+  var btnClose = document.getElementById('hmenuClose');
+  var toggle   = document.getElementById('hmSesToggle');
+  var label    = document.getElementById('hmSesLabel');
+  var sesAcik  = true;
+
+  btnOpen.addEventListener('click', function(){ overlay.classList.add('open'); });
+  btnClose.addEventListener('click', function(){ overlay.classList.remove('open'); });
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
+
+  document.getElementById('hmSes').addEventListener('click', function(){
+    sesAcik = !sesAcik;
+    toggle.classList.toggle('off', !sesAcik);
+    label.textContent = sesAcik ? 'Ses Açık' : 'Ses Kapalı';
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+  });
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════════════
+     HAKKIMIZDA MODAL
+     ═══════════════════════════════════════════════════════════ -->
+<div class="info-modal-overlay" id="hakkimizdaOverlay" style="display:none">
+  <div class="info-modal-card">
+    <button class="info-modal-close" id="hakkimizdaClose">&#10005;</button>
+    <div class="info-modal-icon">&#127891;</div>
+    <h2 class="info-modal-title">Hakkımızda &amp; Vizyonumuz</h2>
+    <div class="info-modal-body">
+      <p>Bu uygulama, <strong>yeni MEB alfabetik öğrenim sırasına</strong> (ELAKİN, OMUTÜY…) tam uyumlu olarak hazırlanmıştır.</p>
+      <p>İçerikler, pedagojik açıdan olumlu ve destekleyici bir dil kullanılarak <strong>çocukların başarısını kutlar.</strong></p>
+      <p>Minik Okur; uzak köylerden şehirlere, imkânı kısıtlı her çocuğun <strong>nitelikli eğitime ücretsiz ulaşmasını</strong> hedefler.</p>
+      <p>Reklam barındırmayan, çocukların hata yapmaktan korkmadığı ve <strong>özgüven kazandığı güvenli bir öğrenme ortamı</strong> sunar.</p>
+      <p>Uygulama, çocukların telaffuzda en çok zorlandığı (r, l, s gibi) seslerde <strong>yüksek bir hata toleransı</strong> ile çalışır.</p>
+      <p>Dil gelişimi devam eden çocukların, fiziksel zorluklar nedeniyle özgüvenlerinin kırılmasını önler; onları düzeltmek yerine <strong>"en yakın doğru"</strong> ile motive ederek ilerlemelerini sağlar.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     GİZLİLİK POLİTİKASI MODAL
+     ═══════════════════════════════════════════════════════════ -->
+<div class="info-modal-overlay" id="gizlilikOverlay" style="display:none">
+  <div class="info-modal-card">
+    <button class="info-modal-close" id="gizlilikClose">&#10005;</button>
+    <div class="info-modal-icon">&#128274;</div>
+    <h2 class="info-modal-title">Gizlilik Politikası</h2>
+    <div class="info-modal-body">
+      <p><strong>Son güncelleme:</strong> 2025</p>
+      <p>Minik Okur uygulamasını kullandığınız için teşekkür ederiz. Gizliliğiniz bizim için son derece önemlidir.</p>
+      <h3>Topladığımız Veriler</h3>
+      <p>Minik Okur, kullanıcılarından <strong>herhangi bir kişisel veri toplamamaktadır.</strong> Uygulama; ad, soyad, e-posta adresi, telefon numarası veya konum bilgisi gibi kişisel bilgiler talep etmez ve kaydetmez.</p>
+      <h3>Ses Tanıma</h3>
+      <p>Uygulama, okuma alıştırmaları sırasında cihazınızın yerleşik ses tanıma özelliğini kullanır. Ses kayıtları yalnızca anlık olarak işlenir; sunucularımıza gönderilmez ve depolanmaz.</p>
+      <h3>Üçüncü Taraf Hizmetler</h3>
+      <p>Uygulama herhangi bir reklam ağı, analitik servisi veya üçüncü taraf izleme aracı içermez.</p>
+      <h3>Çocukların Gizliliği</h3>
+      <p>Minik Okur, çocuklara yönelik tasarlanmıştır. 13 yaşın altındaki bireylerden bilerek kişisel veri toplamıyoruz. Ebeveynlerin veya yasal vasilerin herhangi bir endişesi varsa bizimle iletişime geçebilirler.</p>
+      <h3>Veri Güvenliği</h3>
+      <p>Herhangi bir kullanıcı verisi toplanmadığından, veri ihlali riski de bulunmamaktadır.</p>
+      <h3>Politika Değişiklikleri</h3>
+      <p>Bu gizlilik politikasını zaman zaman güncelleyebiliriz. Değişiklikler bu sayfada yayımlanacaktır.</p>
+      <h3>İletişim</h3>
+      <p>Gizlilik politikamıza ilişkin sorularınız için uygulama içi "Bize Ulaş" seçeneğini kullanabilirsiniz.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+.info-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+.info-modal-card{background:#fff;border-radius:20px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:28px 24px 24px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.25)}
+.info-modal-close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;color:#888;line-height:1}
+.info-modal-icon{font-size:40px;text-align:center;margin-bottom:8px}
+.info-modal-title{text-align:center;font-family:'Baloo 2',sans-serif;font-size:1.3rem;color:#333;margin:0 0 16px}
+.info-modal-body{font-family:'Nunito',sans-serif;font-size:.93rem;color:#444;line-height:1.65}
+.info-modal-body p{margin:0 0 10px}
+.info-modal-body h3{font-size:.95rem;color:#118ab2;margin:14px 0 4px}
+</style>
+
+<script>
+(function(){
+  function openModal(id){ document.getElementById(id).style.display='flex'; }
+  function closeModal(id){ document.getElementById(id).style.display='none'; }
+
+  document.getElementById('hmHakkimizda').addEventListener('click', function(){
+    document.getElementById('hmenuOverlay').classList.remove('open');
+    openModal('hakkimizdaOverlay');
+  });
+  document.getElementById('hakkimizdaClose').addEventListener('click', function(){ closeModal('hakkimizdaOverlay'); });
+  document.getElementById('hakkimizdaOverlay').addEventListener('click', function(e){ if(e.target===this) closeModal('hakkimizdaOverlay'); });
+
+  document.getElementById('hmGizlilik').addEventListener('click', function(){
+    document.getElementById('hmenuOverlay').classList.remove('open');
+    openModal('gizlilikOverlay');
+  });
+  document.getElementById('gizlilikClose').addEventListener('click', function(){ closeModal('gizlilikOverlay'); });
+  document.getElementById('gizlilikOverlay').addEventListener('click', function(e){ if(e.target===this) closeModal('gizlilikOverlay'); });
+})();
+</script>
+
+<script src="hikaye.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
