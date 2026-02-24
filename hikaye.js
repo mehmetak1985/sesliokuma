@@ -410,6 +410,13 @@ function hkKapat() {
 // ═══════════════════════════════════════════════════════════════
 function hkCumleGoster() {
   const hikaye = HIKAYE_DATA[hk.hikayeIdx];
+
+  // blankWord olan cümleleri tamamen atla, sıradakine geç
+  while (hk.cumleIdx < hikaye.cumleler.length && hikaye.cumleler[hk.cumleIdx].blankWord) {
+    hk.cumleIdx++;
+  }
+  if (hk.cumleIdx >= hikaye.cumleler.length) { hkBitti(); return; }
+
   const cumle  = hikaye.cumleler[hk.cumleIdx];
   const toplam = hikaye.cumleler.length;
 
@@ -434,8 +441,8 @@ function hkCumleGoster() {
 
   // Kelime kelime göz takibi vurgulama
   const kelimeler = cumle.text.split(' ');
-  // 1. sınıf okuma hızı: ~400ms/kelime
-  const KELIME_SURESI = 400;
+  // %50 yavaşlatıldı: 600ms/kelime
+  const KELIME_SURESI = 600;
 
   // Her kelimeyi <span> içine al
   textEl.innerHTML = kelimeler
@@ -459,8 +466,8 @@ function hkCumleGoster() {
       // Mevcut kelimeyi vurgula
       const el = document.getElementById('hkKelime_' + i);
       if (el) {
-        el.style.color        = '#f9a825';
-        el.style.background   = 'rgba(249,168,37,0.15)';
+        el.style.color        = '#ffe082';
+        el.style.background   = 'rgba(255,224,130,0.18)';
         el.style.borderRadius = '4px';
         el.style.padding      = '0 2px';
         el.style.transition   = 'color 0.1s, background 0.1s';
@@ -476,11 +483,6 @@ function hkCumleGoster() {
             el.style.padding    = '';
           }
           document.getElementById('hkIleriBtn').style.display = 'block';
-          // Boşluk doldurma varsa seçenekleri göster
-          if (cumle.blankWord) {
-            hk.bekliyor = true;
-            hkSecenekleriGoster(cumle);
-          }
         }, KELIME_SURESI);
       }
     }, i * KELIME_SURESI);
