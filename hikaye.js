@@ -406,7 +406,7 @@ function hkKapat() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CÜMLE GÖSTER
+// CÜMLE GÖSTER — kelime kelime göz takibi vurgulama
 // ═══════════════════════════════════════════════════════════════
 function hkCumleGoster() {
   const hikaye = HIKAYE_DATA[hk.hikayeIdx];
@@ -427,9 +427,64 @@ function hkCumleGoster() {
   const textEl = document.getElementById('hkCumleText');
 
   kart.classList.remove('koyun-card--soru');
-  textEl.textContent = cumle.text;
-  document.getElementById('hkIleriBtn').style.display = 'block';
   hk.bekliyor = false;
+
+  // İleri butonunu gizle — vurgulama bitince gösterilecek
+  document.getElementById('hkIleriBtn').style.display = 'none';
+
+  // Kelime kelime göz takibi vurgulama
+  const kelimeler = cumle.text.split(' ');
+  // 1. sınıf okuma hızı: ~400ms/kelime
+  const KELIME_SURESI = 400;
+
+  // Her kelimeyi <span> içine al
+  textEl.innerHTML = kelimeler
+    .map((k, i) => `<span id="hkKelime_${i}">${k}</span>`)
+    .join(' ');
+
+  // Sırayla vurgula
+  kelimeler.forEach((_, i) => {
+    setTimeout(() => {
+      // Önceki kelimeyi sıfırla
+      if (i > 0) {
+        const onceki = document.getElementById('hkKelime_' + (i - 1));
+        if (onceki) {
+          onceki.style.color      = '';
+          onceki.style.background = '';
+          onceki.style.borderRadius = '';
+          onceki.style.padding    = '';
+          onceki.style.transition = '';
+        }
+      }
+      // Mevcut kelimeyi vurgula
+      const el = document.getElementById('hkKelime_' + i);
+      if (el) {
+        el.style.color        = '#f9a825';
+        el.style.background   = 'rgba(249,168,37,0.15)';
+        el.style.borderRadius = '4px';
+        el.style.padding      = '0 2px';
+        el.style.transition   = 'color 0.1s, background 0.1s';
+      }
+
+      // Son kelimeyse: vurguyu kaldır ve İleri'yi göster
+      if (i === kelimeler.length - 1) {
+        setTimeout(() => {
+          if (el) {
+            el.style.color      = '';
+            el.style.background = '';
+            el.style.borderRadius = '';
+            el.style.padding    = '';
+          }
+          document.getElementById('hkIleriBtn').style.display = 'block';
+          // Boşluk doldurma varsa seçenekleri göster
+          if (cumle.blankWord) {
+            hk.bekliyor = true;
+            hkSecenekleriGoster(cumle);
+          }
+        }, KELIME_SURESI);
+      }
+    }, i * KELIME_SURESI);
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════
