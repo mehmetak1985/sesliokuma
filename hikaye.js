@@ -377,8 +377,8 @@ function hkEkranOlustur() {
   `;
 
   document.body.appendChild(hkEkran);
-  document.getElementById('hkGeriBtn').addEventListener('click', hkKapat);
-  document.getElementById('hkIleriBtn').addEventListener('click', hkIleri);
+  document.getElementById('hkGeriBtn').onclick = hkKapat;
+  document.getElementById('hkIleriBtn').onclick = hkIleri;
 }
 
 // ═══════════════════════════════════════════════════════════════
