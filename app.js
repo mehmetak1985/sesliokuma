@@ -1739,9 +1739,11 @@ function koyunZorlukAl() {
 
 // ─── Eksik harf indekslerini seç (ilk harf daima görünür) ─────
 function eksikIndexlerSec(kelime, adet) {
-  // Kullanılabilir indexler: 1..son (0 daima görünür)
+  // Kullanılabilir indexler: 1..son (0 daima görünür), boşluklar hariç
   const available = [];
-  for (let i = 1; i < kelime.length; i++) available.push(i);
+  for (let i = 1; i < kelime.length; i++) {
+    if (kelime[i] !== ' ') available.push(i);
+  }
   const karistir = koyunKaristir(available);
   return karistir.slice(0, Math.min(adet, available.length)).sort((a,b)=>a-b);
 }
@@ -1787,6 +1789,12 @@ function tip1Goster(kelime, eksikIdxler, secenekSayisi) {
     harfKutuSatir.innerHTML = '';
     for (let i = 0; i < kelime.length; i++) {
       const kutu = document.createElement('div');
+      if (kelime[i] === ' ') {
+        kutu.className = 'harf-kutu harf-kutu--bosluk';
+        kutu.textContent = ' ';
+        harfKutuSatir.appendChild(kutu);
+        continue;
+      }
       kutu.className = 'harf-kutu';
       const eksikSira = eksikmis.indexOf(i);
       if (eksikSira >= 0) {
@@ -1797,7 +1805,6 @@ function tip1Goster(kelime, eksikIdxler, secenekSayisi) {
           kutu.textContent = '_';
           kutu.classList.add('harf-kutu--bos', 'harf-kutu--aktif');
         } else {
-          // Henüz gelmemiş boşluk — görünür ama pasif
           kutu.textContent = '_';
           kutu.classList.add('harf-kutu--bos');
         }
@@ -1880,6 +1887,12 @@ function tip2Goster(kelime, eksikIdxler) {
     harfKutuSatir.innerHTML = '';
     for (let i = 0; i < kelime.length; i++) {
       const kutu = document.createElement('div');
+      if (kelime[i] === ' ') {
+        kutu.className = 'harf-kutu harf-kutu--bosluk';
+        kutu.textContent = ' ';
+        harfKutuSatir.appendChild(kutu);
+        continue;
+      }
       kutu.className = 'harf-kutu';
       const eksikSira = eksikIdxler.indexOf(i);
       if (eksikSira >= 0) {
@@ -1975,10 +1988,27 @@ function tip3Goster(kelime) {
   let siradakiIdx  = 1;
   let yanlisSayac3 = 0;
 
+  // Boşlukları baştan otomatik dolu say ve siradakiIdx'i boşlukları atlayacak şekilde ilerlet
+  function sonrakiHarfIdx(baslangic) {
+    let idx = baslangic;
+    while (idx < kelime.length && kelime[idx] === ' ') {
+      hedefSira[idx] = true;
+      idx++;
+    }
+    return idx;
+  }
+  siradakiIdx = sonrakiHarfIdx(siradakiIdx);
+
   function kutuCiz() {
     harfKutuSatir.innerHTML = '';
     for (let i = 0; i < kelime.length; i++) {
       const kutu = document.createElement('div');
+      if (kelime[i] === ' ') {
+        kutu.className = 'harf-kutu harf-kutu--bosluk';
+        kutu.textContent = ' ';
+        harfKutuSatir.appendChild(kutu);
+        continue;
+      }
       kutu.className = 'harf-kutu';
       if (i === 0 || hedefSira[i]) {
         kutu.textContent = kelime[i].toLocaleUpperCase('tr-TR');
@@ -1994,10 +2024,10 @@ function tip3Goster(kelime) {
 
   function butonCiz() {
     harfButonSatir.innerHTML = '';
-    // Kalan harfler (doldurulanlar hariç)
+    // Kalan harfler (doldurulanlar ve boşluklar hariç)
     const kalanlar = [];
     for (let i = 1; i < kelime.length; i++) {
-      if (!hedefSira[i]) kalanlar.push({ harf: kelime[i], idx: i });
+      if (!hedefSira[i] && kelime[i] !== ' ') kalanlar.push({ harf: kelime[i], idx: i });
     }
     const karisik = koyunKaristir(kalanlar);
     karisik.forEach(({ harf, idx }) => {
@@ -2011,7 +2041,7 @@ function tip3Goster(kelime) {
           // ✅ Doğru sıra
           yanlisSayac3 = 0;
           hedefSira[idx] = true;
-          siradakiIdx++;
+          siradakiIdx = sonrakiHarfIdx(siradakiIdx + 1);
           kutuCiz();
           if (siradakiIdx >= kelime.length) {
             // Tamamlandı
