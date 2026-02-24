@@ -1,125 +1,103 @@
-// ═══════════════════════════════════════════════════════════════
-//  UZAY YOLU
-// ═══════════════════════════════════════════════════════════════
 (function(){
 "use strict";
 
-// MEB sırasına göre soru-cevap çiftleri: {soru, dogru, yanlis}
 const SORULAR=[
-  // Seviye 1: E L A K İ N
-  {soru:'"EL" mi yoksa "LA" mı?',dogru:'EL',yanlis:'LA'},
-  {soru:'"KAL" mı yoksa "KEL" mi?',dogru:'KAL',yanlis:'KEL'},
-  {soru:'"İNEK" mi yoksa "EKİ" mi?',dogru:'İNEK',yanlis:'EKİ'},
-  {soru:'"ALİ" mi yoksa "ELİ" mi?',dogru:'ALİ',yanlis:'ELİ'},
-  {soru:'"KALE" mi yoksa "LEKE" mi?',dogru:'KALE',yanlis:'LEKE'},
-  {soru:'"EKİN" mi yoksa "İKEN" mi?',dogru:'EKİN',yanlis:'İKEN'},
-  // Seviye 2: O M U T Ü Y
-  {soru:'"OKUL" mu yoksa "KOLU" mu?',dogru:'OKUL',yanlis:'KOLU'},
-  {soru:'"MUTLU" mu yoksa "TULMU" mu?',dogru:'MUTLU',yanlis:'TULMU'},
-  {soru:'"ÜTÜYÜ" mü yoksa "YÜÜTÜ" mü?',dogru:'ÜTÜYÜ',yanlis:'YÜÜTÜ'},
-  {soru:'"YOLU" mu yoksa "LOYU" mu?',dogru:'YOLU',yanlis:'LOYU'},
-  {soru:'"METE" mi yoksa "TEME" mi?',dogru:'METE',yanlis:'TEME'},
-  {soru:'"TÜYLÜ" mü yoksa "LÜYTÜ" mü?',dogru:'TÜYLÜ',yanlis:'LÜYTÜ'},
-  // Seviye 3: A R I B D S
-  {soru:'"ARABA" mı yoksa "BARAA" mı?',dogru:'ARABA',yanlis:'BARAA'},
-  {soru:'"BALIK" mı yoksa "LAKIB" mı?',dogru:'BALIK',yanlis:'LAKIB'},
-  {soru:'"DEREde" mi yoksa "REDEde" mi?',dogru:'DERE',yanlis:'REDE'},
-  {soru:'"RESIM" mi yoksa "SİREM" mi?',dogru:'RESİM',yanlis:'SİREM'},
-  {soru:'"SÖYLE" mi yoksa "ÖYSLE" mi?',dogru:'SÖYLE',yanlis:'ÖYSLE'},
-  // Seviye 4: Ç G Ş Z P
-  {soru:'"ÇİÇEK" mi yoksa "İÇÇEK" mi?',dogru:'ÇİÇEK',yanlis:'İÇÇEK'},
-  {soru:'"GÖZLÜK" mü yoksa "ZÖGÜLK" mü?',dogru:'GÖZLÜK',yanlis:'ZÖGÜLK'},
-  {soru:'"ŞEKER" mi yoksa "KEŞER" mi?',dogru:'ŞEKER',yanlis:'KEŞER'},
-  {soru:'"ÇİLEK" mi yoksa "İLEÇK" mi?',dogru:'ÇİLEK',yanlis:'İLEÇK'},
-  {soru:'"PAZAR" mı yoksa "ZAPAR" mı?',dogru:'PAZAR',yanlis:'ZAPAR'},
-  // Seviye 5: H F V
-  {soru:'"HAVA" mı yoksa "AVAH" mı?',dogru:'HAVA',yanlis:'AVAH'},
-  {soru:'"FİLMİ" mi yoksa "LİFMİ" mi?',dogru:'FİLMİ',yanlis:'LİFMİ'},
-  {soru:'"VAHŞI" mı yoksa "HAŞVI" mı?',dogru:'VAHŞİ',yanlis:'HAŞVİ'},
+  {soru:'BALIK',dogru:'BALIK',yanlis:'BALKI',emoji:'🐟'},
+  {soru:'GÜNEŞ',dogru:'GÜNEŞ',yanlis:'GÜNŞE',emoji:'☀️'},
+  {soru:'ARABA',dogru:'ARABA',yanlis:'ARBAA',emoji:'🚗'},
+  {soru:'ELMA',dogru:'ELMA',yanlis:'EMLA',emoji:'🍎'},
+  {soru:'KÖPEK',dogru:'KÖPEK',yanlis:'KÖPKE',emoji:'🐶'},
+  {soru:'UÇAK',dogru:'UÇAK',yanlis:'UÇKA',emoji:'✈️'},
+  {soru:'ZÜRAFA',dogru:'ZÜRAFA',yanlis:'ZÜRFA',emoji:'🦒'},
+  {soru:'ÇİLEK',dogru:'ÇİLEK',yanlis:'ÇİELK',emoji:'🍓'}
 ];
 
-let soruIndex=0,puan=0,durduruldu=false;
-let mevcutSoru=null,cevapBekleniyor=false;
+let soruIdx=0, puan=0, durduruldu=false, cevapBekleniyor=false, audioCtx=null;
+const alan=document.getElementById('uzayAlan'), puanEl=document.getElementById('uzayScore');
 
-const alan    = document.getElementById('uzayAlan');
-const puanEl  = document.getElementById('uzayScore');
+// Cerrah Dokunuşu: Global AudioContext yönetimi
+function initAudio() { 
+  if(!audioCtx) audioCtx = new(window.AudioContext||window.webkitAudioContext)(); 
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+}
 
 function render(){
-  if(!alan)return;
-  alan.innerHTML='';
-
-  mevcutSoru=SORULAR[soruIndex%SORULAR.length];
-  // Sağ/sol rastgele yerleştir
+  if(!alan||durduruldu)return;
+  const s=SORULAR[soruIdx % SORULAR.length];
   const solMu=Math.random()>0.5;
-  const solMetin=solMu?mevcutSoru.dogru:mevcutSoru.yanlis;
-  const sagMetin=solMu?mevcutSoru.yanlis:mevcutSoru.dogru;
 
   alan.innerHTML=`
-    <div class="uzay-soru-kart">${mevcutSoru.soru}</div>
-    <div class="uzay-gemi-alan">
-      <div class="uzay-gemi" id="uzayGemi">🚀</div>
+    <div class="uzay-soru-kart" style="text-align:center; padding:15px; background:rgba(255,255,255,0.05); border-radius:20px; border:1px solid rgba(255,255,255,0.1);">
+        <div style="font-size:clamp(3rem, 10vw, 4.5rem); margin-bottom:5px; animation:pop 0.5s;">${s.emoji}</div>
+        <div style="font-size:1.2rem; font-weight:bold; color:#00f2ff; text-transform:uppercase;">Bu Hangisi?</div>
     </div>
-    <div class="uzay-yollar">
-      <div class="uzay-yol" id="uzayYolSol" data-dir="SOL" data-deger="${solMetin}">${solMetin}</div>
-      <div class="uzay-yol" id="uzayYolSag" data-dir="SAĞ" data-deger="${sagMetin}">${sagMetin}</div>
+    <div style="height:200px; position:relative; overflow:hidden; margin:15px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div id="uzayGemi" style="font-size:3.5rem; position:absolute; bottom:10px; left:50%; transform:translateX(-50%); transition:all 0.7s cubic-bezier(0.47, 0, 0.74, 0.71); z-index:10; filter:drop-shadow(0 0 10px #fff);">🚀</div>
+    </div>
+    <div id="uzayYollar" style="display:flex; justify-content:center; gap:15px; padding:0 10px;">
+        <button class="uzay-yol" id="yolSol" style="flex:1; padding:18px 10px; font-size:1rem; font-weight:bold; cursor:pointer; border-radius:15px; border:2px solid #fff; background:transparent; color:#fff; transition:0.2s;">${solMu?s.dogru:s.yanlis}</button>
+        <button class="uzay-yol" id="yolSag" style="flex:1; padding:18px 10px; font-size:1rem; font-weight:bold; cursor:pointer; border-radius:15px; border:2px solid #fff; background:transparent; color:#fff; transition:0.2s;">${solMu?s.yanlis:s.dogru}</button>
     </div>
   `;
 
   cevapBekleniyor=true;
-  document.getElementById('uzayYolSol').addEventListener('click',()=>cevapla(solMetin));
-  document.getElementById('uzayYolSag').addEventListener('click',()=>cevapla(sagMetin));
+  document.getElementById('yolSol').onclick=()=> { initAudio(); cevapla(solMu?'SOL':'SAG', document.getElementById('yolSol').textContent); };
+  document.getElementById('yolSag').onclick=()=> { initAudio(); cevapla(solMu?'SAG':'SOL', document.getElementById('yolSag').textContent); };
 }
 
-function cevapla(secilen){
+function cevapla(yon, metin){
   if(!cevapBekleniyor||durduruldu)return;
-  cevapBekleniyor=false;
-  const dogru=secilen===mevcutSoru.dogru;
+  const s=SORULAR[soruIdx % SORULAR.length];
+  const dogru=metin===s.dogru;
   const gemi=document.getElementById('uzayGemi');
-  const yollar=alan.querySelectorAll('.uzay-yol');
-
-  yollar.forEach(y=>{
-    if(y.dataset.deger===mevcutSoru.dogru)y.classList.add('uzay-yol--dogru');
-    else if(y.dataset.deger===secilen&&!dogru)y.classList.add('uzay-yol--yanlis');
-  });
 
   if(dogru){
-    puan+=15;
-    if(puanEl)puanEl.textContent=puan;
-    if(window.koyunSkoru)window.koyunSkoru(15);
-    if(gemi)gemi.classList.add('hizlan');
-    audioFeedback(true);
+    cevapBekleniyor=false; // Hacker önlemi: Çift tıklamayı engelle
+    puan+=20; if(puanEl)puanEl.textContent=puan;
+    
+    // Roket fırlatma animasyonu
+    gemi.style.bottom="300px";
+    gemi.style.left=yon==='SOL'?"10%":"90%";
+    gemi.style.opacity="0";
+    gemi.style.transform="translateX(-50%) scale(0.5)";
+    
+    playSpaceSound(800, 0.5);
+    
+    setTimeout(()=>{
+      soruIdx++;
+      render();
+    }, 800);
   } else {
-    puan=Math.max(0,puan-5);
-    if(puanEl)puanEl.textContent=puan;
-    audioFeedback(false);
+    // Yanlış cevap efekti
+    gemi.style.animation="shake 0.4s ease-in-out";
+    playSpaceSound(150, 0.2);
+    setTimeout(()=>gemi.style.animation="", 400);
   }
-
-  soruIndex++;
-  setTimeout(()=>{if(!durduruldu)render();},1000);
 }
 
-function audioFeedback(dogru){
-  try{
-    const ctx=new(window.AudioContext||window.webkitAudioContext)();
-    const osc=ctx.createOscillator();const gain=ctx.createGain();
-    osc.connect(gain);gain.connect(ctx.destination);
-    if(dogru){osc.frequency.setValueAtTime(660,ctx.currentTime);osc.frequency.setValueAtTime(880,ctx.currentTime+0.12);}
-    else{osc.frequency.setValueAtTime(250,ctx.currentTime);osc.frequency.setValueAtTime(180,ctx.currentTime+0.15);}
-    gain.gain.setValueAtTime(0.25,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);
-    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.35);
-  }catch(e){}
+function playSpaceSound(f,d){
+  if(!audioCtx) return;
+  try {
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(f, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(f*2, audioCtx.currentTime+d);
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+d);
+    o.start(); o.stop(audioCtx.currentTime+d);
+  } catch(e) { console.error("Ses hatası:", e); }
 }
 
-window.uzayBas=function(){
-  durduruldu=false;
-  puan=0;soruIndex=0;
-  if(puanEl)puanEl.textContent=0;
-  render();
-};
+window.uzayBas=()=>{ soruIdx=0; puan=0; if(puanEl)puanEl.textContent=0; render(); };
+window.uzayBas();
 
-window.uzayDurdur=function(){
-  durduruldu=true;
-  cevapBekleniyor=false;
-};
-
+const st=document.createElement('style');
+st.innerHTML=`
+  @keyframes shake{0%,100%{left:50%} 20%{left:45%} 40%{left:55%} 60%{left:47%} 80%{left:53%}}
+  @keyframes pop{0%{transform:scale(0.8); opacity:0} 100%{transform:scale(1); opacity:1}}
+  .uzay-yol:active{background:#fff !important; color:#000 !important; transform:translateY(2px);}
+  .uzay-yol:hover{border-color:#00f2ff; box-shadow: 0 0 10px #00f2ff;}
+`;
+document.head.appendChild(st);
 })();
