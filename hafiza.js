@@ -1,151 +1,149 @@
 // ═══════════════════════════════════════════════════════════════
-//  HAFIZA KARTLARI
+//   HAFIZA KARTLARI - MÜKEMMELLEŞTİRİLMİŞ SÜRÜM
 // ═══════════════════════════════════════════════════════════════
 (function(){
 "use strict";
 
-// MEB sırasına göre hece-resim çiftleri
-const CIFTLER=[
-  // Seviye 1
+// MEB müfredatına uygun, somut ve görsel eşleşmeli çiftler
+const CIFTLER = [
   [{tip:'hece',icerik:'EL'},{tip:'emoji',icerik:'🖐'}],
-  [{tip:'hece',icerik:'AL'},{tip:'emoji',icerik:'🍎'}],
-  [{tip:'hece',icerik:'AK'},{tip:'emoji',icerik:'🦆'}],
-  [{tip:'hece',icerik:'KAL'},{tip:'emoji',icerik:'🏠'}],
-  // Seviye 2
+  [{tip:'hece',icerik:'ELMA'},{tip:'emoji',icerik:'🍎'}], 
+  [{tip:'hece',icerik:'KAZ'},{tip:'emoji',icerik:'🦆'}],  
+  [{tip:'hece',icerik:'KEDİ'},{tip:'emoji',icerik:'🐈'}],
   [{tip:'hece',icerik:'İNEK'},{tip:'emoji',icerik:'🐄'}],
   [{tip:'hece',icerik:'KALE'},{tip:'emoji',icerik:'🏰'}],
   [{tip:'hece',icerik:'LALE'},{tip:'emoji',icerik:'🌷'}],
-  [{tip:'hece',icerik:'EKİN'},{tip:'emoji',icerik:'🌾'}],
-  // Seviye 3
+  [{tip:'hece',icerik:'KAPI'},{tip:'emoji',icerik:'🚪'}], 
   [{tip:'hece',icerik:'OKUL'},{tip:'emoji',icerik:'🏫'}],
-  [{tip:'hece',icerik:'YOLU'},{tip:'emoji',icerik:'🛤'}],
+  [{tip:'hece',icerik:'ORMAN'},{tip:'emoji',icerik:'🌲🌲'}], 
   [{tip:'hece',icerik:'MUTLU'},{tip:'emoji',icerik:'😊'}],
-  [{tip:'hece',icerik:'ÜTÜYÜ'},{tip:'emoji',icerik:'👕'}],
+  [{tip:'hece',icerik:'KUZU'},{tip:'emoji',icerik:'🐑'}]
 ];
 
-// Seviye başına kaç çift
-const SEVIYE_CIFT=[4,6,8,12];
+const SEVIYE_CIFT = [4, 6, 8, 12];
+let seviye = 0, puan = 0, durduruldu = false, kilitli = false;
+let acikKartlar = [], eslesilenler = 0, toplamCift = 0, kartVerisi = [];
+let audioCtx = null; // Bellek yönetimi için tek kanal ses
 
-let seviye=0,puan=0,durduruldu=false;
-let acikKartlar=[],eslesilenler=0,toplamCift=0,kartVerisi=[];
-let kilitli=false;
+const alan = document.getElementById('hafizaAlan');
+const puanEl = document.getElementById('hafizaScore');
+const seviyeEl = document.getElementById('hafizaSeviyeText');
 
-const alan    = document.getElementById('hafizaAlan');
-const puanEl  = document.getElementById('hafizaScore');
-const seviyeEl= document.getElementById('hafizaSeviyeText');
+function shuffle(arr) { 
+  return arr.map(a => ({sort: Math.random(), value: a}))
+            .sort((a, b) => a.sort - b.sort)
+            .map(a => a.value);
+}
 
-function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function yeniSeviye() {
+  if (durduruldu) return;
+  const ciftSayisi = SEVIYE_CIFT[Math.min(seviye, SEVIYE_CIFT.length - 1)];
+  toplamCift = ciftSayisi;
+  eslesilenler = 0; acikKartlar = []; kilitli = false;
+  
+  if (seviyeEl) seviyeEl.textContent = `Seviye ${seviye + 1}`;
 
-function yeniSeviye(){
-  if(durduruldu)return;
-  const ciftSayisi=SEVIYE_CIFT[Math.min(seviye,SEVIYE_CIFT.length-1)];
-  toplamCift=ciftSayisi;
-  eslesilenler=0;
-  acikKartlar=[];
-  kilitli=false;
-  if(seviyeEl)seviyeEl.textContent='Seviye '+(seviye+1);
-
-  // Kullanılacak çiftleri seç
-  const secilmis=shuffle(CIFTLER).slice(0,ciftSayisi);
-  // Her çiftten iki kart oluştur
-  kartVerisi=[];
-  secilmis.forEach((cift,i)=>{
-    kartVerisi.push({id:'c'+i+'_0',grupId:i,icerik:cift[0].icerik,tip:cift[0].tip,eslesti:false});
-    kartVerisi.push({id:'c'+i+'_1',grupId:i,icerik:cift[1].icerik,tip:cift[1].tip,eslesti:false});
+  // Mevcut çiftlerden seçim yap ve kartları oluştur
+  const secilenler = shuffle(CIFTLER).slice(0, ciftSayisi);
+  kartVerisi = [];
+  secilenler.forEach((cift, i) => {
+    kartVerisi.push({id:`c${i}_0`, grupId:i, icerik:cift[0].icerik, tip:cift[0].tip, eslesti:false});
+    kartVerisi.push({id:`c${i}_1`, grupId:i, icerik:cift[1].icerik, tip:cift[1].tip, eslesti:false});
   });
-  kartVerisi=shuffle(kartVerisi);
+  kartVerisi = shuffle(kartVerisi);
   render();
 }
 
-function render(){
-  if(!alan)return;
-  // Izgara sütun sayısı
-  const cols=toplamCift<=4?4:toplamCift<=6?4:4;
-  alan.style.gridTemplateColumns='repeat('+cols+',1fr)';
-  alan.innerHTML='';
-  kartVerisi.forEach(kart=>{
-    const div=document.createElement('div');
-    div.className='hafiza-kart';
-    div.id='kart_'+kart.id;
-    div.innerHTML='<div class="hafiza-kart-on">❓</div><div class="hafiza-kart-arka'+(kart.tip==='emoji'?' emoji-arka':'')+'">'+kart.icerik+'</div>';
-    div.addEventListener('click',()=>kartaTıkla(kart.id));
+function render() {
+  if (!alan) return;
+  // Dinamik ızgara yapısı: Küçük seviyelerde 4, büyüklerde 6 sütun
+  const cols = toplamCift >= 12 ? 6 : 4;
+  alan.style.display = 'grid';
+  alan.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  alan.innerHTML = '';
+
+  kartVerisi.forEach(kart => {
+    const div = document.createElement('div');
+    div.className = 'hafiza-kart';
+    div.id = `kart_${kart.id}`;
+    div.innerHTML = `
+      <div class="hafiza-kart-on">❓</div>
+      <div class="hafiza-kart-arka ${kart.tip === 'emoji' ? 'emoji-arka' : ''}">${kart.icerik}</div>
+    `;
+    div.onclick = () => kartaTikla(kart.id);
     alan.appendChild(div);
   });
 }
 
-function kartaTıkla(kartId){
-  if(kilitli||durduruldu)return;
-  const kart=kartVerisi.find(k=>k.id===kartId);
-  if(!kart||kart.eslesti)return;
-  const el=document.getElementById('kart_'+kartId);
-  if(!el||el.classList.contains('cevrili'))return;
+function kartaTikla(kartId) {
+  if (kilitli || durduruldu) return;
+  const kart = kartVerisi.find(k => k.id === kartId);
+  const el = document.getElementById(`kart_${kartId}`);
+
+  if (!kart || kart.eslesti || el.classList.contains('cevrili') || acikKartlar.includes(kartId)) return;
+
   el.classList.add('cevrili');
   acikKartlar.push(kartId);
-  audioFlip();
-  if(acikKartlar.length===2)kontrolEt();
-}
+  playTone(300, 0.1); // Çevirme sesi
 
-function kontrolEt(){
-  kilitli=true;
-  const [id1,id2]=acikKartlar;
-  const k1=kartVerisi.find(k=>k.id===id1);
-  const k2=kartVerisi.find(k=>k.id===id2);
-  if(k1.grupId===k2.grupId){
-    // Eşleşti
-    k1.eslesti=true;k2.eslesti=true;
-    const el1=document.getElementById('kart_'+id1);
-    const el2=document.getElementById('kart_'+id2);
-    if(el1)el1.classList.add('hafiza-kart--eslesti');
-    if(el2)el2.classList.add('hafiza-kart--eslesti');
-    eslesilenler++;
-    puan+=20;
-    if(puanEl)puanEl.textContent=puan;
-    if(window.koyunSkoru)window.koyunSkoru(20);
-    audioFeedback(true);
-    acikKartlar=[];
-    kilitli=false;
-    if(eslesilenler===toplamCift){
-      setTimeout(()=>{
-        if(durduruldu)return;
-        seviye++;
-        if(seviye<SEVIYE_CIFT.length)yeniSeviye();
-        else{seviye=0;yeniSeviye();}
-      },800);
-    }
-  } else {
-    // Eşleşmedi
-    puan=Math.max(0,puan-3);
-    if(puanEl)puanEl.textContent=puan;
-    audioFeedback(false);
-    const el1=document.getElementById('kart_'+id1);
-    const el2=document.getElementById('kart_'+id2);
-    if(el1)el1.classList.add('hafiza-kart--yanlis');
-    if(el2)el2.classList.add('hafiza-kart--yanlis');
-    setTimeout(()=>{
-      if(el1){el1.classList.remove('cevrili','hafiza-kart--yanlis');}
-      if(el2){el2.classList.remove('cevrili','hafiza-kart--yanlis');}
-      acikKartlar=[];kilitli=false;
-    },900);
+  if (acikKartlar.length === 2) {
+    kilitli = true;
+    setTimeout(kontrolEt, 600); // Kullanıcıya kartı görmesi için süre tanı
   }
 }
 
-function audioFlip(){
-  try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.setValueAtTime(300,ctx.currentTime);gain.gain.setValueAtTime(0.1,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.1);osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.1);}catch(e){}
-}
-function audioFeedback(dogru){
-  try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);if(dogru){osc.frequency.setValueAtTime(523,ctx.currentTime);osc.frequency.setValueAtTime(659,ctx.currentTime+0.1);osc.frequency.setValueAtTime(784,ctx.currentTime+0.2);osc.frequency.setValueAtTime(1047,ctx.currentTime+0.3);}else{osc.frequency.setValueAtTime(250,ctx.currentTime);osc.frequency.setValueAtTime(200,ctx.currentTime+0.15);}gain.gain.setValueAtTime(0.25,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.45);osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.45);}catch(e){}
+function kontrolEt() {
+  const [id1, id2] = acikKartlar;
+  const k1 = kartVerisi.find(k => k.id === id1);
+  const k2 = kartVerisi.find(k => k.id === id2);
+  const el1 = document.getElementById(`kart_${id1}`);
+  const el2 = document.getElementById(`kart_${id2}`);
+
+  if (k1.grupId === k2.grupId) {
+    k1.eslesti = k2.eslesti = true;
+    el1.classList.add('hafiza-kart--eslesti');
+    el2.classList.add('hafiza-kart--eslesti');
+    eslesilenler++;
+    puan += 20;
+    playTone(523, 0.3); // Başarı sesi
+    if (eslesilenler === toplamCift) nextStep();
+  } else {
+    el1.classList.add('hafiza-kart--yanlis');
+    el2.classList.add('hafiza-kart--yanlis');
+    playTone(200, 0.2); // Hata sesi
+    setTimeout(() => {
+      el1.classList.remove('cevrili', 'hafiza-kart--yanlis');
+      el2.classList.remove('cevrili', 'hafiza-kart--yanlis');
+    }, 800);
+  }
+  
+  if (puanEl) puanEl.textContent = puan;
+  acikKartlar = [];
+  kilitli = false;
 }
 
-window.hafizaBas=function(){
-  durduruldu=false;
-  puan=0;seviye=0;
-  if(puanEl)puanEl.textContent=0;
-  yeniSeviye();
-};
+function nextStep() {
+  setTimeout(() => {
+    seviye++;
+    if (seviye >= SEVIYE_CIFT.length) seviye = 0;
+    yeniSeviye();
+  }, 1000);
+}
 
-window.hafizaDurdur=function(){
-  durduruldu=true;
-  acikKartlar=[];kilitli=false;
-};
+function playTone(freq, dur) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+    osc.start(); osc.stop(audioCtx.currentTime + dur);
+  } catch (e) {}
+}
+
+window.hafizaBas = () => { durduruldu = false; puan = 0; seviye = 0; if(puanEl) puanEl.textContent = 0; yeniSeviye(); };
+window.hafizaDurdur = () => { durduruldu = true; kilitli = false; };
 
 })();
