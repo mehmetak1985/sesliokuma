@@ -52,11 +52,10 @@ const KELIME_SEVIYELERI = [
 let ko = {
   seviye: 0,
   kelimeIdx: 0,
-  skor: 0,
   aktif: false,
-  yerlestirilen: [],   // her slot için yerleştirilen harf
-  harfler: [],         // karıştırılmış harf listesi
-  dragSrc: null,       // sürüklenen harf elementi
+  yerlestirilen: [],
+  harfler: [],
+  dragSrc: null,
 };
 
 // ── Ekran ──────────────────────────────────────────────────────
@@ -83,7 +82,6 @@ function koEkranOlustur() {
 
       <div style="width:100%;display:flex;align-items:center;justify-content:space-between;">
         <button id="koGeriBtn" class="btn-back">← Menü</button>
-        <div class="koyun-score-badge">⭐ <span id="koSkor">0</span></div>
       </div>
 
       <div style="width:100%;text-align:center;">
@@ -125,7 +123,6 @@ window.kelimeOyunuBas = function () {
   koEkranOlustur();
   ko.seviye = 0;
   ko.kelimeIdx = 0;
-  ko.skor = 0;
   ko.aktif = true;
   var ks = document.getElementById('koyunScreen');
   if (ks) ks.style.display = 'none';
@@ -166,7 +163,6 @@ function koKelimeGoster() {
   document.getElementById('koProgressBar').style.width =
     Math.round((gecilen / toplamKelime) * 100) + '%';
 
-  document.getElementById('koSkor').textContent = ko.skor;
   document.getElementById('koSonuc').textContent = '';
   document.getElementById('koSonuc').className = 'koyun-result';
 
@@ -361,8 +357,8 @@ function koYerlestir(harfBtn, slot, slotIdx) {
 
 // ── Doğru Kelime ───────────────────────────────────────────────
 function koDogruKelime() {
-  ko.skor += (ko.seviye + 1) * 2;
-  document.getElementById('koSkor').textContent = ko.skor;
+  const kazanilanPuan = (ko.seviye + 1) * 2;
+  if (typeof window.koyunSkoru === 'function') window.koyunSkoru(kazanilanPuan);
 
   const sonuc = document.getElementById('koSonuc');
   sonuc.textContent = 'Harika! ⭐';
@@ -425,14 +421,10 @@ function koOyunBitti() {
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0;">
       <div style="font-size:3rem;">🏆</div>
       <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:1.5rem;color:#7c3aed;">Tüm Seviyeler Tamam!</div>
-      <div style="font-family:'Nunito',sans-serif;font-size:1.3rem;color:#f59e0b;font-weight:900;">⭐ ${ko.skor} puan!</div>
     </div>
   `;
   document.getElementById('koHarfler').innerHTML = '';
   document.getElementById('koSlotlar').innerHTML = '';
-
-  // Skoru ana oyuna aktar
-  if (typeof window.koyunSkoru === 'function') window.koyunSkoru(ko.skor);
 
   const gec = document.getElementById('koBtnGec');
   gec.textContent = '← Menüye Dön';

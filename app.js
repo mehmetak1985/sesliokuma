@@ -12,20 +12,33 @@ const HIKAYE_GRUPLARI=[["Mina kırmızı oyuncak arabasını aldı.","Arabayı y
 const HIKAYE_ISIMLERI=['Mina ve Oyuncak Arabası','Baran ve Yapboz','Henna ve Kediler','Mustafa ve Yeni Ayakkabıları','Asya ve Yağmur','Yusuf ve Kitap','Zeynep ve Çiçekler','Maysa ve Resim','Mehmet ve Uçurtma','Yağmur ve Kütüphane','Çiçek ve Dostluk','Emir ve Kayıp Kalem','Beyaz ve Paylaşmak','Kaan ve Zamanında Uyanmak','Elvan ve Bitki','Berk ve Kırılan Bardak','Defne ve Grup Çalışması','Aras ve Cesaret','İlayda ve Doğru Karar','Onur ve Sabır','Henna ve Asya'];
 
 // ─── State ────────────────────────────────────────────────────────────────────
-const LS_KEY='sesliOkumaOyunu_v1';
+const LS_KEY='minikOkur_v2';
+
+// Merkezi rozet tanımları — 8 rozet, puan eşiğine göre
+const ROZETLER=[
+  {id:'minikOkur',     emoji:'🌱', baslik:'Minik Okur',     aciklama:'İlk adımını attın!',  esik:10},
+  {id:'caliskan',      emoji:'⭐', baslik:'Çalışkan',        aciklama:'50 puana ulaştın!',   esik:50},
+  {id:'harfUstasi',    emoji:'🔤', baslik:'Harf Ustası',     aciklama:'150 puana ulaştın!',  esik:150},
+  {id:'kelimeUstasi',  emoji:'📖', baslik:'Kelime Ustası',   aciklama:'300 puana ulaştın!',  esik:300},
+  {id:'yildizOkur',    emoji:'🌟', baslik:'Yıldız Okur',    aciklama:'500 puana ulaştın!',  esik:500},
+  {id:'minikSampiyon', emoji:'🏅', baslik:'Minik Şampiyon', aciklama:'750 puana ulaştın!',  esik:750},
+  {id:'superOkur',     emoji:'🏆', baslik:'Süper Okur',      aciklama:'1000 puana ulaştın!', esik:1000},
+  {id:'efsane',        emoji:'👑', baslik:'Efsane',          aciklama:'1500 puana ulaştın!', esik:1500},
+];
+
 let grupIndex=0,cumleIndex=0,hikayeModu=false,hikayeIndex=0,hikayeCumle=0;
 let bolumDogru=0,bolumYanlis=0,kelimeHatalar={};
 let targetWords=[],wordSpans=[],currentWordIndex=0,score=0,totalScore=0;
 let yanlisSayac=0,yanlisSayacIndex=-1,denemeHakki=0;
 let endGameTimer=null;
-let achievements={minikOkur:false,hicPesEtmeyen:false,cesurOkuyucu:false,parlayanYildiz:false,okumaSampiyonu:false};
+let kazanilanRozetler=[];
 let tamamlananHikayeler=new Array(HIKAYE_GRUPLARI.length).fill(false);
 let mikIzniAlindi=false;
 
 function HEDEF_METIN(){return hikayeModu?HIKAYE_GRUPLARI[hikayeIndex][hikayeCumle%HIKAYE_GRUPLARI[hikayeIndex].length]:CUMLE_GRUPLARI[grupIndex][cumleIndex%CUMLE_GRUPLARI[grupIndex].length];}
 
-function kaydet(){try{localStorage.setItem(LS_KEY,JSON.stringify({grupIndex,cumleIndex,hikayeModu,hikayeIndex,hikayeCumle,totalScore,achievements,tamamlananHikayeler}));}catch(e){}}
-function yukle(){try{const d=JSON.parse(localStorage.getItem(LS_KEY)||'null');if(!d)return;grupIndex=d.grupIndex||0;cumleIndex=d.cumleIndex||0;hikayeModu=d.hikayeModu||false;hikayeIndex=d.hikayeIndex||0;hikayeCumle=d.hikayeCumle||0;totalScore=d.totalScore||0;if(d.achievements)achievements=Object.assign({},achievements,d.achievements);if(Array.isArray(d.tamamlananHikayeler))tamamlananHikayeler=d.tamamlananHikayeler.slice();}catch(e){}}
+function kaydet(){try{localStorage.setItem(LS_KEY,JSON.stringify({grupIndex,cumleIndex,hikayeModu,hikayeIndex,hikayeCumle,totalScore,kazanilanRozetler,tamamlananHikayeler}));}catch(e){}}
+function yukle(){try{const d=JSON.parse(localStorage.getItem(LS_KEY)||'null');if(!d)return;grupIndex=d.grupIndex||0;cumleIndex=d.cumleIndex||0;hikayeModu=d.hikayeModu||false;hikayeIndex=d.hikayeIndex||0;hikayeCumle=d.hikayeCumle||0;totalScore=d.totalScore||0;if(Array.isArray(d.kazanilanRozetler))kazanilanRozetler=d.kazanilanRozetler.slice();if(Array.isArray(d.tamamlananHikayeler))tamamlananHikayeler=d.tamamlananHikayeler.slice();}catch(e){}}
 
 // ─── SpeechController ─────────────────────────────────────────────────────────
 const SpeechController=(function(){
@@ -63,11 +76,18 @@ function kelimeEslesir(k,h){if(k===h)return true;const f=fonetikNormalize(k,h);i
 function updateUI(){wordSpans.forEach((span,i)=>{if(i===currentWordIndex&&!span.classList.contains('correct')&&!span.classList.contains('wrong'))span.className='word active';});const eskiPuan=parseInt(scoreDisplay.textContent,10);scoreDisplay.textContent=totalScore;if(totalScore!==eskiPuan){scoreDisplay.classList.remove('bump');void scoreDisplay.offsetWidth;scoreDisplay.classList.add('bump');}}
 function oyunuKur(){const metin=HEDEF_METIN();targetWords=normalizeText(metin);const fragment=document.createDocumentFragment();wordSpans=[];const orijinal=metin.split(/\s+/);targetWords.forEach((k,i)=>{const span=document.createElement('span');span.className='word'+(i===0?' active':'');span.textContent=orijinal[i]||k;span.dataset.index=i;fragment.appendChild(span);wordSpans.push(span);});wordCard.innerHTML='';wordCard.appendChild(fragment);const adet=targetWords.length;wordCard.dataset.wordcount=adet<=3?'small':adet<=5?'medium':'large';}
 function validateWord(konusulan){if(currentWordIndex>=targetWords.length)return;const tokenler=normalizeText(konusulan);if(!tokenler.length)return;const token=tokenler[0],hedef=targetWords[currentWordIndex],span=wordSpans[currentWordIndex];if(kelimeEslesir(token,hedef)){kelimeKabul(span,hedef);}else{if(yanlisSayacIndex!==currentWordIndex){yanlisSayac=0;yanlisSayacIndex=currentWordIndex;denemeHakki=0;}yanlisSayac++;if(yanlisSayac===1){bolumYanlis++;kelimeHatalar[hedef]=(kelimeHatalar[hedef]||0)+1;}if(denemeHakki===0){denemeHakki=1;span.style.transform='scale(1.06)';span.style.background='rgba(255,209,102,0.18)';span.style.borderColor='var(--yellow)';span.style.color='var(--yellow)';if(micStatus)micStatus.textContent='💪 Tekrar deneyelim!';setTimeout(()=>{if(currentWordIndex<targetWords.length&&wordSpans[currentWordIndex]===span){span.style.transform='';span.style.background='';span.style.borderColor='';span.style.color='';span.className='word active';if(micStatus)micStatus.textContent='🎤 Dinliyorum...';}},800);}else{denemeHakki=0;kelimeKabul(span,hedef);}}}
-function kelimeKabul(span,hedef){span.className='word correct';score+=1;totalScore+=1;bolumDogru++;yanlisSayac=0;yanlisSayacIndex=-1;denemeHakki=0;currentWordIndex++;requestAnimationFrame(updateUI);if(currentWordIndex===targetWords.length){kontrolRozetlerYildiz();kontrolRozetlerZorluk();endGame();}}
+function kelimeKabul(span,hedef){span.className='word correct';score+=1;totalScore+=1;bolumDogru++;yanlisSayac=0;yanlisSayacIndex=-1;denemeHakki=0;currentWordIndex++;requestAnimationFrame(updateUI);kontrolRozetler();if(currentWordIndex===targetWords.length){endGame();}}
 function gosterHata(mesaj){if(errorMsg){errorMsg.textContent=mesaj;errorMsg.classList.add('visible');}}
 function syncLevelButtons(){document.querySelectorAll('.lvl-btn').forEach(btn=>{btn.classList.toggle('active',parseInt(btn.dataset.level,10)===grupIndex);});}
 function updateStoryProgress(){if(!hikayeModu){if(storyProgress)storyProgress.classList.remove('visible');return;}if(storyProgress)storyProgress.classList.add('visible');const hikaye=HIKAYE_GRUPLARI[hikayeIndex];if(storyTitle)storyTitle.textContent='📖 '+HIKAYE_ISIMLERI[hikayeIndex];if(storyProgressText)storyProgressText.textContent=(hikayeCumle+1)+' / '+hikaye.length;if(storyBar)storyBar.style.width=Math.round(((hikayeCumle+1)/hikaye.length)*100)+'%';}
-function menuSkorGuncelle(){const el1=document.getElementById('menuScoreText'),el2=document.getElementById('menuTotalScore');if(el1)el1.textContent=totalScore;if(el2)el2.textContent=totalScore;}
+function menuSkorGuncelle(){
+  const el1=document.getElementById('menuScoreText'),el2=document.getElementById('menuTotalScore');
+  if(el1)el1.textContent=totalScore;
+  if(el2)el2.textContent=totalScore;
+  // Oyun içi badge'leri de güncelle
+  document.querySelectorAll('.oyun-toplam-puan').forEach(el=>el.textContent=totalScore);
+  menuRozetGuncelle();
+}
 
 // ─── Rapor ────────────────────────────────────────────────────────────────────
 function gosterRapor(opts){reportEmoji.textContent=opts.emoji||'🌟';reportTitle.textContent=opts.title||'Tamamlandı!';reportSubtitle.textContent=opts.subtitle||'';reportDogru.textContent=bolumDogru;reportYanlis.textContent=bolumYanlis;reportPuan.textContent=totalScore;const hatalar=Object.entries(kelimeHatalar).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k);if(hatalar.length){reportHardList.textContent='';hatalar.forEach((k,i)=>{const s=document.createElement('strong');s.textContent=k;reportHardList.appendChild(s);if(i<hatalar.length-1){const sep=document.createTextNode('  ·  ');reportHardList.appendChild(sep);}});reportHardWords.style.display='block';}else reportHardWords.style.display='none';reportBtnRow.innerHTML='';if(opts.onTekrar){const btn=document.createElement('button');btn.className='report-btn secondary';btn.textContent='🔄 Tekrar Oku';btn.onclick=()=>{kapatRapor();opts.onTekrar();};reportBtnRow.appendChild(btn);}const btnNext=document.createElement('button');btnNext.className='report-btn primary';btnNext.textContent=opts.nextLabel||'▶ Devam';btnNext.onclick=()=>{kapatRapor();opts.onDevam();};reportBtnRow.appendChild(btnNext);if(opts.autoMs&&opts.autoMs>0){reportTimerWrap.style.display='block';reportTimerBar.style.transition='none';reportTimerBar.style.width='100%';requestAnimationFrame(()=>requestAnimationFrame(()=>{reportTimerBar.style.transition='width '+opts.autoMs+'ms linear';reportTimerBar.style.width='0%';}));const t=setTimeout(()=>{kapatRapor();opts.onDevam();},opts.autoMs);reportBtnRow.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>clearTimeout(t),{once:true}));}else reportTimerWrap.style.display='none';reportOverlay.classList.add('visible');}
@@ -77,16 +97,45 @@ function sifirlaIstatistik(){bolumDogru=0;bolumYanlis=0;kelimeHatalar={};}
 // ─── Rozet ────────────────────────────────────────────────────────────────────
 const achToast=document.getElementById('achToast'),achToastTitle=document.getElementById('achToastTitle'),achToastDesc=document.getElementById('achToastDesc');
 let toastTimer=null;
-function rozetGoster(baslik,aciklama){if(achToastTitle)achToastTitle.textContent=baslik;if(achToastDesc)achToastDesc.textContent=aciklama;if(achToast)achToast.classList.add('visible');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>{if(achToast)achToast.classList.remove('visible');toastTimer=null;},3500);}
-function kontrolRozetlerYildiz(){if(!achievements.minikOkur){achievements.minikOkur=true;rozetGoster('🌟 Minik Okur','İlk kelime tamam!');kaydet();}if(totalScore>=50&&!achievements.parlayanYildiz){achievements.parlayanYildiz=true;rozetGoster('✨ Parlayan Yıldız','50 puana ulaştın!');kaydet();}if(totalScore>=200&&!achievements.okumaSampiyonu){achievements.okumaSampiyonu=true;rozetGoster('🏆 Okuma Şampiyonu','200 puan!');kaydet();}}
-function kontrolRozetlerZorluk(){if(bolumYanlis===0&&bolumDogru>=3&&!achievements.cesurOkuyucu){achievements.cesurOkuyucu=true;rozetGoster('💪 Cesur Okuyucu','Hiç hata yapmadan bitirdin!');kaydet();}}
-function kontrolRozetlerHikayeSonu(){const tam=tamamlananHikayeler.filter(Boolean).length;if(tam>=5&&!achievements.hicPesEtmeyen){achievements.hicPesEtmeyen=true;rozetGoster('🎯 Hiç Pes Etmeyen','5 hikayeyi tamamladın!');kaydet();}}
+
+function rozetGoster(baslik,aciklama){
+  if(achToastTitle)achToastTitle.textContent=baslik;
+  if(achToastDesc)achToastDesc.textContent=aciklama;
+  if(achToast)achToast.classList.add('visible');
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{if(achToast)achToast.classList.remove('visible');toastTimer=null;},3500);
+}
+
+// Puan değişiminde rozet kontrolü yap — tek merkezi fonksiyon
+function kontrolRozetler(){
+  ROZETLER.forEach(r=>{
+    if(!kazanilanRozetler.includes(r.id) && totalScore>=r.esik){
+      kazanilanRozetler.push(r.id);
+      rozetGoster(r.emoji+' '+r.baslik, r.aciklama);
+      kaydet();
+      menuRozetGuncelle();
+    }
+  });
+}
+
+// Menü footer rozet alanını güncelle
+function menuRozetGuncelle(){
+  const alan=document.getElementById('menuRozetAlan');
+  if(!alan)return;
+  // Kazanılan rozetlerin son 4'ünü göster
+  const gorunecek=ROZETLER.filter(r=>kazanilanRozetler.includes(r.id)).slice(-4);
+  if(gorunecek.length===0){
+    alan.innerHTML='<span style="color:rgba(255,255,255,0.5);font-size:0.8rem;font-family:Nunito,sans-serif;">Henüz rozet kazanılmadı</span>';
+  } else {
+    alan.innerHTML=gorunecek.map(r=>`<span title="${r.baslik}" style="font-size:1.6rem;cursor:default;">${r.emoji}</span>`).join('');
+  }
+}
 
 // ─── Oyun akışı ───────────────────────────────────────────────────────────────
 function sonrakiCumleyeGec(){if(hikayeModu){hikayeCumle++;const hikaye=HIKAYE_GRUPLARI[hikayeIndex];if(hikayeCumle>=hikaye.length){hikayeCumle=0;hikayeIndex=hikayeIndex<HIKAYE_GRUPLARI.length-1?hikayeIndex+1:0;}updateStoryProgress();}else{cumleIndex++;if(cumleIndex>=CUMLE_GRUPLARI[grupIndex].length){cumleIndex=0;if(grupIndex<CUMLE_GRUPLARI.length-1){grupIndex++;if(micStatus)micStatus.textContent='🌟 Yeni harf grubu!';syncLevelButtons();}}}kaydet();}
 function resetCumle(){currentWordIndex=0;score=0;yanlisSayac=0;yanlisSayacIndex=-1;if(interimText)interimText.textContent='';if(congratsBanner)congratsBanner.classList.remove('visible');if(errorMsg)errorMsg.classList.remove('visible');oyunuKur();SpeechController.startListening();}
 function endGame(){SpeechController.stopAll();wordSpans.forEach((span,i)=>{if(i>=currentWordIndex&&!span.classList.contains('correct'))span.className='word wrong';});if(congratsBanner)congratsBanner.classList.add('visible');if(wordCard){wordCard.classList.add('celebrate');setTimeout(()=>wordCard.classList.remove('celebrate'),600);}if(btnStop)btnStop.disabled=true;if(btnStart)btnStart.disabled=false;if(micStatus)micStatus.textContent='🎉 Harika iş çıkardın!';if(endGameTimer)clearTimeout(endGameTimer);
-if(hikayeModu){const hikaye=HIKAYE_GRUPLARI[hikayeIndex];const sonCumle=(hikayeCumle===hikaye.length-1);if(sonCumle){tamamlananHikayeler[hikayeIndex]=true;kontrolRozetlerHikayeSonu();endGameTimer=setTimeout(()=>{endGameTimer=null;if(congratsBanner)congratsBanner.classList.remove('visible');if(errorMsg)errorMsg.classList.remove('visible');if(btnStop)btnStop.disabled=false;if(btnStart)btnStart.disabled=false;const dp=bolumDogru+bolumYanlis>0?Math.round((bolumDogru/(bolumDogru+bolumYanlis))*100):100;gosterRapor({emoji:dp>=90?'🏆':dp>=70?'⭐':'💪',title:'📖 Hikaye Bitti!',subtitle:HIKAYE_ISIMLERI[hikayeIndex]+' · %'+dp+' doğru',autoMs:0,nextLabel:'▶ Sonraki Hikaye',onTekrar:()=>{hikayeCumle=0;sifirlaIstatistik();resetCumle();},onDevam:()=>{sonrakiCumleyeGec();sifirlaIstatistik();resetCumle();}});},1200);}else{endGameTimer=setTimeout(()=>{endGameTimer=null;if(congratsBanner)congratsBanner.classList.remove('visible');if(errorMsg)errorMsg.classList.remove('visible');if(btnStop)btnStop.disabled=false;if(btnStart)btnStart.disabled=false;sonrakiCumleyeGec();resetCumle();},2000);}}else{const sonCumle=(cumleIndex===CUMLE_GRUPLARI[grupIndex].length-1);if(sonCumle){endGameTimer=setTimeout(()=>{endGameTimer=null;if(congratsBanner)congratsBanner.classList.remove('visible');if(errorMsg)errorMsg.classList.remove('visible');if(btnStop)btnStop.disabled=false;if(btnStart)btnStart.disabled=false;const dp=bolumDogru+bolumYanlis>0?Math.round((bolumDogru/(bolumDogru+bolumYanlis))*100):100;gosterRapor({emoji:dp>=90?'🏆':dp>=70?'⭐':'💪',title:(grupIndex+1)+'. Bölüm Tamamlandı!',subtitle:'Harika iş çıkardın! %'+dp+' doğru',autoMs:5000,nextLabel:'▶ Sonraki Bölüm',onDevam:()=>{sonrakiCumleyeGec();sifirlaIstatistik();resetCumle();}});},1200);}else{endGameTimer=setTimeout(()=>{endGameTimer=null;if(congratsBanner)congratsBanner.classList.remove('visible');if(errorMsg)errorMsg.classList.remove('visible');if(btnStop)btnStop.disabled=false;if(btnStart)btnStart.disabled=false;sonrakiCumleyeGec();resetCumle();},2000);}}}
+if(hikayeModu){const hikaye=HIKAYE_GRUPLARI[hikayeIndex];const sonCumle=(hikayeCumle===hikaye.length-1);if(sonCumle){tamamlananHikayeler[hikayeIndex]=true;kaydet();endGameTimer=setTimeout(()=>{endGameTimer=null;if(congratsBanner)congratsBanner.classList.remove('visible');if(errorMsg)errorMsg.classList.remove('visible');if(btnStop)btnStop.disabled=false;if(btnStart)btnStart.disabled=false;const dp=bolumDogru+bolumYanlis>0?Math.round((bolumDogru/(bolumDogru+bolumYanlis))*100):100;gosterRapor({emoji:dp>=90?'🏆':dp>=70?'⭐':'💪',title:'📖 Hikaye Bitti!',subtitle:HIKAYE_ISIMLERI[hikayeIndex]+' · %'+dp+' doğru',autoMs:0,nextLabel:'▶ Sonraki Hikaye',onTekrar:()=>{hikayeCumle=0;sifirlaIstatistik();resetCumle();},onDevam:()=>{sonrakiCumleyeGec();sifirlaIstatistik();resetCumle();}});},1200);}else{endGameTimer=setTimeout(()=>{endGameTimer=null;if(congratsBanner)congratsBanner.classList.remove('visible');if(errorMsg)errorMsg.classList.remove('visible');if(btnStop)btnStop.disabled=false;if(btnStart)btnStart.disabled=false;sonrakiCumleyeGec();resetCumle();},2000);}}else{const sonCumle=(cumleIndex===CUMLE_GRUPLARI[grupIndex].length-1);if(sonCumle){endGameTimer=setTimeout(()=>{endGameTimer=null;if(congratsBanner)congratsBanner.classList.remove('visible');if(errorMsg)errorMsg.classList.remove('visible');if(btnStop)btnStop.disabled=false;if(btnStart)btnStart.disabled=false;const dp=bolumDogru+bolumYanlis>0?Math.round((bolumDogru/(bolumDogru+bolumYanlis))*100):100;gosterRapor({emoji:dp>=90?'🏆':dp>=70?'⭐':'💪',title:(grupIndex+1)+'. Bölüm Tamamlandı!',subtitle:'Harika iş çıkardın! %'+dp+' doğru',autoMs:5000,nextLabel:'▶ Sonraki Bölüm',onDevam:()=>{sonrakiCumleyeGec();sifirlaIstatistik();resetCumle();}});},1200);}else{endGameTimer=setTimeout(()=>{endGameTimer=null;if(congratsBanner)congratsBanner.classList.remove('visible');if(errorMsg)errorMsg.classList.remove('visible');if(btnStop)btnStop.disabled=false;if(btnStart)btnStart.disabled=false;sonrakiCumleyeGec();resetCumle();},2000);}}}
 
 // ─── Sesli Okuma buton olayları ───────────────────────────────────────────────
 if(btnStart)btnStart.addEventListener('click',()=>{if(errorMsg)errorMsg.classList.remove('visible');btnStart.disabled=true;btnStop.disabled=false;SpeechController.startListening();currentWordIndex=0;score=0;yanlisSayac=0;yanlisSayacIndex=-1;if(interimText)interimText.textContent='';if(congratsBanner)congratsBanner.classList.remove('visible');oyunuKur();});
@@ -142,7 +191,7 @@ if(betaDevamBtn)betaDevamBtn.addEventListener('click',()=>{if(betaModalOverlay)b
 
 // Dış köprüler
 window.sesliOkumayaGec=function(hIndex){hikayeModu=true;hikayeIndex=hIndex||0;hikayeCumle=0;if(tabHikaye)tabHikaye.classList.add('active');if(tabAlistirma)tabAlistirma.classList.remove('active');if(levelSelector)levelSelector.style.display='none';ekranGoster(gameContainer);if(btnStart)btnStart.disabled=false;if(btnStop)btnStop.disabled=true;sifirlaIstatistik();oyunuKur();updateStoryProgress();};
-window.koyunSkoru=function(puan){totalScore+=puan;menuSkorGuncelle();kaydet();};
+window.koyunSkoru=function(puan){totalScore+=puan;menuSkorGuncelle();kontrolRozetler();kaydet();};
 
 // ─── Başlangıç ─────────────────────────────────────────────────────────────────
 yukle();
@@ -150,4 +199,5 @@ syncLevelButtons();
 oyunuKur();
 if(hikayeModu){if(tabHikaye)tabHikaye.classList.add('active');if(tabAlistirma)tabAlistirma.classList.remove('active');if(levelSelector)levelSelector.style.display='none';updateStoryProgress();}
 menuSkorGuncelle();
+menuRozetGuncelle();
 ekranGoster(menuScreen);
