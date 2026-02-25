@@ -66,11 +66,7 @@ function kontrol(secilen, btn) {
     if(dogrumu) {
         state.kilit = true;
         state.dogruSayaci++;
-        state.puan += 10;
         btn.style.background = "#2ecc71";
-        const uzayScoreEl = document.getElementById('uzayScore');
-        if (uzayScoreEl) uzayScoreEl.textContent = state.puan;
-        if (typeof window.koyunSkoru === 'function') window.koyunSkoru(10);
 
         if(state.dogruSayaci >= 3) {
             // FIRLATMA OPERASYONU
@@ -102,19 +98,6 @@ function kontrol(secilen, btn) {
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 
-// Global API
-window.uzayBas = function() {
-  state.soruIdx = 0;
-  state.puan = 0;
-  state.dogruSayaci = 0;
-  state.kilit = false;
-  yeniSoru();
-};
-
-window.uzayDurdur = function() {
-  state.kilit = true;
-};
-
 const style = document.createElement('style');
 style.innerHTML = `
     @keyframes flicker { 0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.2); } }
@@ -122,4 +105,5 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
+yeniSoru();
 })();

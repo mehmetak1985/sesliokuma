@@ -87,16 +87,14 @@ function ipucu(dogru){
 }
 
 function tamam(){
-  if(durduruldu) return;
   puan+=50; if(puanEl) puanEl.textContent=puan;
   playWin();
   setTimeout(()=>{
-    if(durduruldu) return;
     kelimeIdx++; 
     if(kelimeIdx>=5){ seviye++; kelimeIdx=0; }
-    if(seviye>=5){
-      if(alan) alan.innerHTML='<div style="text-align:center;padding:20px;font-size:1.5rem;color:#fff;font-weight:900;">🏆 TEBRİKLER!<br>Tüm yapbozları bitirdin!</div>';
-      setTimeout(()=>{ if(!durduruldu) window.yapbozBas(); }, 2000);
+    if(seviye>=5){ 
+       alert("TEBRİKLER! Tüm yapbozları bitirdin!"); 
+       window.yapbozBas(); 
     } else { render(); }
   }, 1200);
 }
@@ -114,8 +112,8 @@ function playWin(){ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>playTone(f,
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
-window.yapbozBas=()=>{ seviye=0; kelimeIdx=0; puan=0; durduruldu=false; if(alan)alan.innerHTML=''; render(); };
-window.yapbozDurdur=()=>{ durduruldu=true; if(alan)alan.innerHTML=''; };
+window.yapbozBas=()=>{ seviye=0; kelimeIdx=0; puan=0; render(); };
+window.yapbozBas();
 
 // CSS ANİMASYONLARI
 const s=document.createElement('style');
