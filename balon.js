@@ -1,4 +1,4 @@
-// BALON OYUNU - MOBILE STABLE (HEIGHT SAFE)
+// BALON OYUNU - AUTO START SAFE VERSION
 
 (function () {
 
@@ -13,23 +13,30 @@
   let dogruSayisi = 0;
   let seviye = 1;
   let oyunAktif = false;
-
   let animasyonId = null;
   let balonListesi = [];
+
+  /* ========== AUTO INIT ========== */
+
+  document.addEventListener("DOMContentLoaded", function () {
+    balonBas();
+  });
 
   function balonBas() {
 
     oyunAlani = document.getElementById("balonAlani");
     hedefYazi = document.getElementById("balonHedef");
 
-    if (!oyunAlani || !hedefYazi) return;
+    if (!oyunAlani || !hedefYazi) {
+      console.log("Balon alanı bulunamadı");
+      return;
+    }
 
     temizle();
 
     oyunAlani.style.position = "relative";
     oyunAlani.style.overflow = "hidden";
 
-    // 🔥 HEIGHT GUARANTEE (CSS’e dokunmadan)
     if (oyunAlani.clientHeight < 200) {
       oyunAlani.style.height = "400px";
     }
@@ -42,16 +49,9 @@
   }
 
   function temizle() {
-
     oyunAktif = false;
-
-    if (animasyonId) {
-      cancelAnimationFrame(animasyonId);
-      animasyonId = null;
-    }
-
+    if (animasyonId) cancelAnimationFrame(animasyonId);
     balonListesi = [];
-
     if (oyunAlani) oyunAlani.innerHTML = "";
   }
 
@@ -107,8 +107,6 @@
           oyunAktif = false;
 
           patlatEfekt(balon);
-          genelPuanArttir();
-
           dogruSayisi++;
           if (dogruSayisi % 5 === 0) seviye++;
 
@@ -162,7 +160,6 @@
       animasyonId = requestAnimationFrame(frame);
     }
 
-    if (animasyonId) cancelAnimationFrame(animasyonId);
     animasyonId = requestAnimationFrame(frame);
   }
 
@@ -195,14 +192,5 @@
     balon.style.opacity = "0";
     setTimeout(() => balon.remove(), 250);
   }
-
-  function genelPuanArttir() {
-    if (typeof window.genelPuan === "number") {
-      window.genelPuan += 10;
-    }
-  }
-
-  window.balonBas = balonBas;
-  window.balonDurdur = temizle;
 
 })();
