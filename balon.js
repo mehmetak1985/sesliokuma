@@ -1,4 +1,4 @@
-// BALON OYUNU - ULTRA MOBILE OPTIMIZED
+// BALON OYUNU - MOBILE STABLE FIXED
 
 (function () {
 
@@ -16,8 +16,6 @@
 
   let animasyonId = null;
   let balonListesi = [];
-
-  /* ================= INIT ================= */
 
   function balonBas() {
 
@@ -52,8 +50,6 @@
     if (oyunAlani) oyunAlani.innerHTML = "";
   }
 
-  /* ================= GAME LOOP ================= */
-
   function yeniTur() {
 
     if (!oyunAktif) return;
@@ -81,12 +77,16 @@
       stilUygula(balon);
       oyunAlani.appendChild(balon);
 
-      rastgeleKonum(balon);
+      const x = Math.random() * (oyunAlani.clientWidth - 80);
+      const y = Math.random() * (oyunAlani.clientHeight - 120);
+
+      balon.style.left = x + "px";
+      balon.style.top = y + "px";
 
       balonListesi.push({
         el: balon,
-        x: parseFloat(balon.style.left),
-        y: parseFloat(balon.style.top),
+        x: x,
+        y: y,
         yon: Math.random() > 0.5 ? 1 : -1
       });
 
@@ -122,13 +122,11 @@
     if (sec) sec.textContent = aktifKelime;
   }
 
-  /* ================= ANIMATION ================= */
-
   function animasyonBaslat() {
 
     function frame() {
 
-      if (!oyunAktif || document.hidden) return;
+      if (!oyunAktif) return;
 
       const hiz = 0.7 + (seviye * 0.15);
 
@@ -156,21 +154,9 @@
       animasyonId = requestAnimationFrame(frame);
     }
 
+    if (animasyonId) cancelAnimationFrame(animasyonId);
     animasyonId = requestAnimationFrame(frame);
   }
-
-  /* ================= POSITION ================= */
-
-  function rastgeleKonum(balon) {
-
-    const width = oyunAlani.clientWidth || 300;
-    const height = oyunAlani.clientHeight || 400;
-
-    balon.style.left = Math.random() * (width - 80) + "px";
-    balon.style.top = Math.random() * (height - 120) + "px";
-  }
-
-  /* ================= STYLE ================= */
 
   function stilUygula(balon) {
     balon.style.position = "absolute";
@@ -195,8 +181,6 @@
     return renkler[Math.floor(Math.random() * renkler.length)];
   }
 
-  /* ================= EFFECT ================= */
-
   function patlatEfekt(balon) {
     balon.style.transition = "all 0.25s";
     balon.style.transform = "scale(1.4)";
@@ -204,25 +188,11 @@
     setTimeout(() => balon.remove(), 250);
   }
 
-  /* ================= SCORE ================= */
-
   function genelPuanArttir() {
     if (typeof window.genelPuan === "number") {
       window.genelPuan += 10;
     }
   }
-
-  /* ================= VISIBILITY AUTO PAUSE ================= */
-
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden) {
-      if (animasyonId) cancelAnimationFrame(animasyonId);
-    } else if (oyunAktif) {
-      animasyonBaslat();
-    }
-  });
-
-  /* ================= EXPORT ================= */
 
   window.balonBas = balonBas;
   window.balonDurdur = temizle;
