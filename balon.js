@@ -1,4 +1,4 @@
-// BALON OYUNU - MOBILE STABLE FIXED
+// BALON OYUNU - MOBILE STABLE (HEIGHT SAFE)
 
 (function () {
 
@@ -28,6 +28,11 @@
 
     oyunAlani.style.position = "relative";
     oyunAlani.style.overflow = "hidden";
+
+    // 🔥 HEIGHT GUARANTEE (CSS’e dokunmadan)
+    if (oyunAlani.clientHeight < 200) {
+      oyunAlani.style.height = "400px";
+    }
 
     dogruSayisi = 0;
     seviye = 1;
@@ -68,6 +73,9 @@
 
     const adet = Math.min(3 + (seviye - 1), 6);
 
+    const width = oyunAlani.clientWidth || 300;
+    const height = oyunAlani.clientHeight || 400;
+
     for (let i = 0; i < adet; i++) {
 
       const balon = document.createElement("div");
@@ -77,8 +85,8 @@
       stilUygula(balon);
       oyunAlani.appendChild(balon);
 
-      const x = Math.random() * (oyunAlani.clientWidth - 80);
-      const y = Math.random() * (oyunAlani.clientHeight - 120);
+      const x = Math.random() * (width - 80);
+      const y = Math.random() * (height - 120);
 
       balon.style.left = x + "px";
       balon.style.top = y + "px";
