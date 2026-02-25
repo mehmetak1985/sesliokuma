@@ -71,7 +71,7 @@ function koEkranOlustur() {
     'display:none',
     'position:fixed',
     'inset:0',
-    'z-index:500',
+    'z-index:600',
     'overflow-y:auto',
     'flex-direction:column',
     'align-items:center',
