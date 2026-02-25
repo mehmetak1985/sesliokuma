@@ -2,7 +2,7 @@
 "use strict";
 
 // 1. Yazılım Mühendisi Dokunuşu: State (Durum) Yönetimi
-let state = { soruIdx: 0, dogruSayaci: 0, kilit: false };
+let state = { soruIdx: 0, puan: 0, dogruSayaci: 0, kilit: false };
 const KELIMELER = [{k:'BALIK', e:'🐟'}, {k:'GÜNEŞ', e:'☀️'}, {k:'ARABA', e:'🚗'}, {k:'ELMA', e:'🍎'}, {k:'KÖPEK', e:'🐶'}, {k:'UÇAK', e:'✈️'}];
 
 // 2. DOM Elementlerini bir kez yakala (Ölümsüz nesneler)
@@ -66,7 +66,10 @@ function kontrol(secilen, btn) {
     if(dogrumu) {
         state.kilit = true;
         state.dogruSayaci++;
+        state.puan += 10;
         btn.style.background = "#2ecc71";
+        const uzayScoreEl = document.getElementById('uzayScore');
+        if (uzayScoreEl) uzayScoreEl.textContent = state.puan;
         if (typeof window.koyunSkoru === 'function') window.koyunSkoru(10);
 
         if(state.dogruSayaci >= 3) {
@@ -102,6 +105,7 @@ function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 // Global API
 window.uzayBas = function() {
   state.soruIdx = 0;
+  state.puan = 0;
   state.dogruSayaci = 0;
   state.kilit = false;
   yeniSoru();

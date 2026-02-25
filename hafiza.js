@@ -21,11 +21,12 @@ const CIFTLER = [
 ];
 
 const SEVIYE_CIFT = [4, 6, 8, 12];
-let seviye = 0, durduruldu = false, kilitli = false;
+let seviye = 0, puan = 0, durduruldu = false, kilitli = false;
 let acikKartlar = [], eslesilenler = 0, toplamCift = 0, kartVerisi = [];
-let audioCtx = null;
+let audioCtx = null; // Bellek yönetimi için tek kanal ses
 
 const alan = document.getElementById('hafizaAlan');
+const puanEl = document.getElementById('hafizaScore');
 const seviyeEl = document.getElementById('hafizaSeviyeText');
 
 function shuffle(arr) { 
@@ -103,8 +104,9 @@ function kontrolEt() {
     el1.classList.add('hafiza-kart--eslesti');
     el2.classList.add('hafiza-kart--eslesti');
     eslesilenler++;
-    if(window.koyunSkoru) window.koyunSkoru(20);
+    puan += 20;
     playTone(523, 0.3);
+    if (puanEl) puanEl.textContent = puan;
     acikKartlar = [];
     kilitli = false;
     if (eslesilenler === toplamCift) nextStep();
@@ -112,6 +114,7 @@ function kontrolEt() {
     el1.classList.add('hafiza-kart--yanlis');
     el2.classList.add('hafiza-kart--yanlis');
     playTone(200, 0.2);
+    if (puanEl) puanEl.textContent = puan;
     acikKartlar = [];
     setTimeout(() => {
       el1.classList.remove('cevrili', 'hafiza-kart--yanlis');
@@ -142,7 +145,7 @@ function playTone(freq, dur) {
   } catch (e) {}
 }
 
-window.hafizaBas = () => { durduruldu = false; seviye = 0; yeniSeviye(); };
+window.hafizaBas = () => { durduruldu = false; puan = 0; seviye = 0; if(puanEl) puanEl.textContent = 0; yeniSeviye(); };
 window.hafizaDurdur = () => { durduruldu = true; kilitli = false; };
 
 })();
