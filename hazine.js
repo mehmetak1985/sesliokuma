@@ -12,9 +12,9 @@ const SEVIYELER = [
   { v: [{k:'ZÜRAFA', e:'🦒'}, {k:'KARINCA', e:'🐜'}, {k:'PENGUEN', e:'🐧'}, {k:'PATATES', e:'🥔'}] }
 ];
 
-let aktifSeviyeIdx = 0, puan = 0, durduruldu = false, girilenHarfler = "", sharedAudioCtx = null, isProcessing = false;
+let aktifSeviyeIdx = 0, durduruldu = false, girilenHarfler = "", sharedAudioCtx = null, isProcessing = false;
 
-const alan = document.getElementById('hazineAlan'), sonucEl = document.getElementById('hazineSonuc'), puanEl = document.getElementById('hazineScore');
+const alan = document.getElementById('hazineAlan'), sonucEl = document.getElementById('hazineSonuc');
 
 // CSS: Mobil odaklı ve GPU dostu animasyonlar
 if (!document.getElementById('hazineStyles')) {
@@ -46,7 +46,7 @@ if (!document.getElementById('hazineStyles')) {
 }
 
 function render(){
-  if(!alan) return;
+  if(!alan || durduruldu) return;
   isProcessing = false;
   alan.innerHTML = '';
   const data = SEVIYELER[aktifSeviyeIdx].v;
@@ -110,8 +110,6 @@ function sandikAc(idx){
   const item = SEVIYELER[aktifSeviyeIdx].v[idx];
   el.innerHTML = `<div class="sandik-kapak">🔓</div><div style="font-size:2.5rem;z-index:1">${item.e}</div><div style="color:white;font-weight:bold;z-index:2">${item.k}</div>`;
   
-  puan += 20;
-  if(puanEl) puanEl.textContent = puan;
   if(window.koyunSkoru) window.koyunSkoru(20);
   
   document.querySelectorAll('.sandik').forEach(s => { if(!s.classList.contains('sandik--acik')) s.classList.remove('pasif'); });
@@ -133,7 +131,12 @@ function sandikAc(idx){
 function finalEkran() {
     const f = document.createElement('div');
     f.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle,#1a2a6c,#b21f1f,#fdbb2d);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10000;color:white;text-align:center;`;
-    f.innerHTML = `<h1 style="font-size:2.5rem">🏆 ŞAMPİYON!</h1><div style="font-size:80px">👑</div><h2>Hazineyi Tamamladın!</h2><h3>Puan: ${puan}</h3><button onclick="location.reload()" style="padding:15px 30px; border-radius:30px; border:none; background:#27ae60; color:white; font-size:1.3rem; cursor:pointer; box-shadow:0 5px 0 #1e8449">TEKRAR OYNA</button>`;
+    const btn = document.createElement('button');
+    btn.style.cssText = 'padding:15px 30px; border-radius:30px; border:none; background:#27ae60; color:white; font-size:1.3rem; cursor:pointer; box-shadow:0 5px 0 #1e8449';
+    btn.textContent = 'TEKRAR OYNA';
+    btn.onclick = () => { document.body.removeChild(f); window.hazineBas(); };
+    f.innerHTML = `<h1 style="font-size:2.5rem">🏆 ŞAMPİYON!</h1><div style="font-size:80px">👑</div><h2>Hazineyi Tamamladın!</h2>`;
+    f.appendChild(btn);
     document.body.appendChild(f);
 }
 
@@ -150,7 +153,7 @@ function audioFeedback(d){
   } catch(e) {}
 }
 
-window.hazineBas=()=>{ aktifSeviyeIdx=0; puan=0; render(); };
+window.hazineBas=()=>{ aktifSeviyeIdx=0; durduruldu=false; isProcessing=false; render(); };
 window.hazineDurdur=()=>{ durduruldu=true; };
 
 })();

@@ -135,9 +135,14 @@
 
   </div>
 
-  <!-- Alt yıldız şeridi -->
+  <!-- Alt rozet şeridi -->
   <div class="menu-footer">
-    <span class="menu-footer-score">Toplam Yıldız: <strong id="menuTotalScore">0</strong> ⭐</span>
+    <div class="menu-footer-rozetler">
+      <span class="menu-footer-label">⭐ Toplam: <strong id="menuTotalScore">0</strong></span>
+      <div id="menuRozetAlan" class="menu-rozet-alan">
+        <span style="color:rgba(255,255,255,0.5);font-size:0.8rem;font-family:Nunito,sans-serif;">Henüz rozet kazanılmadı</span>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -346,7 +351,7 @@
   <button class="btn-back" id="btnBalonBack">← Geri</button>
   <div class="oyun-header">
     <h2 class="koyun-title">🎈 Balon Patlatma</h2>
-    <div class="koyun-score-badge">⭐ <span id="balonScore">0</span></div>
+    <div class="koyun-score-badge">⭐ <span class="oyun-toplam-puan">0</span></div>
   </div>
   <div class="balon-seviye-bar">
     <span id="balonSeviyeText">Seviye 1</span>
@@ -363,7 +368,7 @@
   <button class="btn-back" id="btnUzayBack">← Geri</button>
   <div class="oyun-header">
     <h2 class="koyun-title">🚀 Uzay Yolu</h2>
-    <div class="koyun-score-badge">⭐ <span id="uzayScore">0</span></div>
+    <div class="koyun-score-badge">⭐ <span class="oyun-toplam-puan">0</span></div>
   </div>
   <div class="uzay-alan" id="uzayAlan"></div>
 </div>
@@ -375,7 +380,7 @@
   <button class="btn-back" id="btnHazineBack">← Geri</button>
   <div class="oyun-header">
     <h2 class="koyun-title">🪙 Gizli Hazine</h2>
-    <div class="koyun-score-badge">⭐ <span id="hazineScore">0</span></div>
+    <div class="koyun-score-badge">⭐ <span class="oyun-toplam-puan">0</span></div>
   </div>
   <div class="hazine-alan" id="hazineAlan"></div>
   <div class="hazine-sonuc" id="hazineSonuc"></div>
@@ -388,7 +393,7 @@
   <button class="btn-back" id="btnHafizaBack">← Geri</button>
   <div class="oyun-header">
     <h2 class="koyun-title">🃏 Hafıza Kartları</h2>
-    <div class="koyun-score-badge">⭐ <span id="hafizaScore">0</span></div>
+    <div class="koyun-score-badge">⭐ <span class="oyun-toplam-puan">0</span></div>
   </div>
   <div class="hafiza-seviye-bar">
     <span id="hafizaSeviyeText">Seviye 1</span>
@@ -403,7 +408,7 @@
   <button class="btn-back" id="btnYapbozBack">← Geri</button>
   <div class="oyun-header">
     <h2 class="koyun-title">🔤 Kelime Yapbozu</h2>
-    <div class="koyun-score-badge">⭐ <span id="yapbozScore">0</span></div>
+    <div class="koyun-score-badge">⭐ <span class="oyun-toplam-puan">0</span></div>
   </div>
   <div class="yapboz-seviye-bar">
     <span id="yapbozSeviyeText">Seviye 1 / 5</span>
@@ -556,6 +561,7 @@
 <script src="hikaye.js"></script>
 <script src="hikaye-secim.js"></script>
 <script src="app.js"></script>
+<script src="kelime.js"></script>
 <script src="balon.js"></script>
 <script src="uzay.js"></script>
 <script src="hazine.js"></script>

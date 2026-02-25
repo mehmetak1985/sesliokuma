@@ -403,10 +403,6 @@ function hkAcHikaye(hikayeIdx) {
 function hkKapat() {
   if (hkEkran) hkEkran.style.display = 'none';
   hk.aktif = false;
-  var msc = document.getElementById('menuScoreText');
-  var mst = document.getElementById('menuTotalScore');
-  if (msc && typeof totalScore !== 'undefined') msc.textContent = totalScore;
-  if (mst && typeof totalScore !== 'undefined') mst.textContent = totalScore;
   if (typeof hkSecimAc === 'function') hkSecimAc();
   else if (typeof menuGoster === 'function') menuGoster();
   else { var ms = document.getElementById('menuScreen'); if (ms) ms.style.display = 'flex'; }
@@ -566,12 +562,8 @@ function hkIleri() {
   const hikaye = HIKAYE_DATA[hk.hikayeIdx];
   // Her ileri basışta +1 puan
   hk.skor++;
-  if (typeof totalScore !== 'undefined') {
-    totalScore++;
-    var ms = document.getElementById('menuScoreText');
-    var mt = document.getElementById('menuTotalScore');
-    if (ms) ms.textContent = totalScore;
-    if (mt) mt.textContent = totalScore;
+  if (typeof window.koyunSkoru === 'function') {
+    window.koyunSkoru(1);
   }
   document.getElementById('hkSkorBadge').textContent = '⭐ ' + hk.skor;
   hk.cumleIdx++;
@@ -697,27 +689,9 @@ function hkBitisEkrani() {
 // ═══════════════════════════════════════════════════════════════
 // MENÜ ENTEGRASYONU
 // ═══════════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', function () {
-  const hikayeBtn = document.querySelector('[data-mod="hikaye"]');
-  if (hikayeBtn) {
-    hikayeBtn.addEventListener('click', function (e) {
-      e.stopImmediatePropagation();
-      const ms = document.getElementById('menuScreen');
-      if (ms) ms.style.display = 'none';
-      const gc = document.getElementById('gameContainer');
-      if (gc) gc.style.display = 'none';
-      hkAc(0);
-    }, true);
-  }
-
-  const hikayeKart = document.getElementById('menuCardHikaye');
-  if (hikayeKart) {
-    hikayeKart.addEventListener('click', function (e) {
-      if (e.target.classList.contains('menu-card-btn')) return;
-      e.stopImmediatePropagation();
-      const ms = document.getElementById('menuScreen');
-      if (ms) ms.style.display = 'none';
-      hkAc(0);
-    }, true);
-  }
-});
+// hikayeSecimBas ve hkAcHikaye global API olarak tanımla
+// Navigasyon app.js tarafından yönetilir
+window.hikayeSecimBas = function() {
+  if (typeof hkSecimAc === 'function') hkSecimAc();
+  else hkAcHikaye(0);
+};

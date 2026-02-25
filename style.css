@@ -184,9 +184,11 @@ body::before,body::after{display:none;}
 /* Beta etiketi */
 .beta-badge{display:inline-block;background:rgba(255,255,255,0.9);color:#e65100;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.58rem;padding:2px 7px;border-radius:50px;letter-spacing:1px;text-transform:uppercase;border:1.5px solid rgba(230,81,0,0.4);vertical-align:middle;line-height:1.4;}
 
-.menu-footer{background:rgba(210,180,140,0.55);border:2px solid rgba(255,255,255,0.5);border-radius:50px;padding:10px 28px;display:flex;align-items:center;gap:10px;font-size:1.3rem;box-shadow:0 3px 12px rgba(0,0,0,0.12);backdrop-filter:blur(6px);}
-.menu-footer-score{font-family:'Nunito',sans-serif;font-weight:700;font-size:0.95rem;color:var(--text-dark);margin-left:6px;}
-.menu-footer-score strong{font-weight:900;color:var(--orange);}
+.menu-footer{background:rgba(210,180,140,0.55);border:2px solid rgba(255,255,255,0.5);border-radius:20px;padding:12px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,0.12);backdrop-filter:blur(6px);width:min(94vw,500px);}
+.menu-footer-rozetler{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;}
+.menu-footer-label{font-family:'Nunito',sans-serif;font-weight:700;font-size:0.9rem;color:var(--text-dark);}
+.menu-footer-label strong{font-weight:900;color:var(--orange);}
+.menu-rozet-alan{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;min-height:32px;}
 
 /* ═══════════════════════════════════════════════════════════════
    ALT MENÜ EKRANLARI
@@ -349,7 +351,7 @@ body::before,body::after{display:none;}
 .harf-kutu--dogru{border-color:#43a047;background:rgba(67,160,71,0.15);color:#2e7d32;animation:harfDogru 0.35s ease;}
 @keyframes harfDogru{0%{transform:scale(0.8);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
 .harf-buton-satir{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:340px;margin:0 auto;}
-.harf-btn{width:68px;height:68px;border:none;border-radius:18px;background:linear-gradient(135deg,#fff9c4,#fff176);color:#1a2744;font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,0.18),0 2px 6px rgba(0,0,0,0.10);transition:transform 0.12s,box-shadow 0.12s,background 0.15s;user-select:none;-webkit-tap-highlight-color:transparent;}
+.harf-btn{width:68px;height:68px;border:none;border-radius:18px;background:linear-gradient(135deg,#fff9c4,#fff176);color:#1a2744;font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,0.18),0 2px 6px rgba(0,0,0,0.10);transition:transform 0.12s,box-shadow 0.12s,background 0.15s;user-select:none;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;}
 .harf-btn:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 8px 24px rgba(0,0,0,0.22);}
 .harf-btn:active{transform:scale(0.95);}
 .harf-btn--yanlis{background:linear-gradient(135deg,#ffcdd2,#ef9a9a)!important;animation:harfYanlis 0.35s ease;}

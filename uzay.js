@@ -2,7 +2,7 @@
 "use strict";
 
 // 1. Yazılım Mühendisi Dokunuşu: State (Durum) Yönetimi
-let state = { soruIdx: 0, puan: 0, dogruSayaci: 0, kilit: false };
+let state = { soruIdx: 0, dogruSayaci: 0, kilit: false };
 const KELIMELER = [{k:'BALIK', e:'🐟'}, {k:'GÜNEŞ', e:'☀️'}, {k:'ARABA', e:'🚗'}, {k:'ELMA', e:'🍎'}, {k:'KÖPEK', e:'🐶'}, {k:'UÇAK', e:'✈️'}];
 
 // 2. DOM Elementlerini bir kez yakala (Ölümsüz nesneler)
@@ -67,6 +67,7 @@ function kontrol(secilen, btn) {
         state.kilit = true;
         state.dogruSayaci++;
         btn.style.background = "#2ecc71";
+        if (typeof window.koyunSkoru === 'function') window.koyunSkoru(10);
 
         if(state.dogruSayaci >= 3) {
             // FIRLATMA OPERASYONU
@@ -98,6 +99,18 @@ function kontrol(secilen, btn) {
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 
+// Global API
+window.uzayBas = function() {
+  state.soruIdx = 0;
+  state.dogruSayaci = 0;
+  state.kilit = false;
+  yeniSoru();
+};
+
+window.uzayDurdur = function() {
+  state.kilit = true;
+};
+
 const style = document.createElement('style');
 style.innerHTML = `
     @keyframes flicker { 0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.2); } }
@@ -105,5 +118,4 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-yeniSoru();
 })();

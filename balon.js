@@ -14,16 +14,13 @@ const HECE_GRUPLARI=[
 
 const RENKLER=["#ef476f","#f4a261","#ffd166","#06d6a0","#118ab2","#8e24aa","#e91e63","#00acc1"];
 
-let seviye=0,puan=0,aktifBalonlar=[],animFrame=null,durduruldu=false;
-let hedefHece=null,bekleyenTimer=null;
+let seviye=0,dogruSayac=0,aktifBalonlar=[],durduruldu=false;
+let hedefHece=null;
 
 const alan     = document.getElementById('balonAlan');
 const sonucEl  = document.getElementById('balonSonuc');
-const puanEl   = document.getElementById('balonScore');
 const seviyeEl = document.getElementById('balonSeviyeText');
 const hedefEl  = document.getElementById('balonHedefText');
-
-function oyunuBitir(){}
 
 function yeniTur(){
   if(durduruldu)return;
@@ -91,25 +88,20 @@ function balonaTıkla(balon){
   if(!balon.aktif||durduruldu)return;
   balon.aktif=false;
   if(balon.hece===hedefHece){
-    // Doğru
     balon.el.classList.add('balon--patladi');
-    puan+=10;
-    if(puanEl)puanEl.textContent=puan;
     if(window.koyunSkoru)window.koyunSkoru(10);
     if(sonucEl)sonucEl.textContent='🎉 Harika! +10';
     audioFeedback(true);
-    // Seviye ilerlemesi
-    if(puan>=(seviye+1)*30&&seviye<HECE_GRUPLARI.length-1){
+    dogruSayac++;
+    if(dogruSayac>=(seviye+1)*3&&seviye<HECE_GRUPLARI.length-1){
       seviye++;
       if(seviyeEl)seviyeEl.textContent='Seviye '+(seviye+1);
     }
     setTimeout(()=>{if(balon.el)balon.el.remove();if(!durduruldu)yeniTur();},400);
   } else {
-    // Yanlış
-    balon.aktif=true; // tekrar aktif et
+    balon.aktif=true;
     balon.el.classList.add('balon--yanlis');
-    puan=Math.max(0,puan-2);
-    if(puanEl)puanEl.textContent=puan;
+    if(window.koyunSkoru)window.koyunSkoru(-2);
     if(sonucEl)sonucEl.textContent='😕 Yanlış! -2';
     audioFeedback(false);
     setTimeout(()=>{balon.el.classList.remove('balon--yanlis');},400);
@@ -132,8 +124,7 @@ function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Mat
 
 window.balonBas=function(){
   durduruldu=false;
-  puan=0;seviye=0;aktifBalonlar=[];
-  if(puanEl)puanEl.textContent=0;
+  seviye=0;dogruSayac=0;aktifBalonlar=[];animCalisiyor=false;
   if(seviyeEl)seviyeEl.textContent='Seviye 1';
   if(alan)alan.innerHTML='';
   if(sonucEl)sonucEl.textContent='';
