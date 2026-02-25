@@ -14,16 +14,14 @@ const HECE_GRUPLARI=[
 
 const RENKLER=["#ef476f","#f4a261","#ffd166","#06d6a0","#118ab2","#8e24aa","#e91e63","#00acc1"];
 
-let seviye=0,puan=0,aktifBalonlar=[],animFrame=null,durduruldu=false;
-let hedefHece=null,bekleyenTimer=null;
+let seviye=0,puan=0,aktifBalonlar=[],durduruldu=false;
+let hedefHece=null;
 
 const alan     = document.getElementById('balonAlan');
 const sonucEl  = document.getElementById('balonSonuc');
 const puanEl   = document.getElementById('balonScore');
 const seviyeEl = document.getElementById('balonSeviyeText');
 const hedefEl  = document.getElementById('balonHedefText');
-
-function oyunuBitir(){}
 
 function yeniTur(){
   if(durduruldu)return;
@@ -132,7 +130,7 @@ function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Mat
 
 window.balonBas=function(){
   durduruldu=false;
-  puan=0;seviye=0;aktifBalonlar=[];
+  puan=0;seviye=0;aktifBalonlar=[];animCalisiyor=false;
   if(puanEl)puanEl.textContent=0;
   if(seviyeEl)seviyeEl.textContent='Seviye 1';
   if(alan)alan.innerHTML='';

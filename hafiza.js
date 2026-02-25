@@ -105,21 +105,23 @@ function kontrolEt() {
     el2.classList.add('hafiza-kart--eslesti');
     eslesilenler++;
     puan += 20;
-    playTone(523, 0.3); // Başarı sesi
+    playTone(523, 0.3);
+    if (puanEl) puanEl.textContent = puan;
+    acikKartlar = [];
+    kilitli = false;
     if (eslesilenler === toplamCift) nextStep();
   } else {
     el1.classList.add('hafiza-kart--yanlis');
     el2.classList.add('hafiza-kart--yanlis');
-    playTone(200, 0.2); // Hata sesi
+    playTone(200, 0.2);
+    if (puanEl) puanEl.textContent = puan;
+    acikKartlar = [];
     setTimeout(() => {
       el1.classList.remove('cevrili', 'hafiza-kart--yanlis');
       el2.classList.remove('cevrili', 'hafiza-kart--yanlis');
+      kilitli = false;
     }, 800);
   }
-  
-  if (puanEl) puanEl.textContent = puan;
-  acikKartlar = [];
-  kilitli = false;
 }
 
 function nextStep() {
