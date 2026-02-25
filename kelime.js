@@ -128,7 +128,7 @@ window.kelimeOyunuBas = function () {
   ko.skor = 0;
   ko.aktif = true;
   var ks = document.getElementById('koyunScreen');
-if(ks) ks.style.display = 'none';
+  if (ks) ks.style.display = 'none';
   koEkran.style.display = 'flex';
   koKelimeGoster();
 };
