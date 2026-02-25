@@ -201,3 +201,10 @@ if(hikayeModu){if(tabHikaye)tabHikaye.classList.add('active');if(tabAlistirma)ta
 menuSkorGuncelle();
 menuRozetGuncelle();
 ekranGoster(menuScreen);
+// Android Geri Tuşu Kontrolü
+document.addEventListener("backbutton", function(e) {
+   e.preventDefault();
+   if (confirm("Oyundan çıkmak istiyor musunuz?")) {
+       navigator.app.exitApp();
+   }
+}, false);
