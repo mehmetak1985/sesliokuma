@@ -8,11 +8,11 @@
   let aktifKelime = "";
   let alan = null;
   let hedefEl = null;
-  let seviye = 1;
   let oyunAktif = false;
   let animasyonId = null;
   let balonListesi = [];
   let lastTime = 0;
+  let yanlisSayisi = 0;
 
   document.addEventListener("DOMContentLoaded", balonBas);
 
@@ -26,9 +26,8 @@
     alan.style.position = "relative";
     alan.style.overflow = "hidden";
 
-    if (alan.clientHeight < 200) {
-      alan.style.height = "400px";
-    }
+    hedefEl.style.fontSize = "28px";
+    hedefEl.style.fontWeight = "bold";
 
     oyunAktif = true;
     yeniTur();
@@ -36,11 +35,11 @@
 
   function yeniTur() {
 
-    if (!oyunAktif) return;
-
     cancelAnimationFrame(animasyonId);
+
     balonListesi.forEach(b => b.el.remove());
     balonListesi = [];
+    yanlisSayisi = 0;
 
     aktifKelime = kelimeler[Math.floor(Math.random() * kelimeler.length)];
     hedefEl.textContent = '🎯 "' + aktifKelime + '" kelimeyi bul!';
@@ -51,11 +50,10 @@
 
   function balonUret() {
 
-    const adet = Math.max(4, Math.min(3 + (seviye - 1), 6));
+    const adet = 4;
     const width = alan.clientWidth;
     const height = alan.clientHeight;
     const minMesafe = 90;
-
     let kullanilanX = [];
 
     for (let i = 0; i < adet; i++) {
@@ -65,50 +63,74 @@
       stilUygula(balon);
       alan.appendChild(balon);
 
-      let x;
-      let guvenli = false;
-      let deneme = 0;
+      let x, guvenli = false, deneme = 0;
 
       while (!guvenli && deneme < 20) {
-        x = Math.random() * (width - 80);
+        x = Math.random() * (width - 90);
         guvenli = kullanilanX.every(px => Math.abs(px - x) > minMesafe);
         deneme++;
       }
 
       kullanilanX.push(x);
 
-      const y = height; // HER ZAMAN ALTTA DOĞAR
+      const y = height;
 
       balon.style.left = x + "px";
       balon.style.top = y + "px";
 
       balonListesi.push({
         el: balon,
-        x: x,
         y: y,
-        hiz: 40 + Math.random() * 30
+        hiz: 50 + Math.random() * 20,
+        dogru: false,
+        scale: 1
       });
 
       balon.onclick = function () {
         if (!oyunAktif) return;
 
         if (balon.textContent === aktifKelime) {
+
+          if (window.koyunSkoru) window.koyunSkoru(10);
+
           oyunAktif = false;
           cancelAnimationFrame(animasyonId);
 
-          balon.remove();
+          const obje = balonListesi.find(b => b.el === balon);
+          if (obje) obje.scale = 1.3;
 
           setTimeout(() => {
-            oyunAktif = true;
             yeniTur();
           }, 400);
+
+        } else {
+
+          yanlisSayisi++;
+          if (window.koyunSkoru) window.koyunSkoru(-2);
+
+          balon.style.opacity = "0.5";
+          balon.style.pointerEvents = "none";
+
+          if (yanlisSayisi >= 2) {
+            dogruyuVurgula();
+          }
         }
       };
     }
 
-    // En az 1 doğru garanti
     const sec = balonListesi[Math.floor(Math.random() * balonListesi.length)];
-    if (sec) sec.el.textContent = aktifKelime;
+    if (sec) {
+      sec.el.textContent = aktifKelime;
+      sec.dogru = true;
+    }
+  }
+
+  function dogruyuVurgula() {
+    const dogruBalon = balonListesi.find(b => b.dogru);
+    if (!dogruBalon) return;
+
+    dogruBalon.scale = 1.2;
+    dogruBalon.el.style.boxShadow = "0 0 20px 8px #fff";
   }
 
   function animasyonBaslat() {
@@ -117,8 +139,6 @@
 
     function frame(time) {
 
-      if (!oyunAktif) return;
-
       const delta = (time - lastTime) / 1000;
       lastTime = time;
 
@@ -126,7 +146,9 @@
 
         const b = balonListesi[i];
         b.y -= b.hiz * delta;
-        b.el.style.transform = `translateY(${b.y - alan.clientHeight}px)`;
+
+        b.el.style.transform =
+          `translateY(${b.y - alan.clientHeight}px) scale(${b.scale})`;
 
         if (b.y < -100) {
           b.el.remove();
@@ -151,8 +173,8 @@
 
   function stilUygula(el) {
     el.style.position = "absolute";
-    el.style.width = "80px";
-    el.style.height = "80px";
+    el.style.width = "90px";
+    el.style.height = "90px";
     el.style.borderRadius = "50%";
     el.style.background = renkUret();
     el.style.display = "flex";
@@ -160,6 +182,7 @@
     el.style.justifyContent = "center";
     el.style.color = "#fff";
     el.style.fontWeight = "bold";
+    el.style.fontSize = "20px";
     el.style.cursor = "pointer";
     el.style.userSelect = "none";
     el.style.willChange = "transform";
