@@ -391,7 +391,6 @@ function hkAc(hikayeIdx) {
 
 function hkAcHikaye(hikayeIdx) {
   hkEkranOlustur();
-  if (typeof tumEkranlariGizle === 'function') tumEkranlariGizle();
   hk.hikayeIdx = hikayeIdx;
   hk.cumleIdx  = 0;
   hk.skor      = 0;
