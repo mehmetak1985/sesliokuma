@@ -568,5 +568,10 @@
 <script src="hazine.js"></script>
 <script src="hafiza.js"></script>
 <script src="yapboz.js"></script>
+     <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
 </body>
 </html>
