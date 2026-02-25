@@ -8,7 +8,7 @@
 const KELIME_SEVIYELERI = [
   // Seviye 1 — 3 harf
   [
-    { kelime: 'kap', emoji: '🏺' },
+    { kelime: 'ayı', emoji: '🐻' },
     { kelime: 'top', emoji: '⚽' },
     { kelime: 'bal', emoji: '🍯' },
     { kelime: 'göz', emoji: '👁️' },
@@ -27,7 +27,7 @@ const KELIME_SEVIYELERI = [
     { kelime: 'okul', emoji: '🏫' },
     { kelime: 'çiçek', emoji: '🌸' },
     { kelime: 'kitap', emoji: '📚' },
-    { kelime: 'bebek', emoji: '👶' },
+    { kelime: 'limon', emoji: '🍋' },
     { kelime: 'ekmek', emoji: '🍞' },
   ],
   // Seviye 4 — 6 harf
@@ -44,7 +44,7 @@ const KELIME_SEVIYELERI = [
     { kelime: 'yapboz', emoji: '🧩' },
     { kelime: 'dondurma', emoji: '🍦' },
     { kelime: 'kelebek', emoji: '🦋' },
-    { kelime: 'kalemlik', emoji: '✏️' },
+    { kelime: 'zürafa', emoji: '🦒' },
   ],
 ];
 
