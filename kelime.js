@@ -195,6 +195,9 @@ function koKelimeGoster() {
   ko.harfler.forEach((harf, i) => {
     const btn = document.createElement('div');
     btn.className = 'harf-btn';
+    btn.style.display = 'flex';
+btn.style.alignItems = 'center';
+btn.style.justifyContent = 'center';
     btn.textContent = harf;
     btn.dataset.harfIndex = i;
     btn.draggable = true;
