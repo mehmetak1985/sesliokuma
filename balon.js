@@ -66,35 +66,29 @@
 
   function balonUret() {
 
-    const adet = Math.min(4 + (seviye - 1), 7); // seviye arttıkça balon artar
+    const adet = Math.min(4 + (seviye - 1), 7);
     const width = alan.clientWidth;
     const height = alan.clientHeight;
-    const minMesafe = 90;
+
+    // Seviye arttıkça küçül (minimum 45px)
+    const balonBoyut = Math.max(70 - (seviye * 3), 45);
+
+    // Çakışma olmaması için sütun sistemi
+    const kolonGenislik = width / adet;
 
     let secenekler = kelimeler.filter(k => k !== aktifKelime);
     secenekler = karistir(secenekler).slice(0, adet - 1);
     secenekler.push(aktifKelime);
     secenekler = karistir(secenekler);
 
-    let kullanilanX = [];
-
     for (let i = 0; i < adet; i++) {
 
       const balon = document.createElement("div");
       balon.textContent = secenekler[i];
-      stilUygula(balon);
+      stilUygula(balon, balonBoyut);
       alan.appendChild(balon);
 
-      let x, guvenli = false, deneme = 0;
-
-      while (!guvenli && deneme < 20) {
-        x = Math.random() * (width - 90);
-        guvenli = kullanilanX.every(px => Math.abs(px - x) > minMesafe);
-        deneme++;
-      }
-
-      kullanilanX.push(x);
-
+      const x = (kolonGenislik * i) + (kolonGenislik / 2) - (balonBoyut / 2);
       const y = height;
 
       balon.style.left = x + "px";
@@ -103,7 +97,7 @@
       const balonObj = {
         el: balon,
         y: y,
-        hiz: 45 + (seviye * 5) + Math.random() * 15, // hız artışı
+        hiz: 45 + (seviye * 6) + Math.random() * 10,
         dogru: balon.textContent === aktifKelime,
         scale: 1
       };
@@ -119,7 +113,6 @@
 
           dogruSayisi++;
 
-          // 5 doğru → seviye artışı
           if (dogruSayisi % 5 === 0) {
             seviye++;
             seviyeGuncelle();
@@ -203,10 +196,10 @@
     return a;
   }
 
-  function stilUygula(el) {
+  function stilUygula(el, boyut) {
     el.style.position = "absolute";
-    el.style.width = "90px";
-    el.style.height = "90px";
+    el.style.width = boyut + "px";
+    el.style.height = boyut + "px";
     el.style.borderRadius = "50%";
     el.style.background = renkUret();
     el.style.display = "flex";
@@ -214,14 +207,17 @@
     el.style.justifyContent = "center";
     el.style.color = "#fff";
     el.style.fontWeight = "bold";
-    el.style.fontSize = "20px";
+    el.style.fontSize = Math.max(boyut / 4, 12) + "px";
     el.style.cursor = "pointer";
     el.style.userSelect = "none";
     el.style.willChange = "transform";
   }
 
   function renkUret() {
-    const renkler = ["#ef476f","#f4a261","#ffd166","#06d6a0","#118ab2","#8e24aa","#e91e63","#00acc1"];
+    const renkler = [
+      "#ef476f","#f4a261","#ffd166","#06d6a0",
+      "#118ab2","#8e24aa","#e91e63","#00acc1"
+    ];
     return renkler[Math.floor(Math.random() * renkler.length)];
   }
 
