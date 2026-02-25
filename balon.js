@@ -1,4 +1,4 @@
-// BALON OYUNU - AUTO START SAFE VERSION
+// BALON OYUNU - balonAlan UYUMLU STABLE
 
 (function () {
 
@@ -8,15 +8,13 @@
   ];
 
   let aktifKelime = "";
-  let oyunAlani = null;
-  let hedefYazi = null;
+  let alan = null;
+  let hedefEl = null;
   let dogruSayisi = 0;
   let seviye = 1;
   let oyunAktif = false;
   let animasyonId = null;
   let balonListesi = [];
-
-  /* ========== AUTO INIT ========== */
 
   document.addEventListener("DOMContentLoaded", function () {
     balonBas();
@@ -24,21 +22,21 @@
 
   function balonBas() {
 
-    oyunAlani = document.getElementById("balonAlani");
-    hedefYazi = document.getElementById("balonHedef");
+    alan = document.getElementById("balonAlan");
+    hedefEl = document.getElementById("balonHedefText");
 
-    if (!oyunAlani || !hedefYazi) {
-      console.log("Balon alanı bulunamadı");
+    if (!alan || !hedefEl) {
+      console.log("balonAlan bulunamadı");
       return;
     }
 
     temizle();
 
-    oyunAlani.style.position = "relative";
-    oyunAlani.style.overflow = "hidden";
+    alan.style.position = "relative";
+    alan.style.overflow = "hidden";
 
-    if (oyunAlani.clientHeight < 200) {
-      oyunAlani.style.height = "400px";
+    if (alan.clientHeight < 200) {
+      alan.style.height = "400px";
     }
 
     dogruSayisi = 0;
@@ -52,7 +50,7 @@
     oyunAktif = false;
     if (animasyonId) cancelAnimationFrame(animasyonId);
     balonListesi = [];
-    if (oyunAlani) oyunAlani.innerHTML = "";
+    if (alan) alan.innerHTML = "";
   }
 
   function yeniTur() {
@@ -60,10 +58,10 @@
     if (!oyunAktif) return;
 
     balonListesi = [];
-    oyunAlani.innerHTML = "";
+    alan.innerHTML = "";
 
     aktifKelime = kelimeler[Math.floor(Math.random() * kelimeler.length)];
-    hedefYazi.textContent = "ŞUNU PATLAT: " + aktifKelime;
+    hedefEl.textContent = '🎯 "' + aktifKelime + '" kelimeyi bul!';
 
     balonUret();
     animasyonBaslat();
@@ -73,8 +71,8 @@
 
     const adet = Math.min(3 + (seviye - 1), 6);
 
-    const width = oyunAlani.clientWidth || 300;
-    const height = oyunAlani.clientHeight || 400;
+    const width = alan.clientWidth || 300;
+    const height = alan.clientHeight || 400;
 
     for (let i = 0; i < adet; i++) {
 
@@ -83,7 +81,7 @@
       balon.textContent = rastgeleKelime();
 
       stilUygula(balon);
-      oyunAlani.appendChild(balon);
+      alan.appendChild(balon);
 
       const x = Math.random() * (width - 80);
       const y = Math.random() * (height - 120);
@@ -107,6 +105,7 @@
           oyunAktif = false;
 
           patlatEfekt(balon);
+
           dogruSayisi++;
           if (dogruSayisi % 5 === 0) seviye++;
 
@@ -122,8 +121,8 @@
       };
     }
 
-    const sec = oyunAlani.children[
-      Math.floor(Math.random() * oyunAlani.children.length)
+    const sec = alan.children[
+      Math.floor(Math.random() * alan.children.length)
     ];
     if (sec) sec.textContent = aktifKelime;
   }
@@ -143,7 +142,7 @@
         b.y -= hiz;
         b.x += 0.5 * b.yon;
 
-        if (b.x < 10 || b.x > oyunAlani.clientWidth - 80)
+        if (b.x < 10 || b.x > alan.clientWidth - 80)
           b.yon *= -1;
 
         if (b.y < -80) {
@@ -182,7 +181,7 @@
   }
 
   function rastgeleRenk() {
-    const renkler = ["#ff7675","#74b9ff","#55efc4","#ffeaa7","#a29bfe"];
+    const renkler = ["#ef476f","#f4a261","#ffd166","#06d6a0","#118ab2"];
     return renkler[Math.floor(Math.random() * renkler.length)];
   }
 
