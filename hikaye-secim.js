@@ -136,5 +136,9 @@ function hkSecimOlustur() {
 
 function hkSecimAc() {
   hkSecimOlustur();
+
+  var ms = document.getElementById('menuScreen');
+  if (ms) ms.style.display = 'none';
+
   hkSecimEl.style.display = 'flex';
 }
