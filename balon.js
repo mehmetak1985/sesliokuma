@@ -51,6 +51,8 @@
 
   function yeniTur() {
 
+    oyunAktif = true; // 🔧 DÜZELTME
+
     cancelAnimationFrame(animasyonId);
 
     balonListesi.forEach(b => b.el.remove());
@@ -70,10 +72,7 @@
     const width = alan.clientWidth;
     const height = alan.clientHeight;
 
-    // Seviye arttıkça küçül (minimum 45px)
     const balonBoyut = Math.max(70 - (seviye * 3), 45);
-
-    // Çakışma olmaması için sütun sistemi
     const kolonGenislik = width / adet;
 
     let secenekler = kelimeler.filter(k => k !== aktifKelime);
