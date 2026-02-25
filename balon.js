@@ -8,11 +8,16 @@
   let aktifKelime = "";
   let alan = null;
   let hedefEl = null;
+  let seviyeEl = null;
+
   let oyunAktif = false;
   let animasyonId = null;
   let balonListesi = [];
   let lastTime = 0;
   let yanlisSayisi = 0;
+
+  let seviye = 1;
+  let dogruSayisi = 0;
 
   document.addEventListener("DOMContentLoaded", balonBas);
 
@@ -20,6 +25,7 @@
 
     alan = document.getElementById("balonAlan");
     hedefEl = document.getElementById("balonHedefText");
+    seviyeEl = document.getElementById("balonSeviyeText");
 
     if (!alan || !hedefEl) return;
 
@@ -29,8 +35,18 @@
     hedefEl.style.fontSize = "28px";
     hedefEl.style.fontWeight = "bold";
 
+    seviyeGuncelle();
+
     oyunAktif = true;
     yeniTur();
+  }
+
+  function seviyeGuncelle() {
+    if (seviyeEl) {
+      seviyeEl.textContent = "Seviye " + seviye;
+      seviyeEl.style.fontWeight = "bold";
+      seviyeEl.style.fontSize = "20px";
+    }
   }
 
   function yeniTur() {
@@ -50,16 +66,22 @@
 
   function balonUret() {
 
-    const adet = 4;
+    const adet = Math.min(4 + (seviye - 1), 7); // seviye arttıkça balon artar
     const width = alan.clientWidth;
     const height = alan.clientHeight;
     const minMesafe = 90;
+
+    let secenekler = kelimeler.filter(k => k !== aktifKelime);
+    secenekler = karistir(secenekler).slice(0, adet - 1);
+    secenekler.push(aktifKelime);
+    secenekler = karistir(secenekler);
+
     let kullanilanX = [];
 
     for (let i = 0; i < adet; i++) {
 
       const balon = document.createElement("div");
-      balon.textContent = rastgeleKelime();
+      balon.textContent = secenekler[i];
       stilUygula(balon);
       alan.appendChild(balon);
 
@@ -78,30 +100,41 @@
       balon.style.left = x + "px";
       balon.style.top = y + "px";
 
-      balonListesi.push({
+      const balonObj = {
         el: balon,
         y: y,
-        hiz: 50 + Math.random() * 20,
-        dogru: false,
+        hiz: 45 + (seviye * 5) + Math.random() * 15, // hız artışı
+        dogru: balon.textContent === aktifKelime,
         scale: 1
-      });
+      };
+
+      balonListesi.push(balonObj);
 
       balon.onclick = function () {
         if (!oyunAktif) return;
 
-        if (balon.textContent === aktifKelime) {
+        if (balonObj.dogru) {
 
           if (window.koyunSkoru) window.koyunSkoru(10);
+
+          dogruSayisi++;
+
+          // 5 doğru → seviye artışı
+          if (dogruSayisi % 5 === 0) {
+            seviye++;
+            seviyeGuncelle();
+          }
 
           oyunAktif = false;
           cancelAnimationFrame(animasyonId);
 
-          const obje = balonListesi.find(b => b.el === balon);
-          if (obje) obje.scale = 1.3;
+          balon.style.transition = "0.2s";
+          balon.style.opacity = "0";
 
           setTimeout(() => {
+            balon.remove();
             yeniTur();
-          }, 400);
+          }, 200);
 
         } else {
 
@@ -116,12 +149,6 @@
           }
         }
       };
-    }
-
-    const sec = balonListesi[Math.floor(Math.random() * balonListesi.length)];
-    if (sec) {
-      sec.el.textContent = aktifKelime;
-      sec.dogru = true;
     }
   }
 
@@ -167,8 +194,13 @@
     animasyonId = requestAnimationFrame(frame);
   }
 
-  function rastgeleKelime() {
-    return kelimeler[Math.floor(Math.random() * kelimeler.length)];
+  function karistir(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
   }
 
   function stilUygula(el) {
