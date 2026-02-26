@@ -1,39 +1,25 @@
 {
+  "id": "com.minikokur.sesliokuma",
   "name": "Minik Okur",
-  "short_name": "Minik-Okur",
-  "description": "Çocuklar için eğlenceli sesli okuma ve eğitici oyunlar.",
-  "lang": "tr-TR",
-  "dir": "ltr",
-  "start_url": "/sesliokuma/",
-  "scope": "/sesliokuma/",
+  "short_name": "Minik Okur",
+  "description": "Çocuklar için sesli okuma ve kelime oyunu uygulaması.",
+  "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "any",
   "background_color": "#ffffff",
-  "theme_color": "#4facfe",
+  "theme_color": "#4e73df",
+  "orientation": "any",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "icon512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ],
   "screenshots": [
@@ -42,14 +28,14 @@
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Minik Okur Mobil Görünüm"
+      "label": "Mobil Görünüm"
     },
     {
       "src": "screenshot-desktop.png",
       "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Minik Okur Masaüstü Görünüm"
+      "label": "Masaüstü Görünüm"
     }
   ]
 }
