@@ -2,7 +2,7 @@
 
 (function () {
     const kelimeler = [
-        { kelime: "EL", emoji: "🖐️", seviye: 1 }, { kelime: "AL", emoji: "🍎", seviye: 1 },
+        { kelime: "EL", emoji: "🖐️", seviye: 1 }, { kelime: "AT", emoji: "🐎", seviye: 1 },
         { kelime: "LALE", emoji: "🌷", seviye: 2 }, { kelime: "KALE", emoji: "🏰", seviye: 2 },
         { kelime: "ELMA", emoji: "🍎", seviye: 3 }, { kelime: "ANNE", emoji: "👩", seviye: 3 },
         { kelime: "OKUL", emoji: "🏫", seviye: 4 }, { kelime: "KİTAP", emoji: "📚", seviye: 4 },
