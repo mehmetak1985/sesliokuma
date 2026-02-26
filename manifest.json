@@ -13,7 +13,13 @@
       "src": "icon512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon192.png",
@@ -27,13 +33,8 @@
       "src": "screenshot-mobile.png",
       "sizes": "409x769",
       "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "screenshot-desktop.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide"
+      "form_factor": "narrow",
+      "label": "Mobil Görünüm"
     }
   ]
 }
