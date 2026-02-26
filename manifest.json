@@ -25,17 +25,15 @@
   "screenshots": [
     {
       "src": "screenshot-mobile.png",
-      "sizes": "1080x1920",
+      "sizes": "409x769",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Mobil Görünüm"
+      "form_factor": "narrow"
     },
     {
       "src": "screenshot-desktop.png",
       "sizes": "1920x1080",
       "type": "image/png",
-      "form_factor": "wide",
-      "label": "Masaüstü Görünüm"
+      "form_factor": "wide"
     }
   ]
 }
