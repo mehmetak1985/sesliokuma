@@ -26,50 +26,52 @@
         <span></span><span></span><span></span>
       </button>
     </div>
-    <div class="menu-topbar-right">
-      <span class="menu-score-badge">Puan: <strong id="menuScoreText">0</strong> ⭐</span>
-    </div>
-  </div>
-
-  <!-- Hamburger Modal -->
-  <div class="hmenu-overlay" id="hmenuOverlay">
+    <div class="hmenu-overlay" id="hmenuOverlay">
     <div class="hmenu-panel">
       <button class="hmenu-close" id="hmenuClose">&#10005;</button>
       <div class="hmenu-logo">&#127891; Minik Okur</div>
       <div class="hmenu-items">
-        <button class="hmenu-item" id="hmAchievements">
+        
+        <button class="hmenu-item" id="hmAchievements" style="display: none;">
           <span class="hmenu-icon">&#127942;</span>
           <span class="hmenu-label">Başarılarım</span>
         </button>
-        <button class="hmenu-item" id="hmSes">
+
+        <button class="hmenu-item" id="hmSes" onclick="document.querySelectorAll('audio, video').forEach(el => el.muted = !el.muted)">
           <span class="hmenu-icon">&#128266;</span>
-          <span class="hmenu-label" id="hmSesLabel">Ses Açık</span>
-          <span class="hmenu-toggle" id="hmSesToggle"></span>
+          <span class="hmenu-label" id="hmSesLabel">Ses Aç/Kapat</span>
         </button>
-        <button class="hmenu-item">
+
+        <button class="hmenu-item" style="display: none;">
           <span class="hmenu-icon">&#11088;</span>
           <span class="hmenu-label">Bize Puan Ver</span>
         </button>
-        <button class="hmenu-item">
+
+        <button class="hmenu-item" onclick="window.navigator.share({title: 'Minik Okur', url: 'https://minik-okur.github.io/sesliokuma/'})">
           <span class="hmenu-icon">&#128226;</span>
           <span class="hmenu-label">Tavsiye Et</span>
         </button>
-        <button class="hmenu-item">
+
+        <button class="hmenu-item" onclick="location.href='mailto:akdagm@icloud.com'">
           <span class="hmenu-icon">&#9993;&#65039;</span>
           <span class="hmenu-label">Bize Ulaş</span>
         </button>
-        <button class="hmenu-item hmenu-item--bagis">
+
+        <button class="hmenu-item hmenu-item--bagis" style="display: none;">
           <span class="hmenu-icon">&#128149;</span>
           <span class="hmenu-label">Bağış Yap</span>
         </button>
-        <button class="hmenu-item" id="hmHakkimizda">
+
+        <button class="hmenu-item" id="hmHakkimizda" style="display: none;">
           <span class="hmenu-icon">&#128218;</span>
           <span class="hmenu-label">Hakkımızda</span>
         </button>
-        <button class="hmenu-item" id="hmGizlilik">
+
+        <button class="hmenu-item" id="hmGizlilik" onclick="location.href='privacy.html'">
           <span class="hmenu-icon">&#128274;</span>
           <span class="hmenu-label">Gizlilik Politikası</span>
         </button>
+
       </div>
     </div>
   </div>
