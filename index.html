@@ -570,9 +570,11 @@
 <script src="hazine.js"></script>
 <script src="hafiza.js"></script>
 <script src="yapboz.js"></script>
-     <script>
+   <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js');
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sesliokuma/sw.js');
+    });
   }
 </script>
 </body>
