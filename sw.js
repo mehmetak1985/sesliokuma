@@ -1,12 +1,13 @@
 const CACHE_NAME = 'minik-okur-v1';
 const ASSETS = [
-  '/sesliokuma/',
-  '/sesliokuma/index.html',
-  '/sesliokuma/manifest.json',
-  '/sesliokuma/icon-192.png',
-  '/sesliokuma/icon-512.png',
-  '/sesliokuma/screenshot-mobile.png',
-  '/sesliokuma/screenshot-desktop.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './icon192.png',
+  './icon512.png',
+  './screenshot-mobile.png',
+  './screenshot-desktop.png',
+  './privacy.html'
 ];
 
 // Kurulum: Dosyaları önbelleğe al
@@ -29,7 +30,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// İstekleri Yakalama: Önce önbelleğe bak, yoksa internetten getir
+// İstekleri Yakalama
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
