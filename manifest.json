@@ -1,8 +1,13 @@
 {
   "name": "Minik Okur",
-  "short_name": "Minik Okur",
+  "short_name": "Minik-Okur",
+  "description": "Çocuklar için eğlenceli sesli okuma ve eğitici oyunlar.",
+  "lang": "tr-TR",
+  "dir": "ltr",
   "start_url": "/sesliokuma/",
+  "scope": "/sesliokuma/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#4facfe",
   "icons": [
@@ -29,6 +34,22 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Minik Okur Mobil Görünüm"
+    },
+    {
+      "src": "screenshot-desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Minik Okur Masaüstü Görünüm"
     }
   ]
 }
