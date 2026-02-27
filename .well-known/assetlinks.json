@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.minik_okur.twa",
+        "sha256_cert_fingerprints": ["76:2C:6E:F6:46:D5:F6:7A:9F:A1:21:CF:7A:5E:8D:30:A2:E8:6F:5A:8C:89:25:BE:58:C8:F7:4E:55:C8:55:DE"]
+      }
+    }]
