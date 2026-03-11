@@ -102,7 +102,7 @@
             seciliHarfler.push(harf);
             render();
             if (seciliHarfler.length === hedef.length) {
-                if (typeof window.koyunSkoru === 'function') window.koyunSkoru(10);
+                if (typeof window.koyunSkoru === 'function') window.koyunSkoru(5);
                 setTimeout(sonraki, 700);
             }
         } else {
@@ -117,6 +117,7 @@
         if (kelimeIdx >= 2) {
             kelimeIdx = 0;
             seviye++;
+            if (typeof window.koyunSkoru === 'function') window.koyunSkoru(10);
         }
         if (seviye >= 5) {
             alan.innerHTML = `<div class="yapboz-emoji">🏆</div><h2 style="color:#1e293b; font-family:'Baloo 2'">Harikasın!</h2>`;
@@ -136,6 +137,7 @@
             ekran.scrollTop = 0;
         }
         seviye = 0; kelimeIdx = 0; seciliHarfler = []; durduruldu = false;
+        if (window.profilAktiviteKaydet) window.profilAktiviteKaydet('oyun');
         render();
     };
 

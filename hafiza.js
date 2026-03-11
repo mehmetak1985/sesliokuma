@@ -103,7 +103,7 @@ function kontrolEt() {
     el1.classList.add('hafiza-kart--eslesti');
     el2.classList.add('hafiza-kart--eslesti');
     eslesilenler++;
-    if(window.koyunSkoru) window.koyunSkoru(20);
+    if(window.koyunSkoru) window.koyunSkoru(5);
     playTone(523, 0.3);
     acikKartlar = [];
     kilitli = false;
@@ -123,6 +123,7 @@ function kontrolEt() {
 
 function nextStep() {
   setTimeout(() => {
+    if(window.koyunSkoru) window.koyunSkoru(10);
     seviye++;
     if (seviye >= SEVIYE_CIFT.length) seviye = 0;
     yeniSeviye();
@@ -142,7 +143,7 @@ function playTone(freq, dur) {
   } catch (e) {}
 }
 
-window.hafizaBas = () => { durduruldu = false; seviye = 0; yeniSeviye(); };
+window.hafizaBas = () => { durduruldu = false; seviye = 0; if(window.profilAktiviteKaydet) window.profilAktiviteKaydet('oyun'); yeniSeviye(); };
 window.hafizaDurdur = () => { durduruldu = true; kilitli = false; };
 
 })();

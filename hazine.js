@@ -110,12 +110,13 @@ function sandikAc(idx){
   const item = SEVIYELER[aktifSeviyeIdx].v[idx];
   el.innerHTML = `<div class="sandik-kapak">🔓</div><div style="font-size:2.5rem;z-index:1">${item.e}</div><div style="color:white;font-weight:bold;z-index:2">${item.k}</div>`;
   
-  if(window.koyunSkoru) window.koyunSkoru(20);
+  if(window.koyunSkoru) window.koyunSkoru(5);
   
   document.querySelectorAll('.sandik').forEach(s => { if(!s.classList.contains('sandik--acik')) s.classList.remove('pasif'); });
 
   const aciklar = alan.querySelectorAll('.sandik--acik').length;
   if(aciklar === 4) {
+    if(window.koyunSkoru) window.koyunSkoru(10);
     if(aktifSeviyeIdx < SEVIYELER.length - 1) {
       sonucEl.innerHTML = `<button id="nextLvlBtn" style="padding:12px 25px; background:#27ae60; color:white; border:none; border-radius:12px; font-size:1.1rem; font-weight:bold; cursor:pointer; margin-top:10px;">SEVİYE ${aktifSeviyeIdx+2} BAŞLASIN ➔</button>`;
       document.getElementById('nextLvlBtn').onclick = () => { aktifSeviyeIdx++; render(); };
@@ -153,7 +154,7 @@ function audioFeedback(d){
   } catch(e) {}
 }
 
-window.hazineBas=()=>{ aktifSeviyeIdx=0; durduruldu=false; isProcessing=false; render(); };
+window.hazineBas=()=>{ aktifSeviyeIdx=0; durduruldu=false; isProcessing=false; if(window.profilAktiviteKaydet) window.profilAktiviteKaydet('oyun'); render(); };
 window.hazineDurdur=()=>{ durduruldu=true; };
 
 })();

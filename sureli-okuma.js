@@ -10,42 +10,42 @@ const SO_METINLER = [
   {
     id: 1,
     baslik: "Ay'a Yolculuk",
-    kelimeSayisi: 50,
+    kelimeSayisi: 45,
     yildiz: 1,
     metin: "Mustafa gece gökyüzüne baktı. Yıldızlar parlıyordu. Ay çok büyük görünüyordu. \"Aya gitsem nasıl olurdu?\" diye düşündü. Uzay gemisine bindi. Roket ateşlendi. Yukarı fırladı. Ay'a indi. Her adımda zıplayarak yürüdü. Çünkü ay'da yerçekimi azdı. Dünya'ya baktı. Mavi ve yuvarlaktı. Çok güzeldi. Eve döndü. Rüyasında tekrar gitti."
   },
   {
     id: 2,
     baslik: "Dinozorlar Nereye Gitti?",
-    kelimeSayisi: 60,
+    kelimeSayisi: 49,
     yildiz: 2,
     metin: "Henna müzede büyük bir iskelet gördü. \"Bu ne?\" diye sordu. Öğretmeni anlattı. Milyonlarca yıl önce dinozorlar yaşıyordu. Devasa hayvanlardı. Kimisi ot yerdi, kimisi et. Sonra büyük bir taş gökten düştü. Toz her yeri kapladı. Güneş görünmez oldu. Bitkiler soldu. Dinozorlar yavaş yavaş yok oldu. Henna üzüldü. \"Keşke olsaydılar\" dedi."
   },
   {
     id: 3,
     baslik: "Denizaltında Bir Gün",
-    kelimeSayisi: 70,
+    kelimeSayisi: 54,
     yildiz: 3,
     metin: "Yavuz deniz kenarında oturuyordu. Elinde sihirli bir maske vardı. Taktı ve suya daldı. Rengarenk balıklar etrafında yüzdü. Bir ahtapot ona el salladı. Mercanlar pembe ve sarıydı. Uzakta büyük bir balina geçti. Sesi tüm denize yayıldı. Küçük balıklar okulda sıra sıra yüzüyordu. Öğretmenleri büyük bir levrekti. Yavuz güldü. Maskesi çıkınca her şey bitti. Ama unutamadı."
   },
   {
     id: 4,
     baslik: "Bulutların Üstünde",
-    kelimeSayisi: 80,
+    kelimeSayisi: 57,
     yildiz: 4,
     metin: "Erba pencereden bulutlara bakıyordu. \"Acaba yumuşak mıdır?\" diye düşündü. O gün uçağa bindi. Bulutların arasından geçtiler. Beyaz ve pamuk gibiydi. Pilot seslendi. \"Fırtına geliyor\" dedi. Bulutlar karardu. Şimşekler çaktı. Uçak sallandı. Erba korkmadı. Merak etti. Şimşek aslında bulutlar arasındaki elektrikti. Yağmur damlaları camdan aşağı kaydı. Az sonra güneş çıktı. Gökkuşağı belirdi. Erba hayatının en güzel manzarasını gördü."
   },
   {
     id: 5,
     baslik: "Tohumun Yolculuğu",
-    kelimeSayisi: 90,
+    kelimeSayisi: 63,
     yildiz: 5,
     metin: "Meryem bahçeye küçük bir tohum gömdü. Her gün suladı. Günler geçti. Bir sabah yeşil bir filiz çıktı. Meryem sevindi. Öğretmeni anlattı. Tohum toprağın içinde suyu emer. Güneşe doğru uzanır. Kökler derinleşir. Yapraklar açılır. Sonra çiçek olur. Meyve verir. İçinde yeni tohumlar oluşur. Böylece döngü devam eder. Meryem baktı. Bitkisi artık çiçek açmıştı. Sarı yapraklarıydı. Rüzgarda sallanıyordu. \"Sen de bir mucizesin\" dedi bitkisine. Güldü."
   },
   {
     id: 6,
     baslik: "Işığın Hızı",
-    kelimeSayisi: 100,
+    kelimeSayisi: 72,
     yildiz: 6,
     metin: "Osman teleskopla yıldızlara bakıyordu. Dedesi yanına oturdu. \"O yıldız ne kadar uzakta?\" diye sordu Osman. Dedesi düşündü. \"O kadar uzak ki ışığı buraya gelmesi yıllar alır\" dedi. Osman şaşırdı. \"Yani şu an gördüğümüz ışık çok eskiden yola çıktı mı?\" diye sordu. Dedesi güldü. \"Evet, belki o yıldız artık yok bile.\" Osman bunu düşündü. Gökyüzü ona farklı göründü. Her yıldız aslında geçmişten gelen bir mesajdı. O gece çok geç uyudu. Zihninde sorular bitmiyordu."
   }
@@ -59,10 +59,6 @@ let so_timer = null;
 let so_basladi = false;
 let so_bitti = false;
 let so_geriSayimTimer = null;
-
-// ─── Ses: ses-yonetici.js üzerinden yönetiliyor ───────────────────────────────
-// window.playSes('countdown_tick') → geri sayım tiki
-// window.playSes('time_up')        → süre doldu
 
 // ─── DOM Yardımcıları ─────────────────────────────────────────────────────────
 function so_el(id) { return document.getElementById(id); }
@@ -119,11 +115,9 @@ function so_geriSayimBaslat() {
     sayac--;
     if (sayac > 0) {
       goster(sayac);
-      window.playSes('countdown_tick');
     } else {
       clearInterval(so_geriSayimTimer);
       so_geriSayimTimer = null;
-      window.playSes('countdown_tick');
       setTimeout(() => {
         so_ekranGoster('soOkumaEkrani');
         so_baslatTimer();
@@ -249,7 +243,8 @@ function so_timerBit() {
   clearInterval(so_timer);
   so_timer = null;
   so_bitti = true;
-  window.playSes('time_up');
+  if (typeof window.koyunSkoru === 'function') window.koyunSkoru(10);
+  if (window.profilAktiviteKaydet) window.profilAktiviteKaydet('sureli');
   setTimeout(() => so_sonucEkraniAc(), 600);
 }
 

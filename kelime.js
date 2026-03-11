@@ -124,6 +124,7 @@ window.kelimeOyunuBas = function () {
   ko.seviye = 0;
   ko.kelimeIdx = 0;
   ko.aktif = true;
+  if (window.profilAktiviteKaydet) window.profilAktiviteKaydet('oyun');
   var ks = document.getElementById('koyunScreen');
   if (ks) ks.style.display = 'none';
   koEkran.style.display = 'flex';
@@ -133,8 +134,6 @@ window.kelimeOyunuBas = function () {
 window.kelimeOyunuDurdur = function () {
   if (koEkran) koEkran.style.display = 'none';
   ko.aktif = false;
-  // Skoru ana oyuna aktar
-  if (typeof window.koyunSkoru === 'function') window.koyunSkoru(0);
   // Menüye dön
   var kd = document.getElementById('kelimeDunyaScreen');
   if (kd) {
@@ -334,14 +333,12 @@ function koYerlestir(harfBtn, slot, slotIdx) {
     slot.classList.add('harf-kutu--dogru');
     harfBtn.style.visibility = 'hidden';
     harfBtn.draggable = false;
-    if (window.playSes) window.playSes('correct');
   } else {
     // Yanlış — geri al
     ko.yerlestirilen[slotIdx] = null;
     slot.textContent = '';
     slot.style.borderStyle = '';
     slot.classList.add('harf-kutu--bos');
-    if (window.playSes) window.playSes('wrong');
     harfBtn.classList.add('harf-btn--yanlis');
     setTimeout(() => harfBtn.classList.remove('harf-btn--yanlis'), 400);
     const sonuc = document.getElementById('koSonuc');
@@ -359,9 +356,7 @@ function koYerlestir(harfBtn, slot, slotIdx) {
 
 // ── Doğru Kelime ───────────────────────────────────────────────
 function koDogruKelime() {
-  const kazanilanPuan = (ko.seviye + 1) * 2;
-  if (typeof window.koyunSkoru === 'function') window.koyunSkoru(kazanilanPuan);
-  if (window.playSes) window.playSes('level_complete');
+  if (typeof window.koyunSkoru === 'function') window.koyunSkoru(5);
 
   const sonuc = document.getElementById('koSonuc');
   sonuc.textContent = 'Harika! ⭐';
@@ -387,6 +382,7 @@ function koSonraki() {
     // Seviye bitti
     ko.kelimeIdx = 0;
     ko.seviye++;
+    if (typeof window.koyunSkoru === 'function') window.koyunSkoru(10);
 
     if (ko.seviye >= KELIME_SEVIYELERI.length) {
       // Oyun bitti

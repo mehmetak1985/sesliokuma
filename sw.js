@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minik-okur-v2';
+const CACHE_NAME = 'minik-okur-v1';
 const ASSETS = [
   './',
   './index.html',
@@ -7,19 +7,7 @@ const ASSETS = [
   './icon512.png',
   './screenshot-mobile.png',
   './screenshot-desktop.png',
-  './privacy.html',
-  './style.css',
-  './app.js',
-  './ses-yonetici.js',
-  './balon.js',
-  './kelime.js',
-  './uzay.js',
-  './hazine.js',
-  './hafiza.js',
-  './yapboz.js',
-  './hikaye.js',
-  './hikaye-secim.js',
-  './sureli-okuma.js'
+  './privacy.html'
 ];
 
 // Kurulum: Dosyaları önbelleğe al
@@ -29,8 +17,6 @@ self.addEventListener('install', (event) => {
       return cache.addAll(ASSETS);
     })
   );
-  // Yeni SW hemen devreye girsin, eski beklemesin
-  self.skipWaiting();
 });
 
 // Aktivasyon: Eski önbellekleri temizle
@@ -42,8 +28,6 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-  // Tüm açık sekmeleri hemen kontrol al
-  self.clients.claim();
 });
 
 // İstekleri Yakalama
